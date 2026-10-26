@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nationalité française — Prep Dashboard</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#1d2433;--muted:#5b6475;--blue:#002395;--red:#ED2939;--ok:#1a7f37;--bad:#c62828;--line:#e3e6ee}
+body.dark{--bg:#12151c;--card:#1c212b;--ink:#e8ebf2;--muted:#9aa3b5;--line:#2c3340;--blue:#6d8cff}
+*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(90deg,#002395 0 33%,#fff 33% 66%,#ED2939 66%);height:6px}
+.top{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;flex-wrap:wrap;gap:8px}
+h1{font-size:20px;margin:0}nav{display:flex;gap:6px;flex-wrap:wrap;padding:0 24px}
+nav button{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px}
+nav button.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+main{padding:18px 24px;max-width:1100px;margin:auto}section{display:none}section.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}
+.muted{color:var(--muted)}a{color:var(--blue)}button.btn{background:var(--blue);color:#fff;border:0;padding:8px 14px;border-radius:8px;cursor:pointer;margin:4px 4px 0 0}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+select,input{padding:7px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:14px}
+.flash{min-height:200px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:20px;cursor:pointer;perspective:800px}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);cursor:pointer;font-size:15px}
+.opt.ok{border-color:var(--ok);background:rgba(26,127,55,.12)}.opt.bad{border-color:var(--bad);background:rgba(198,40,40,.12)}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:rgba(0,35,149,.1);color:var(--blue);margin-right:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;font-size:14px}
+.line{margin:6px 0}.line b{color:var(--blue)}.en{color:var(--muted);font-size:13px;display:block}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}.bar>i{display:block;height:100%;background:var(--ok)}
+.big{font-size:28px;font-weight:700}
+</style>
+</head>
+<body>
+<header></header>
+<div class="top"><h1>🇫🇷 Nationalité française — Examen civique, Entretien &amp; Français</h1>
+<button class="btn ghost" onclick="document.body.classList.toggle('dark')">🌓 Thème</button></div>
+<nav id="nav"></nav>
+<main>
+
+<section id="home"><div class="card"><h2>Vue d'ensemble</h2>
+<p><b>Examen civique (naturalisation, depuis le 1ᵉʳ janvier 2026)</b>: 40 QCM (1 bonne réponse sur 4), environ 28 de connaissance + 12 mises en situation, <b>45 min</b>, sur tablette/ordinateur. Pour réussir : <b>32/40 (80 %)</b>. Organismes : CCIP et France Éducation International.</p>
+<p><b>Langue</b>: niveau <b>B2</b> (oral + écrit) exigé à partir du 1ᵉʳ janvier 2026. <b>Entretien d'assimilation</b> en préfecture : questions sur votre parcours, vos motivations, les valeurs et l'histoire de la France.</p>
+<p>5 thèmes : Principes et valeurs · Institutions · Droits et devoirs · Histoire, géographie, culture · Vivre en France.</p></div>
+<div class="grid" id="stats"></div></section>
+
+<section id="sources"><div class="card"><h2>Sources officielles (vérifiées le 26/10/2026)</h2><div id="srcList"></div>
+<p class="muted">Les mises en situation ne sont pas publiées. Celles de ce tableau de bord sont des exemples représentatifs. Téléchargez la liste officielle des questions « naturalisation » et révisez-la en plus de ce site.</p></div></section>
+
+<section id="flash"><div class="card"><span id="fcInfo" class="muted"></span>
+<div style="margin:8px 0"><select id="fcTheme"></select> <label><input type="checkbox" id="fcHard"> Seulement « à revoir »</label></div>
+<div class="card flash" id="fcCard" onclick="flipFC()"></div>
+<button class="btn ghost" onclick="nextFC(-1)">◀</button><button class="btn" onclick="flipFC()">Retourner</button>
+<button class="btn" style="background:var(--bad)" onclick="markFC(false)">À revoir</button><button class="btn" style="background:var(--ok)" onclick="markFC(true)">Je sais ✓</button>
+<button class="btn ghost" onclick="nextFC(1)">▶</button><button class="btn ghost" onclick="shuffleFC()">🔀</button></div></section>
+
+<section id="quiz"><div class="card"><h2>QCM d'entraînement</h2>
+<select id="qzTheme"></select> <select id="qzN"><option>10</option><option>20</option><option value="40">40 (examen blanc, 45 min)</option></select>
+<button class="btn" onclick="startQuiz()">Démarrer</button> <span id="timer" class="big"></span>
+<div id="qzBox" style="margin-top:12px"></div></div></section>
+
+<section id="interview"><div class="card"><h2>Entretien d'assimilation : questions fréquentes</h2>
+<p class="muted">Lisez la question, répondez à voix haute, puis comparez avec le modèle. Adaptez les réponses à votre histoire personnelle.</p><div id="ivList"></div></div></section>
+
+<section id="dialogues"><div class="card"><h2>Dialogues du quotidien</h2><select id="dlTense"></select> <label><input type="checkbox" id="dlHide"> Masquer l'anglais</label></div><div id="dlList"></div></section>
+
+<section id="conj"><div class="card"><h2>Conjugaison</h2>
+<select id="cjVerb"></select> <select id="cjTense"></select><div id="cjTable" style="margin-top:10px"></div></div>
+<div class="card"><h3>Exercice</h3><div id="cjDrill"></div></div>
+<div class="card"><h3>Rappels</h3><ul>
+<li><b>Présent</b>: action habituelle ou en cours. <i>Je travaille à Paris.</i></li>
+<li><b>Passé composé</b> (avoir/être + participe passé): action terminée. <i>J'ai visité Lyon. Je suis arrivé en 2018.</i> Avec ÊTRE (DR &amp; MRS VANDERTRAMP + pronominaux), le participe s'accorde.</li>
+<li><b>Imparfait</b>: description ou habitude dans le passé. <i>Quand j'étais petit, je jouais au foot.</i></li>
+<li><b>Plus-que-parfait</b>: passé avant le passé. <i>J'avais déjà mangé quand il est arrivé.</i></li>
+<li><b>Futur proche</b> (aller + infinitif): <i>Je vais voter.</i> <b>Futur simple</b>: <i>Je deviendrai français.</i></li>
+<li><b>Conditionnel</b>: politesse et hypothèse. <i>Je voudrais un rendez-vous. Si j'étais français, je voterais.</i></li>
+</ul><p class="muted">Remarque : le « present perfect » anglais (<i>I have lived here for 8 years</i>) se dit en général avec le <b>présent + depuis</b> (<i>J'habite ici depuis 8 ans</i>), ou avec le passé composé quand l'action est terminée.</p></div></section>
+</main>
+
+<script>
+// ---------------- DATA ----------------
+const SOURCES=[
+["Ministère : procédures d'accès à la nationalité (examen civique, entretien, B2)","https://www.immigration.interieur.gouv.fr/devenir-francais/procedures-dacces-a-nationalite-francaise"],
+["Liste officielle : questions de connaissance, examen civique nationalité","https://www.immigration.interieur.gouv.fr/documentation/guides-textes-et-brochures/questions-de-connaissance-pour-lexamen-civique-nationalite-francaise.html"],
+["L'examen civique pour la naturalisation / réintégration","https://www.immigration.interieur.gouv.fr/documentation/guides-textes-et-brochures/lexamen-civique-pour-demande-de-naturalisation-ou-de-reintegration-dans-nationalite-francaise.html"],
+["Livret du citoyen (sert à l'entretien et à l'examen)","https://www.immigration.interieur.gouv.fr/documentation/guides-textes-et-brochures/livret-du-citoyen.html"],
+["Charte des droits et devoirs du citoyen français","https://www.immigration.interieur.gouv.fr/documentation/guides-textes-et-brochures/charte-des-droits-et-devoirs-du-citoyen-francais.html"],
+["Formation civique : site de révision officiel (fiches par thème)","https://formation-civique.interieur.gouv.fr/"],
+["Informations générales sur l'examen civique","https://formation-civique.interieur.gouv.fr/examen-civique/informations-g%C3%A9n%C3%A9rales-sur-lexamen-civique/"],
+["Liste officielle des questions : CR (carte de résident, niveau proche)","https://formation-civique.interieur.gouv.fr/examen-civique/liste-officielle-des-questions-de-connaissance-cr/"],
+["Liste officielle des questions : CSP","https://formation-civique.interieur.gouv.fr/examen-civique/liste-officielle-des-questions-de-connaissance-csp/"],
+["Fiches : Principes et valeurs","https://formation-civique.interieur.gouv.fr/fiches-par-thematiques/principes-et-valeurs-de-la-republique/"],
+["Fiches : Système institutionnel","https://formation-civique.interieur.gouv.fr/fiches-par-thematiques/systeme-institutionnel-et-politique/"],
+["Fiches : Droits et devoirs","https://formation-civique.interieur.gouv.fr/fiches-par-thematiques/droits-et-devoirs/"],
+["Fiches : Histoire, géographie et culture","https://formation-civique.interieur.gouv.fr/fiches-par-thematiques/histoire-geographie-et-culture/"],
+["Fiches : Vivre dans la société française","https://formation-civique.interieur.gouv.fr/fiches-par-thematiques/vivre-dans-la-societe-fran%C3%A7aise/"],
+["Arrêté du 10 octobre 2025 (programme et modalités)","https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000052381620"],
+["Inscription examen : CCIP","https://francais.cci-paris-idf.fr/candidat?produit=21"],
+["Inscription examen : France Éducation International","https://test-civique.fr/inscription"],
+["Carte des centres FEI","https://www.france-education-international.fr/centres-d-examen/carte?type-centre=examen_civique"],
+["Service-public : naturalisation par décret","https://www.service-public.fr/particuliers/vosdroits/F2213"],
+["Service-public : niveau de langue / diplômes","https://www.service-public.gouv.fr/particuliers/vosdroits/F34739"],
+["Simulateur naturalisation","https://www.service-public.fr/simulateur/calcul/Naturalisation"],
+["Quiz gratuit (France Fraternité, non officiel)","https://www.ensemble-en-france.org/quiz-examen-civique-gratuit-debutant/"]];
+
+const T={P:"Principes et valeurs",I:"Institutions",D:"Droits et devoirs",H:"Histoire, géo, culture",V:"Vivre en France",S:"Mise en situation"};
+// [theme, question, [4 options], correct index, explanation]
+const Q=[
+["P","Quelle est la devise de la République française ?",["Liberté, Égalité, Fraternité","Travail, Famille, Patrie","Unité, Progrès, Justice","Paix, Liberté, Solidarité"],0,"Inscrite dans la Constitution (art. 2)."],
+["P","Quel est l'hymne national ?",["Le Chant du départ","La Marseillaise","L'Internationale","Ode à la joie"],1,"Composée par Rouget de Lisle en 1792."],
+["P","Quelles sont les couleurs du drapeau français ?",["Bleu, blanc, rouge","Bleu, blanc, vert","Rouge, blanc, noir","Bleu, jaune, rouge"],0,"Drapeau tricolore, emblème national (art. 2 de la Constitution)."],
+["P","Quel est le symbole féminin de la République ?",["Jeanne d'Arc","Marianne","La Liberté éclairant le monde","Athéna"],1,"Son buste est dans les mairies."],
+["P","Quel animal est un symbole de la France ?",["L'aigle","Le lion","Le coq","L'ours"],2,"Le coq gaulois."],
+["P","Quelle date est la fête nationale ?",["8 mai","11 novembre","14 juillet","1er mai"],2,"En souvenir de la prise de la Bastille (1789) et de la Fête de la Fédération (1790)."],
+["P","Que signifie la laïcité ?",["L'État favorise le catholicisme","L'État est neutre et garantit la liberté de conscience","Les religions sont interdites","Chaque région choisit une religion"],1,"Loi de 1905 sur la séparation des Églises et de l'État."],
+["P","En quelle année a été votée la loi de séparation des Églises et de l'État ?",["1789","1848","1905","1958"],2,"Loi du 9 décembre 1905."],
+["P","Selon la Constitution, la France est une République…",["fédérale et religieuse","indivisible, laïque, démocratique et sociale","monarchique et parlementaire","confédérale et laïque"],1,"Article 1er de la Constitution de 1958."],
+["P","Quel est le principe de la République ?",["Gouvernement du peuple, par le peuple et pour le peuple","Gouvernement des sages","Pouvoir du roi","Pouvoir des régions"],0,"Article 2 de la Constitution."],
+["P","L'égalité femmes-hommes est-elle un principe de la République ?",["Oui","Non","Seulement au travail","Seulement pour le vote"],0,"Garantie par le Préambule de 1946 et la Constitution."],
+["P","Quel texte de 1789 proclame les droits fondamentaux ?",["Le Code civil","La Déclaration des droits de l'homme et du citoyen","L'Édit de Nantes","La Charte de 1814"],1,"Adoptée le 26 août 1789."],
+["I","Quelle est la Constitution actuelle ?",["Celle de 1946 (IVe République)","Celle de 1958 (Ve République)","Celle de 1875","Celle de 1791"],1,"Adoptée le 4 octobre 1958, sous l'impulsion du général de Gaulle."],
+["I","Pour combien d'années est élu le président de la République ?",["4 ans","5 ans","6 ans","7 ans"],1,"Quinquennat depuis 2000 (référendum), appliqué depuis 2002."],
+["I","Comment est élu le président de la République ?",["Par le Parlement","Au suffrage universel direct","Par les maires","Par le Conseil constitutionnel"],1,"Depuis 1962."],
+["I","Qui nomme le Premier ministre ?",["L'Assemblée nationale","Le président de la République","Le Sénat","Le peuple"],1,"Article 8 de la Constitution."],
+["I","Le Parlement est composé de…",["l'Assemblée nationale et le Sénat","le Gouvernement et le Sénat","l'Assemblée et le Conseil d'État","les maires et les préfets"],0,"Bicaméralisme."],
+["I","Combien y a-t-il de députés ?",["348","577","925","100"],1,"Élus pour 5 ans au suffrage universel direct."],
+["I","Où siège le Sénat ?",["Palais Bourbon","Palais du Luxembourg","Palais de l'Élysée","Hôtel Matignon"],1,"L'Assemblée nationale siège au Palais Bourbon."],
+["I","Où travaille le Premier ministre ?",["Élysée","Matignon","Luxembourg","Versailles"],1,"Hôtel de Matignon."],
+["I","Qui vote les lois ?",["Le président","Le Parlement","Les préfets","Le Conseil d'État"],1,"Pouvoir législatif."],
+["I","Qui vérifie que les lois respectent la Constitution ?",["La Cour de cassation","Le Conseil constitutionnel","Le Sénat","La Cour des comptes"],1,"9 membres, plus les anciens présidents."],
+["I","Quel est le plus petit échelon d'administration locale ?",["Le département","La région","La commune","Le canton"],2,"Environ 35 000 communes, dirigées par un maire."],
+["I","Qui élit le maire ?",["Les habitants directement","Le conseil municipal","Le préfet","Le président"],1,"Le conseil municipal est élu par les habitants."],
+["I","Qui représente l'État dans le département ?",["Le maire","Le préfet","Le député","Le président du conseil départemental"],1,"Nommé par décret du président."],
+["I","Combien de régions en France (métropole + outre-mer) ?",["13","18","22","27"],1,"13 en métropole + 5 en outre-mer depuis 2016."],
+["I","La France est membre fondateur…",["de l'Union européenne (CEE 1957)","de l'OTAN uniquement","du Commonwealth","de l'ASEAN"],0,"Traité de Rome, 1957."],
+["I","Quelle est la monnaie de la France ?",["Le franc","L'euro","Le dollar","L'écu"],1,"Pièces et billets en euros depuis 2002."],
+["I","Quel est le drapeau de l'Union européenne ?",["12 étoiles jaunes sur fond bleu","Croix blanche sur rouge","Étoiles blanches sur vert","Un cercle bleu sur blanc"],0,""],
+["D","À quel âge peut-on voter en France ?",["16 ans","18 ans","20 ans","21 ans"],1,"Majorité électorale depuis 1974."],
+["D","Depuis quand les femmes votent-elles en France ?",["1848","1918","1944","1968"],2,"Ordonnance de 1944, premier vote en 1945."],
+["D","Le vote est-il obligatoire en France ?",["Oui","Non, c'est un droit et un devoir civique","Seulement aux présidentielles","Seulement pour les hommes"],1,""],
+["D","Les étrangers de l'UE peuvent voter aux élections…",["présidentielles","municipales et européennes","législatives","à toutes les élections"],1,""],
+["D","Payer ses impôts est…",["facultatif","un devoir","réservé aux riches","réservé aux Français"],1,"Article 13 de la DDHC."],
+["D","L'école est obligatoire de…",["3 à 16 ans","6 à 14 ans","5 à 18 ans","6 à 16 ans"],0,"Dès 3 ans depuis 2019. Formation obligatoire jusqu'à 18 ans."],
+["D","La peine de mort en France…",["existe encore","a été abolie en 1981","a été abolie en 1945","dépend des régions"],1,"Loi Badinter, 1981."],
+["D","Le mariage pour tous a été adopté en…",["2000","2013","2018","1999"],1,"Loi du 17 mai 2013."],
+["D","Peut-on se marier religieusement sans mariage civil ?",["Oui","Non, le mariage civil doit être fait d'abord en mairie","Seulement à Paris","Oui si on est majeur"],1,""],
+["D","La polygamie en France est…",["autorisée","interdite","autorisée pour les étrangers","tolérée"],1,""],
+["D","Quel numéro appeler pour le SAMU ?",["15","17","18","112 uniquement"],0,"17 police, 18 pompiers, 112 urgence européenne, 119 enfance en danger, 3919 violences femmes."],
+["D","Que signifie la liberté d'expression ?",["On peut tout dire sans limite","On peut exprimer ses opinions dans le respect de la loi (pas de diffamation, d'injure, d'appel à la haine)","Seuls les journalistes parlent","Interdiction de critiquer le gouvernement"],1,""],
+["D","Le recensement citoyen (JDC) concerne les jeunes Français à…",["16 ans","18 ans","21 ans","14 ans"],0,"Puis la Journée défense et citoyenneté."],
+["D","Un Français naturalisé a…",["moins de droits","les mêmes droits et devoirs que tout Français","le droit de vote après 10 ans","pas le droit d'être élu"],1,""],
+["H","En quelle année a eu lieu la prise de la Bastille ?",["1715","1789","1815","1848"],1,"14 juillet 1789."],
+["H","Qui était Napoléon Bonaparte ?",["Un roi de France du XVIe siècle","Un empereur des Français (1804)","Un président de la Ve République","Un écrivain"],1,"Il a créé le Code civil (1804)."],
+["H","Quand l'esclavage a-t-il été définitivement aboli en France ?",["1789","1848","1905","1945"],1,"Décret du 27 avril 1848 (Victor Schœlcher)."],
+["H","Quelle date commémore la fin de la Première Guerre mondiale ?",["8 mai","11 novembre","14 juillet","6 juin"],1,"Armistice du 11 novembre 1918."],
+["H","Que commémore le 8 mai ?",["La fin de la Seconde Guerre mondiale en Europe (1945)","La Révolution","La fin de la guerre d'Algérie","L'Europe"],0,""],
+["H","Qui a lancé l'appel du 18 juin 1940 ?",["Jean Moulin","Charles de Gaulle","Philippe Pétain","Clemenceau"],1,"Depuis Londres, à la radio BBC."],
+["H","Qui était Jean Moulin ?",["Un héros de la Résistance","Un roi","Un peintre","Un footballeur"],0,"Il a unifié la Résistance, il est au Panthéon."],
+["H","Qui a été le premier président de la Ve République ?",["François Mitterrand","Charles de Gaulle","Georges Pompidou","Jacques Chirac"],1,"1959-1969."],
+["H","Qui est le président de la République actuel ?",["Emmanuel Macron","François Hollande","Nicolas Sarkozy","Édouard Philippe"],0,"Réélu en 2022 (mandat jusqu'en 2027). Vérifiez l'actualité avant l'examen, ainsi que le nom du Premier ministre."],
+["H","Quelle est la capitale de la France ?",["Lyon","Marseille","Paris","Bordeaux"],2,""],
+["H","Quel est le plus long fleuve de France ?",["La Seine","La Loire","Le Rhône","La Garonne"],1,"Environ 1 000 km."],
+["H","Quel est le plus haut sommet de France ?",["Le mont Blanc","Le Puy de Dôme","Le Vignemale","Le mont Ventoux"],0,"Environ 4 806 m, dans les Alpes."],
+["H","Quelle chaîne de montagnes sépare la France de l'Espagne ?",["Les Alpes","Les Pyrénées","Le Jura","Les Vosges"],1,""],
+["H","Lequel est un territoire d'outre-mer français ?",["La Réunion","Madagascar","Maurice","Le Sénégal"],0,"Avec Guadeloupe, Martinique, Guyane et Mayotte (DROM)."],
+["H","Qui a écrit « Les Misérables » ?",["Molière","Victor Hugo","Émile Zola","Voltaire"],1,"1862."],
+["H","Où sont honorés les grands personnages de la Nation ?",["Au Louvre","Au Panthéon","À Versailles","À l'Élysée"],1,"« Aux grands hommes la patrie reconnaissante »."],
+["H","Quelle femme scientifique, deux fois prix Nobel, repose au Panthéon ?",["Simone Veil","Marie Curie","Joséphine Baker","Olympe de Gouges"],1,""],
+["H","Simone Veil est connue pour…",["la loi sur l'IVG (1975)","l'abolition de l'esclavage","le Code civil","le droit de vote"],0,"Rescapée de la Shoah, première présidente du Parlement européen élu."],
+["H","Avec combien de pays la France métropolitaine a-t-elle une frontière terrestre ?",["4","6","8","10"],2,"Belgique, Luxembourg, Allemagne, Suisse, Italie, Monaco, Espagne, Andorre."],
+["V","Que faut-il faire en cas d'urgence incendie ?",["Appeler le 18 (pompiers)","Appeler le 15","Appeler la mairie","Attendre"],0,""],
+["V","Quel organisme verse les allocations familiales ?",["La CAF","Pôle emploi / France Travail","L'URSSAF","La mairie"],0,""],
+["V","La carte Vitale sert à…",["voyager","être remboursé des soins médicaux","voter","payer les impôts"],1,"Assurance maladie (CPAM)."],
+["V","Quelle est la durée légale du travail par semaine ?",["35 heures","39 heures","40 heures","45 heures"],0,""],
+["V","Comment s'appelle le salaire minimum ?",["Le SMIC","Le RSA","Le SMAG","L'APL"],0,"Salaire minimum interprofessionnel de croissance."],
+["V","Le tri des déchets et le respect de l'environnement sont…",["optionnels","des devoirs de chacun","réservés aux villes","interdits"],1,"Charte de l'environnement (2004), dans la Constitution."],
+["S","Votre voisin vous dit qu'une femme ne peut pas travailler sans l'accord de son mari. Que répondez-vous ?",["C'est vrai en France","C'est faux, les femmes sont libres et égales aux hommes","Ça dépend de la religion","Seulement si elle est mariée"],1,"Égalité femmes-hommes."],
+["S","Un collègue refuse de travailler avec une personne à cause de sa religion. C'est…",["acceptable","une discrimination interdite par la loi","normal dans le privé","un droit"],1,""],
+["S","Un agent public porte un signe religieux visible au guichet. Est-ce autorisé ?",["Oui","Non, les agents publics doivent la neutralité","Oui le vendredi","Seulement les fonctionnaires municipaux"],1,"Les usagers, eux, peuvent en porter."],
+["S","Vous êtes témoin de violences sur un enfant. Que faites-vous ?",["Rien, c'est privé","J'appelle le 119 ou le 17","J'attends","J'en parle seulement à la famille"],1,""],
+["S","Un élève veut porter un signe religieux ostensible à l'école publique. C'est…",["autorisé","interdit (loi de 2004)","autorisé au lycée seulement","au choix du professeur"],1,""],
+["S","On vous propose de travailler « au noir ». C'est…",["légal si on est d'accord","illégal","conseillé","toléré"],1,""],
+["S","Une amie est victime de violences conjugales. Quel numéro peut-elle appeler ?",["3919","118","3615","36 30"],0,"Ou le 17 en cas d'urgence."],
+["S","Votre fille de 15 ans veut choisir son mari elle-même. En France…",["les parents décident","le mariage forcé est interdit et le mariage est possible à 18 ans","elle peut se marier à 15 ans","c'est le maire qui choisit"],1,""]
+];
+
+const IV=[
+["Pourquoi voulez-vous devenir français(e) ?","Je vis en France depuis X ans, j'y travaille et j'y ai construit ma vie. Je partage les valeurs de la République (liberté, égalité, fraternité, laïcité) et je veux participer pleinement à la vie citoyenne, notamment en votant."],
+["Présentez-vous / Parlez-moi de votre parcours.","Je m'appelle…, je suis né(e) à… en… Je suis arrivé(e) en France en… pour… Aujourd'hui, je travaille comme… chez… J'habite à… avec ma famille."],
+["Que faites-vous dans votre travail ?","Je suis… Je m'occupe de… Mon entreprise est… J'y travaille depuis…"],
+["Que représente pour vous la devise « Liberté, Égalité, Fraternité » ?","La liberté de penser, de s'exprimer et de croire. L'égalité de tous devant la loi, sans distinction d'origine, de sexe ou de religion. La fraternité, c'est la solidarité entre citoyens."],
+["Qu'est-ce que la laïcité pour vous ?","L'État est neutre et ne favorise aucune religion. Chacun est libre de croire ou de ne pas croire, et la religion relève de la vie privée. Elle est garantie par la loi de 1905."],
+["Quels sont les droits et devoirs d'un citoyen ?","Droits : voter, s'exprimer, être protégé par la loi. Devoirs : respecter la loi, payer ses impôts, voter (devoir civique), être juré si on est tiré au sort, défendre le pays."],
+["Que pensez-vous de l'égalité hommes-femmes ?","C'est un principe fondamental. Les femmes ont les mêmes droits que les hommes : travail, salaire, choix du conjoint, éducation."],
+["Quelles régions ou villes de France avez-vous visitées ?","J'ai visité… (la Bretagne, Lyon, la Provence…). J'ai beaucoup aimé… parce que…"],
+["Citez un personnage historique français que vous admirez.","J'admire Simone Veil pour son courage et la loi de 1975, ou Victor Hugo, ou le général de Gaulle pour l'appel du 18 juin 1940."],
+["Quelles sont vos activités en dehors du travail ? Êtes-vous dans une association ?","J'aime… Je fais partie de l'association… / Je fais du bénévolat… / Je pratique… au club de ma ville."],
+["Qui est le maire de votre commune ?","Préparez le nom du maire, du préfet, et de votre député. Vérifiez-les avant l'entretien."],
+["Que ferez-vous si vous devenez français(e) ?","Je voterai à toutes les élections, je continuerai à m'engager dans ma commune et je transmettrai les valeurs de la République à mes enfants."],
+["Avez-vous des contacts avec votre pays d'origine ?","Oui, j'ai de la famille là-bas, j'y vais parfois en vacances, mais ma vie et mon avenir sont en France."],
+["Quelles fêtes françaises connaissez-vous ?","Le 14 juillet (fête nationale), le 11 novembre, le 8 mai, le 1er mai (fête du travail), Noël, la fête de la musique le 21 juin."]
+];
+
+// Dialogues: [title, tense, [[speaker, fr, en],...]]
+const DL=[
+["À la boulangerie","Présent",[["Client","Bonjour, je voudrais une baguette et deux croissants, s'il vous plaît.","Hello, I'd like a baguette and two croissants, please."],["Vendeuse","Bien sûr. Ce sera tout ?","Of course. Will that be all?"],["Client","Oui, c'est combien ?","Yes, how much is it?"],["Vendeuse","Ça fait 3,40 €.","That's €3.40."],["Client","Voilà. Merci, bonne journée !","Here you go. Thanks, have a nice day!"]]],
+["Se présenter","Présent",[["A","Comment vous appelez-vous ?","What is your name?"],["B","Je m'appelle Vipul. J'habite à Paris depuis six ans.","My name is Vipul. I've lived in Paris for six years."],["A","Qu'est-ce que vous faites dans la vie ?","What do you do?"],["B","Je travaille dans l'informatique. Je suis architecte d'entreprise.","I work in IT. I'm an enterprise architect."]]],
+["Chez le médecin","Présent",[["Médecin","Qu'est-ce qui ne va pas ?","What's wrong?"],["Patient","J'ai mal à la gorge et j'ai de la fièvre.","I have a sore throat and a fever."],["Médecin","Depuis combien de temps ?","Since when?"],["Patient","Depuis deux jours.","For two days."]]],
+["Le week-end dernier","Passé composé",[["A","Qu'est-ce que tu as fait ce week-end ?","What did you do this weekend?"],["B","Je suis allé à Versailles avec ma famille. Nous avons visité le château.","I went to Versailles with my family. We visited the palace."],["A","Vous avez mangé là-bas ?","Did you eat there?"],["B","Oui, on a pique-niqué dans les jardins. Ensuite, nous sommes rentrés en RER.","Yes, we had a picnic in the gardens. Then we came back by RER."]]],
+["À la préfecture (passé)","Passé composé",[["Agent","Quand êtes-vous arrivé en France ?","When did you arrive in France?"],["Vous","Je suis arrivé en 2018. J'ai d'abord travaillé à Lyon, puis j'ai déménagé à Paris en 2020.","I arrived in 2018. I first worked in Lyon, then moved to Paris in 2020."],["Agent","Avez-vous suivi des cours de français ?","Did you take French classes?"],["Vous","Oui, j'ai pris des cours à l'Alliance française et j'ai obtenu le niveau B2.","Yes, I took classes at the Alliance française and got level B2."]]],
+["Mon enfance","Imparfait",[["A","Où habitais-tu quand tu étais petit ?","Where did you live as a child?"],["B","J'habitais en Inde. Il faisait chaud, et je jouais au cricket tous les jours.","I lived in India. It was hot and I played cricket every day."],["A","Tu allais à l'école à pied ?","Did you walk to school?"],["B","Oui, l'école était près de chez moi.","Yes, the school was near my home."]]],
+["Imparfait + passé composé","Imparfait / Passé composé",[["A","Qu'est-ce qui s'est passé ?","What happened?"],["B","Je marchais dans la rue quand il a commencé à pleuvoir.","I was walking in the street when it started to rain."],["A","Tu avais un parapluie ?","Did you have an umbrella?"],["B","Non, alors je suis entré dans un café.","No, so I went into a café."]]],
+["Projets de vacances","Futur proche",[["A","Qu'est-ce que tu vas faire cet été ?","What are you going to do this summer?"],["B","Je vais partir en Bretagne. On va louer une maison près de la mer.","I'm going to Brittany. We're going to rent a house by the sea."],["A","Vous allez y rester longtemps ?","Are you going to stay long?"],["B","On va rester deux semaines.","We'll stay two weeks."]]],
+["Mon avenir en France","Futur simple",[["Agent","Que ferez-vous si vous obtenez la nationalité ?","What will you do if you get citizenship?"],["Vous","Je voterai à chaque élection et je m'engagerai dans une association de mon quartier.","I'll vote in every election and get involved in a local association."],["Agent","Et vos enfants ?","And your children?"],["Vous","Ils grandiront en France et ils apprendront les valeurs de la République.","They'll grow up in France and learn the values of the Republic."]]],
+["Au restaurant (politesse)","Conditionnel",[["Serveur","Vous avez choisi ?","Have you chosen?"],["Client","Je voudrais le plat du jour, et pourriez-vous m'apporter une carafe d'eau ?","I'd like the dish of the day, and could you bring me a jug of water?"],["Serveur","Bien sûr. Vous aimeriez un dessert ?","Of course. Would you like a dessert?"],["Client","Oui, j'aimerais une crème brûlée.","Yes, I'd like a crème brûlée."]]],
+["Prendre rendez-vous","Conditionnel",[["Vous","Bonjour, je voudrais prendre rendez-vous avec le docteur Martin.","Hello, I'd like to make an appointment with Dr Martin."],["Secrétaire","Jeudi à 10 h, ça vous irait ?","Would Thursday at 10 suit you?"],["Vous","Ce serait parfait, merci.","That would be perfect, thanks."]]],
+["Depuis + présent (present perfect)","Présent + depuis",[["A","Depuis combien de temps vous habitez en France ?","How long have you lived in France?"],["B","J'habite en France depuis huit ans.","I have lived in France for eight years."],["A","Et vous travaillez chez Allianz depuis quand ?","And since when have you worked at Allianz?"],["B","J'y travaille depuis 2019.","I have worked there since 2019."]]],
+["Déjà / jamais (present perfect)","Passé composé",[["A","Tu as déjà visité le Mont-Saint-Michel ?","Have you ever visited Mont-Saint-Michel?"],["B","Non, je ne l'ai jamais visité, mais j'ai déjà vu la tour Eiffel plusieurs fois.","No, I've never visited it, but I've already seen the Eiffel Tower several times."],["A","Tu as fini ton dossier de naturalisation ?","Have you finished your naturalisation file?"],["B","Pas encore, je n'ai pas encore reçu mon extrait d'acte de naissance.","Not yet, I haven't received my birth certificate yet."]]],
+["Avant d'arriver","Plus-que-parfait",[["A","Tu parlais français avant de venir ?","Did you speak French before coming?"],["B","Un peu. J'avais suivi des cours en Inde avant de m'installer ici.","A little. I had taken classes in India before settling here."]]]
+];
+
+// Verbs: infinitive -> {tense: [je,tu,il,nous,vous,ils]}
+const P=["je","tu","il/elle","nous","vous","ils/elles"];
+const V={
+"être":{"Présent":["suis","es","est","sommes","êtes","sont"],"Passé composé":["ai été","as été","a été","avons été","avez été","ont été"],"Imparfait":["étais","étais","était","étions","étiez","étaient"],"Futur simple":["serai","seras","sera","serons","serez","seront"],"Conditionnel":["serais","serais","serait","serions","seriez","seraient"]},
+"avoir":{"Présent":["ai","as","a","avons","avez","ont"],"Passé composé":["ai eu","as eu","a eu","avons eu","avez eu","ont eu"],"Imparfait":["avais","avais","avait","avions","aviez","avaient"],"Futur simple":["aurai","auras","aura","aurons","aurez","auront"],"Conditionnel":["aurais","aurais","aurait","aurions","auriez","auraient"]},
+"aller":{"Présent":["vais","vas","va","allons","allez","vont"],"Passé composé":["suis allé(e)","es allé(e)","est allé(e)","sommes allé(e)s","êtes allé(e)(s)","sont allé(e)s"],"Imparfait":["allais","allais","allait","allions","alliez","allaient"],"Futur simple":["irai","iras","ira","irons","irez","iront"],"Conditionnel":["irais","irais","irait","irions","iriez","iraient"]},
+"faire":{"Présent":["fais","fais","fait","faisons","faites","font"],"Passé composé":["ai fait","as fait","a fait","avons fait","avez fait","ont fait"],"Imparfait":["faisais","faisais","faisait","faisions","faisiez","faisaient"],"Futur simple":["ferai","feras","fera","ferons","ferez","feront"],"Conditionnel":["ferais","ferais","ferait","ferions","feriez","feraient"]},
+"parler":{"Présent":["parle","parles","parle","parlons","parlez","parlent"],"Passé composé":["ai parlé","as parlé","a parlé","avons parlé","avez parlé","ont parlé"],"Imparfait":["parlais","parlais","parlait","parlions","parliez","parlaient"],"Futur simple":["parlerai","parleras","parlera","parlerons","parlerez","parleront"],"Conditionnel":["parlerais","parlerais","parlerait","parlerions","parleriez","parleraient"]},
+"finir":{"Présent":["finis","finis","finit","finissons","finissez","finissent"],"Passé composé":["ai fini","as fini","a fini","avons fini","avez fini","ont fini"],"Imparfait":["finissais","finissais","finissait","finissions","finissiez","finissaient"],"Futur simple":["finirai","finiras","finira","finirons","finirez","finiront"],"Conditionnel":["finirais","finirais","finirait","finirions","finiriez","finiraient"]},
+"prendre":{"Présent":["prends","prends","prend","prenons","prenez","prennent"],"Passé composé":["ai pris","as pris","a pris","avons pris","avez pris","ont pris"],"Imparfait":["prenais","prenais","prenait","prenions","preniez","prenaient"],"Futur simple":["prendrai","prendras","prendra","prendrons","prendrez","prendront"],"Conditionnel":["prendrais","prendrais","prendrait","prendrions","prendriez","prendraient"]},
+"venir":{"Présent":["viens","viens","vient","venons","venez","viennent"],"Passé composé":["suis venu(e)","es venu(e)","est venu(e)","sommes venu(e)s","êtes venu(e)(s)","sont venu(e)s"],"Imparfait":["venais","venais","venait","venions","veniez","venaient"],"Futur simple":["viendrai","viendras","viendra","viendrons","viendrez","viendront"],"Conditionnel":["viendrais","viendrais","viendrait","viendrions","viendriez","viendraient"]},
+"pouvoir":{"Présent":["peux","peux","peut","pouvons","pouvez","peuvent"],"Passé composé":["ai pu","as pu","a pu","avons pu","avez pu","ont pu"],"Imparfait":["pouvais","pouvais","pouvait","pouvions","pouviez","pouvaient"],"Futur simple":["pourrai","pourras","pourra","pourrons","pourrez","pourront"],"Conditionnel":["pourrais","pourrais","pourrait","pourrions","pourriez","pourraient"]},
+"vouloir":{"Présent":["veux","veux","veut","voulons","voulez","veulent"],"Passé composé":["ai voulu","as voulu","a voulu","avons voulu","avez voulu","ont voulu"],"Imparfait":["voulais","voulais","voulait","voulions","vouliez","voulaient"],"Futur simple":["voudrai","voudras","voudra","voudrons","voudrez","voudront"],"Conditionnel":["voudrais","voudrais","voudrait","voudrions","voudriez","voudraient"]},
+"devoir":{"Présent":["dois","dois","doit","devons","devez","doivent"],"Passé composé":["ai dû","as dû","a dû","avons dû","avez dû","ont dû"],"Imparfait":["devais","devais","devait","devions","deviez","devaient"],"Futur simple":["devrai","devras","devra","devrons","devrez","devront"],"Conditionnel":["devrais","devrais","devrait","devrions","devriez","devraient"]},
+"savoir":{"Présent":["sais","sais","sait","savons","savez","savent"],"Passé composé":["ai su","as su","a su","avons su","avez su","ont su"],"Imparfait":["savais","savais","savait","savions","saviez","savaient"],"Futur simple":["saurai","sauras","saura","saurons","saurez","sauront"],"Conditionnel":["saurais","saurais","saurait","saurions","sauriez","sauraient"]},
+"voir":{"Présent":["vois","vois","voit","voyons","voyez","voient"],"Passé composé":["ai vu","as vu","a vu","avons vu","avez vu","ont vu"],"Imparfait":["voyais","voyais","voyait","voyions","voyiez","voyaient"],"Futur simple":["verrai","verras","verra","verrons","verrez","verront"],"Conditionnel":["verrais","verrais","verrait","verrions","verriez","verraient"]},
+"habiter":{"Présent":["habite","habites","habite","habitons","habitez","habitent"],"Passé composé":["ai habité","as habité","a habité","avons habité","avez habité","ont habité"],"Imparfait":["habitais","habitais","habitait","habitions","habitiez","habitaient"],"Futur simple":["habiterai","habiteras","habitera","habiterons","habiterez","habiteront"],"Conditionnel":["habiterais","habiterais","habiterait","habiterions","habiteriez","habiteraient"]},
+"se lever":{"Présent":["me lève","te lèves","se lève","nous levons","vous levez","se lèvent"],"Passé composé":["me suis levé(e)","t'es levé(e)","s'est levé(e)","nous sommes levé(e)s","vous êtes levé(e)(s)","se sont levé(e)s"],"Imparfait":["me levais","te levais","se levait","nous levions","vous leviez","se levaient"],"Futur simple":["me lèverai","te lèveras","se lèvera","nous lèverons","vous lèverez","se lèveront"],"Conditionnel":["me lèverais","te lèverais","se lèverait","nous lèverions","vous lèveriez","se lèveraient"]}
+};
+
+// ---------------- STATE ----------------
+const store=JSON.parse(localStorage.getItem("frnat")||'{"known":{},"quiz":[],"cj":[0,0]}');
+const save=()=>localStorage.setItem("frnat",JSON.stringify(store));
+const $=id=>document.getElementById(id);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const TABS=[["home","🏠 Accueil"],["sources","🔗 Sources"],["flash","🃏 Flashcards"],["quiz","✅ QCM / Examen blanc"],["interview","🗣️ Entretien"],["dialogues","💬 Dialogues"],["conj","📚 Conjugaison"]];
+$("nav").innerHTML=TABS.map(([k,l])=>`<button data-t="${k}">${l}</button>`).join("");
+function show(k){document.querySelectorAll("section").forEach(s=>s.classList.toggle("active",s.id===k));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.t===k));if(k==="home")renderStats();location.hash=k}
+$("nav").onclick=e=>e.target.dataset.t&&show(e.target.dataset.t);
+
+$("srcList").innerHTML="<ol>"+SOURCES.map(([t,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(t)}</a><br><span class="muted" style="font-size:12px">${esc(u)}</span></li>`).join("")+"</ol>";
+
+const themeOpts='<option value="">Tous les thèmes</option>'+Object.entries(T).map(([k,v])=>`<option value="${k}">${v}</option>`).join("");
+$("fcTheme").innerHTML=themeOpts;$("qzTheme").innerHTML=themeOpts;
+
+function renderStats(){
+  const known=Object.values(store.known).filter(Boolean).length;
+  const last=store.quiz.slice(-5);const avg=last.length?Math.round(last.reduce((a,b)=>a+b,0)/last.length):0;
+  const [ok,tot]=store.cj;
+  $("stats").innerHTML=[["Flashcards maîtrisées",`${known}/${Q.length}`,known/Q.length*100],["Moyenne QCM (5 derniers)",`${avg} %`,avg],["Conjugaison",tot?`${Math.round(ok/tot*100)} %`:"—",tot?ok/tot*100:0]]
+   .map(([l,v,p])=>`<div class="card"><div class="muted">${l}</div><div class="big">${v}</div><div class="bar"><i style="width:${p}%"></i></div></div>`).join("")+
+   `<div class="card"><div class="muted">Objectif examen</div><div class="big">≥ 80 %</div><div class="muted">32/40 en 45 min</div></div>`;
+}
+
+// ---------------- FLASHCARDS ----------------
+let fc=[],fi=0,flipped=false;
+function buildFC(){const t=$("fcTheme").value,h=$("fcHard").checked;fc=Q.map((q,i)=>i).filter(i=>(!t||Q[i][0]===t)&&(!h||!store.known[i]));fi=0;flipped=false;drawFC()}
+function drawFC(){if(!fc.length){$("fcCard").innerHTML="🎉 Aucune carte ici.";$("fcInfo").textContent="";return}
+  const q=Q[fc[fi]];$("fcInfo").textContent=`Carte ${fi+1}/${fc.length} · ${T[q[0]]}${store.known[fc[fi]]?" · ✓ maîtrisée":""}`;
+  $("fcCard").innerHTML=flipped?`<div><b style="color:var(--ok)">${esc(q[2][q[3]])}</b><br><span class="muted" style="font-size:15px">${esc(q[4])}</span></div>`:esc(q[1])}
+function flipFC(){flipped=!flipped;drawFC()}
+function nextFC(d){if(!fc.length)return;fi=(fi+d+fc.length)%fc.length;flipped=false;drawFC()}
+function markFC(k){if(!fc.length)return;store.known[fc[fi]]=k;save();nextFC(1)}
+function shuffleFC(){fc=shuffle(fc);fi=0;flipped=false;drawFC()}
+$("fcTheme").onchange=buildFC;$("fcHard").onchange=buildFC;
+
+// ---------------- QUIZ ----------------
+let qz=null,tmr=null;
+function startQuiz(){
+  const t=$("qzTheme").value,n=+$("qzN").value;let pool=Q.filter(q=>!t||q[0]===t);
+  // Exam mode: mirror the real exam split (~70% knowledge, ~30% situational)
+  if(n===40&&!t){const s=shuffle(pool.filter(q=>q[0]==="S")),k=shuffle(pool.filter(q=>q[0]!=="S"));pool=shuffle(k.slice(0,40-Math.min(12,s.length)).concat(s.slice(0,12)))}
+  else pool=shuffle(pool).slice(0,n);
+  qz={items:pool.map(q=>{const o=shuffle(q[2].map((x,i)=>[x,i===q[3]]));return{q,o}}),i:0,score:0,wrong:[]};
+  clearInterval(tmr);$("timer").textContent="";
+  if(n===40){let s=45*60;tmr=setInterval(()=>{s--;$("timer").textContent=`⏱ ${s/60|0}:${String(s%60).padStart(2,"0")}`;if(s<=0){clearInterval(tmr);endQuiz()}},1000)}
+  drawQuiz()}
+function drawQuiz(){const it=qz.items[qz.i];
+  $("qzBox").innerHTML=`<div class="muted">Question ${qz.i+1}/${qz.items.length} · Score ${qz.score}</div><span class="tag">${T[it.q[0]]}</span><h3>${esc(it.q[1])}</h3>`+
+   it.o.map((o,j)=>`<button class="opt" data-j="${j}">${"ABCD"[j]}. ${esc(o[0])}</button>`).join("")+`<div id="qzFb"></div>`;
+  $("qzBox").querySelectorAll(".opt").forEach(b=>b.onclick=()=>answer(+b.dataset.j))}
+function answer(j){const it=qz.items[qz.i],btns=$("qzBox").querySelectorAll(".opt");if(btns[0].disabled)return;
+  btns.forEach((b,k)=>{b.disabled=true;if(it.o[k][1])b.classList.add("ok");else if(k===j)b.classList.add("bad")});
+  if(it.o[j][1])qz.score++;else qz.wrong.push(it.q);
+  $("qzFb").innerHTML=`<p class="muted">${esc(it.q[4])}</p><button class="btn">${qz.i+1<qz.items.length?"Suivante →":"Voir le résultat"}</button>`;
+  $("qzFb").querySelector("button").onclick=()=>{qz.i++;qz.i<qz.items.length?drawQuiz():endQuiz()}}
+function endQuiz(){clearInterval(tmr);const pct=Math.round(qz.score/qz.items.length*100);store.quiz.push(pct);save();
+  $("qzBox").innerHTML=`<div class="big" style="color:${pct>=80?"var(--ok)":"var(--bad)"}">${qz.score}/${qz.items.length} (${pct} %) ${pct>=80?"Réussi ✓":"Pas encore. Objectif : 80 %"}</div>`+
+   (qz.wrong.length?"<h3>À revoir</h3>"+qz.wrong.map(q=>`<div class="line">• ${esc(q[1])} → <b>${esc(q[2][q[3]])}</b></div>`).join(""):"")}
+
+// ---------------- INTERVIEW ----------------
+$("ivList").innerHTML=IV.map(([q,a],i)=>`<div class="card"><b>${i+1}. ${esc(q)}</b><br><button class="btn ghost" onclick="this.nextElementSibling.hidden=!this.nextElementSibling.hidden">Voir un modèle de réponse</button><p hidden>${esc(a)}</p></div>`).join("");
+
+// ---------------- DIALOGUES ----------------
+const tenses=[...new Set(DL.map(d=>d[1]))];
+$("dlTense").innerHTML='<option value="">Tous les temps</option>'+tenses.map(t=>`<option>${t}</option>`).join("");
+function drawDL(){const t=$("dlTense").value,h=$("dlHide").checked;
+  $("dlList").innerHTML=DL.filter(d=>!t||d[1]===t).map(([ti,te,ls])=>`<div class="card"><span class="tag">${te}</span><b>${esc(ti)}</b> <button class="btn ghost" onclick="speak(this)">🔊 Écouter</button>`+
+   ls.map(([s,fr,en])=>`<div class="line"><b>${esc(s)}:</b> <span class="fr">${esc(fr)}</span>${h?"":`<span class="en">${esc(en)}</span>`}</div>`).join("")+"</div>").join("")}
+function speak(btn){if(!window.speechSynthesis)return;speechSynthesis.cancel();
+  btn.parentElement.querySelectorAll(".fr").forEach(e=>{const u=new SpeechSynthesisUtterance(e.textContent);u.lang="fr-FR";u.rate=.9;speechSynthesis.speak(u)})}
+$("dlTense").onchange=drawDL;$("dlHide").onchange=drawDL;
+
+// ---------------- CONJUGATION ----------------
+const TN=["Présent","Passé composé","Imparfait","Futur simple","Conditionnel"];
+$("cjVerb").innerHTML=Object.keys(V).map(v=>`<option>${v}</option>`).join("");
+$("cjTense").innerHTML='<option value="">Tous les temps</option>'+TN.map(t=>`<option>${t}</option>`).join("");
+function drawCJ(){const v=$("cjVerb").value,t=$("cjTense").value,ts=t?[t]:TN;
+  $("cjTable").innerHTML="<table><tr><th></th>"+ts.map(x=>`<th>${x}</th>`).join("")+"</tr>"+
+   P.map((p,i)=>`<tr><td><b>${p}</b></td>`+ts.map(x=>`<td>${V[v][x][i]}</td>`).join("")+"</tr>").join("")+"</table>"}
+const norm=s=>s.toLowerCase().trim().replace(/\s+/g," ").replace(/\(e\)|\(s\)|\(e\)s/g,"").replace(/[’]/g,"'");
+function drill(){const vs=Object.keys(V),v=vs[Math.random()*vs.length|0],t=TN[Math.random()*TN.length|0],i=Math.random()*6|0,ans=V[v][t][i];
+  $("cjDrill").innerHTML=`<p><span class="tag">${t}</span> <b>${v}</b>, ${P[i]} … ?</p><input id="cjIn" autocomplete="off" placeholder="ex. suis allé"> <button class="btn" id="cjOk">Vérifier</button> <button class="btn ghost" onclick="drill()">Passer</button><p id="cjFb"></p>`;
+  const chk=()=>{const g=norm($("cjIn").value),good=norm(ans)===g||norm(ans).replace(/^(me|te|se|nous|vous) /,"")===g;store.cj[1]++;if(good)store.cj[0]++;save();
+    $("cjFb").innerHTML=good?`<b style="color:var(--ok)">✓ Correct !</b>`:`<b style="color:var(--bad)">✗</b> Réponse : <b>${ans}</b>`;setTimeout(drill,good?900:2500)};
+  $("cjOk").onclick=chk;$("cjIn").onkeydown=e=>e.key==="Enter"&&chk();$("cjIn").focus()}
+$("cjVerb").onchange=drawCJ;$("cjTense").onchange=drawCJ;
+
+buildFC();drawDL();drawCJ();drill();show(location.hash.slice(1)||"home");
+</script>
+</body>
+</html>

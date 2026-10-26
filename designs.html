@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Design proposals — Nationalité prep</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,system-ui,sans-serif;background:#0b0c0f}
+.switch{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:9;display:flex;gap:6px;background:rgba(20,20,24,.85);backdrop-filter:blur(10px);padding:6px;border-radius:99px;border:1px solid #2a2a30}
+.switch button{border:0;background:transparent;color:#bbb;padding:8px 16px;border-radius:99px;cursor:pointer;font:600 13px Inter,Segoe UI}
+.switch button.on{background:#fff;color:#111}
+.d{display:none;min-height:100vh;padding:80px 32px 40px}.d.on{display:block}
+.wrap{max-width:1180px;margin:auto}
+/* ---------- A: Linear dark ---------- */
+#A{background:#08090a;color:#e6e6e6}
+#A .shell{display:grid;grid-template-columns:220px 1fr;gap:24px}
+#A aside{border-right:1px solid #1f2023;padding-right:16px}
+#A aside div{padding:9px 12px;border-radius:8px;color:#8a8f98;font-size:14px;margin-bottom:2px}
+#A aside div.on{background:#16171a;color:#fff}
+#A h1{font-size:28px;letter-spacing:-.02em;margin:0 0 4px}#A .sub{color:#8a8f98;margin-bottom:24px}
+#A .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+#A .k{background:#0f1012;border:1px solid #1f2023;border-radius:12px;padding:16px}
+#A .k small{color:#8a8f98}#A .k b{display:block;font-size:26px;margin:6px 0}
+#A .bar{height:4px;background:#1f2023;border-radius:9px}#A .bar i{display:block;height:100%;border-radius:9px;background:#5e6ad2}
+#A .row{display:grid;grid-template-columns:1.4fr 1fr;gap:12px;margin-top:12px}
+#A .panel{background:#0f1012;border:1px solid #1f2023;border-radius:12px;padding:20px}
+#A .opt{border:1px solid #26272b;border-radius:8px;padding:11px 14px;margin:8px 0;font-size:14px;color:#cfd1d4}
+#A .opt.ok{border-color:#4cb782;background:rgba(76,183,130,.08)}
+#A .pill{font-size:11px;padding:3px 8px;border-radius:99px;background:#1b1c30;color:#9aa2ff}
+#A .heat{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;margin-top:12px}#A .heat i{aspect-ratio:1;border-radius:3px;background:#5e6ad2}
+/* ---------- B: Glass tricolore ---------- */
+#B{background:radial-gradient(1200px 600px at 10% 0%,#3346ff55,transparent),radial-gradient(900px 500px at 100% 100%,#ff3b5c44,transparent),#0d1030;color:#fff}
+#B .glass{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px);border-radius:22px;padding:22px}
+#B header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+#B nav{display:flex;gap:6px}#B nav span{padding:8px 14px;border-radius:99px;font-size:13px;color:#cdd3ff}#B nav span.on{background:#fff;color:#0d1030;font-weight:600}
+#B .hero{display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
+#B h1{font-size:40px;line-height:1.05;margin:0 0 10px;letter-spacing:-.03em}
+#B .ring{width:150px;height:150px;border-radius:50%;background:conic-gradient(#4f6bff 0 72%,rgba(255,255,255,.12) 0);display:grid;place-items:center;margin:auto}
+#B .ring div{width:118px;height:118px;border-radius:50%;background:#151a45;display:grid;place-items:center;font:700 30px Inter}
+#B .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px}
+#B .flash{height:190px;display:grid;place-items:center;text-align:center;font-size:20px;background:linear-gradient(135deg,rgba(79,107,255,.35),rgba(255,59,92,.25))}
+#B .btn{display:inline-block;padding:10px 18px;border-radius:99px;background:#fff;color:#0d1030;font-weight:600;font-size:14px;margin-top:12px}
+#B small{color:#b8c0ff}
+/* ---------- C: Editorial paper ---------- */
+#C{background:#f5f1ea;color:#1c1917;font-family:Georgia,'Times New Roman',serif}
+#C .top{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid #1c1917;padding-bottom:12px}
+#C h1{font-size:46px;margin:0;letter-spacing:-.02em}#C .tri{height:4px;width:90px;background:linear-gradient(90deg,#1f3a93 33%,#fff 33% 66%,#c2410c 66%);margin:14px 0}
+#C nav{font:600 13px Inter,Segoe UI;display:flex;gap:18px;text-transform:uppercase;letter-spacing:.08em}#C nav .on{color:#c2410c;border-bottom:2px solid #c2410c}
+#C .cols{display:grid;grid-template-columns:2fr 1fr;gap:32px;margin-top:28px}
+#C .q{background:#fffdf8;border:1px solid #e7e0d4;border-radius:4px;padding:28px;box-shadow:0 1px 0 #e7e0d4}
+#C .q h2{font-size:26px;font-weight:400;margin:6px 0 18px}
+#C .opt{font:15px Inter,Segoe UI;border-top:1px solid #e7e0d4;padding:13px 0;display:flex;gap:12px}#C .opt b{color:#c2410c}
+#C .side div{border-top:1px solid #d6cfc2;padding:14px 0;font:14px Inter,Segoe UI}#C .side big{display:block;font:700 30px Georgia}
+#C .kicker{font:700 11px Inter;letter-spacing:.14em;text-transform:uppercase;color:#c2410c}
+#C .dlg p{font-size:18px;line-height:1.6;margin:6px 0}#C .dlg em{display:block;color:#78716c;font:13px Inter}
+/* ---------- D: Bento playful ---------- */
+#D{background:#f4f6fb;color:#111827}
+#D .bento{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:150px;gap:14px}
+#D .b{border-radius:24px;padding:20px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(17,24,39,.06);position:relative;overflow:hidden}
+#D .big{grid-column:span 2;grid-row:span 2;background:linear-gradient(140deg,#2b4bff,#7c3aed);color:#fff}
+#D .big h1{font-size:34px;margin:8px 0;letter-spacing:-.02em}
+#D .wide{grid-column:span 2}#D .tall{grid-row:span 2}
+#D .em{font-size:34px}#D b.n{font-size:32px;display:block}#D small{color:#6b7280}
+#D .big small{color:#dbe1ff}
+#D .chip{display:inline-block;padding:6px 12px;border-radius:99px;background:#eef2ff;color:#3730a3;font-size:12px;margin:4px 4px 0 0;font-weight:600}
+#D .streak{display:flex;gap:6px;margin-top:10px}#D .streak i{flex:1;height:34px;border-radius:8px;background:#e5e7eb}#D .streak i.on{background:#22c55e}
+.cap{max-width:1180px;margin:0 auto 18px;font:13px Inter,Segoe UI;opacity:.75}
+@media(max-width:900px){#A .shell,#A .row,#B .hero,#C .cols{grid-template-columns:1fr}#A .kpis,#B .tiles{grid-template-columns:1fr 1fr}#D .bento{grid-template-columns:1fr 1fr}}
+</style></head><body>
+<div class="switch"><button data-k="A" class="on">A · Linear Dark</button><button data-k="B">B · Glass Tricolore</button><button data-k="C">C · Éditorial</button><button data-k="D">D · Bento</button></div>
+
+<section class="d on" id="A"><p class="cap" style="color:#8a8f98">A — Sidebar app, dark, dense, calm. Feels like Linear/Vercel. Best for daily focused study.</p><div class="wrap shell">
+<aside><div style="color:#fff;font-weight:600;margin-bottom:12px">🇫🇷 Nationalité</div><div class="on">Accueil</div><div>Flashcards</div><div>Examen blanc</div><div>Entretien</div><div>Dialogues</div><div>Conjugaison</div><div>Sources</div></aside>
+<div><h1>Bonjour Vipul 👋</h1><div class="sub">Il vous reste 34 cartes à revoir. Objectif 32/40.</div>
+<div class="kpis"><div class="k"><small>Flashcards</small><b>42/76</b><div class="bar"><i style="width:55%"></i></div></div><div class="k"><small>Moyenne QCM</small><b>78 %</b><div class="bar"><i style="width:78%"></i></div></div><div class="k"><small>Conjugaison</small><b>86 %</b><div class="bar"><i style="width:86%"></i></div></div><div class="k"><small>Série</small><b>9 jours</b><div class="bar"><i style="width:60%;background:#4cb782"></i></div></div></div>
+<div class="row"><div class="panel"><span class="pill">Institutions</span><h3 style="margin:12px 0">Pour combien d'années est élu le président ?</h3><div class="opt">A. 4 ans</div><div class="opt ok">B. 5 ans ✓</div><div class="opt">C. 6 ans</div><div class="opt">D. 7 ans</div></div>
+<div class="panel"><b>Activité (14 jours)</b><div class="heat">%HEAT%</div><p style="color:#8a8f98;font-size:13px;margin-top:16px">Thème le plus faible : <span style="color:#fff">Histoire, géographie</span></p></div></div></div></div></section>
+
+<section class="d" id="B"><p class="cap" style="color:#cdd3ff">B — Glassmorphism on deep blue with tricolore glows. Top nav, big hero ring. Most "wow", modern consumer app.</p><div class="wrap">
+<header><b style="font-size:18px">Citoyen·ne 🇫🇷</b><nav><span class="on">Accueil</span><span>Cartes</span><span>Examen</span><span>Entretien</span><span>Dialogues</span><span>Verbes</span></nav></header>
+<div class="hero"><div class="glass"><small>EXAMEN CIVIQUE 2026</small><h1>Prêt à 72 %<br>pour le jour J.</h1><small>40 questions · 45 min · 32 bonnes réponses</small><br><span class="btn">Lancer un examen blanc →</span></div>
+<div class="glass"><div class="ring"><div>72%</div></div><p style="text-align:center"><small>Préparation globale</small></p></div></div>
+<div class="tiles"><div class="glass flash">Quelle est la devise<br>de la République ?<br><small style="font-size:12px">Toucher pour retourner</small></div>
+<div class="glass"><small>DIALOGUE · PASSÉ COMPOSÉ</small><p>« Je suis arrivé en France en 2018. »</p><p style="opacity:.6;font-size:13px">I arrived in France in 2018.</p><span class="btn" style="background:rgba(255,255,255,.15);color:#fff">🔊 Écouter</span></div>
+<div class="glass"><small>VERBE DU JOUR</small><h2 style="margin:6px 0">venir</h2><p style="opacity:.85;line-height:1.8">je viens · tu viens · il vient<br>nous venons · vous venez · ils viennent</p></div></div></div></section>
+
+<section class="d" id="C"><p class="cap">C — Editorial "French newspaper" style: serif type, warm paper, lots of whitespace. Calm and elegant, great for reading dialogues.</p><div class="wrap">
+<div class="top"><div><h1>Le Citoyen</h1><div class="tri"></div></div><nav><span class="on">Accueil</span><span>Cartes</span><span>Examen</span><span>Entretien</span><span>Dialogues</span><span>Verbes</span></nav></div>
+<div class="cols"><div><div class="q"><span class="kicker">Question 12 / 40 · Histoire</span><h2>Qui a lancé l'appel du 18 juin 1940 ?</h2><div class="opt"><b>A</b> Jean Moulin</div><div class="opt"><b>B</b> Charles de Gaulle</div><div class="opt"><b>C</b> Philippe Pétain</div><div class="opt"><b>D</b> Georges Clemenceau</div></div>
+<div class="q dlg" style="margin-top:20px"><span class="kicker">Dialogue · Imparfait</span><p>— Où habitais-tu quand tu étais petit ?<em>Where did you live as a child?</em></p><p>— J'habitais en Inde, et je jouais au cricket tous les jours.<em>I lived in India and played cricket every day.</em></p></div></div>
+<div class="side"><span class="kicker">Votre progression</span><div><big>42/76</big>cartes maîtrisées</div><div><big>78 %</big>moyenne aux QCM</div><div><big>⏱ 31:20</big>dernier examen blanc</div><div><span class="kicker">Rappel</span><br>Vérifiez le nom de votre maire et de votre préfet avant l'entretien.</div></div></div></div></section>
+
+<section class="d" id="D"><p class="cap">D — Bento grid, light, rounded, colourful. Duolingo-like and motivating, with a streak and chips. Most fun for daily habit.</p><div class="wrap bento">
+<div class="b big"><small>BONJOUR VIPUL</small><h1>Examen blanc du jour</h1><small>40 questions · 45 minutes · objectif 80 %</small><div style="margin-top:40px"><span style="background:#fff;color:#2b4bff;padding:12px 20px;border-radius:99px;font-weight:700">Commencer ▶</span></div></div>
+<div class="b"><span class="em">🃏</span><b class="n">34</b><small>cartes à revoir</small></div>
+<div class="b"><span class="em">🎯</span><b class="n">78 %</b><small>moyenne QCM</small></div>
+<div class="b wide"><b>Série 🔥 9 jours</b><div class="streak"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div></div>
+<div class="b wide"><b>Thèmes</b><br><span class="chip">Valeurs 92%</span><span class="chip">Institutions 81%</span><span class="chip">Droits 75%</span><span class="chip" style="background:#fef2f2;color:#b91c1c">Histoire 58%</span><span class="chip">Vivre 88%</span></div>
+<div class="b tall" style="background:#fff7ed"><span class="em">💬</span><br><b>Dialogue</b><p style="font-size:14px">— Tu as déjà visité le Mont-Saint-Michel ?<br>— Non, je ne l'ai jamais visité.</p><small>Passé composé</small></div>
+<div class="b"><span class="em">📚</span><b>aller · futur</b><small>j'irai, tu iras, il ira…</small></div>
+<div class="b"><span class="em">🗣️</span><b>Entretien</b><small>14 questions types</small></div>
+</div></section>
+
+<script>
+document.querySelector('#A .heat').innerHTML=Array.from({length:28},()=>`<i style="opacity:${(.15+Math.random()*.85).toFixed(2)}"></i>`).join('');
+document.querySelector('.switch').onclick=e=>{const k=e.target.dataset.k;if(!k)return;document.querySelectorAll('.switch button').forEach(b=>b.classList.toggle('on',b===e.target));document.querySelectorAll('.d').forEach(d=>d.classList.toggle('on',d.id===k))};
+</script></body></html>

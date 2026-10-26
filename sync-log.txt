@@ -1,0 +1,7 @@
+2026-10-26T14:50  243 questions · 0 new · 0 removed · https://www.immigration.interieur.gouv.fr/sites/dgef/files/medias/documents/2026-01/examen-civique-naturalisation-questions-de-connaissance-20251212.pdf
+2026-10-26T14:56  ERROR Illegal trailing comma before end of array: line 1214 column 4 (char 29099)
+2026-10-26T14:56  ERROR <urlopen error [Errno 11001] getaddrinfo failed>
+2026-10-26T14:56  243 questions · 1 new · 0 removed · https://www.immigration.interieur.gouv.fr/sites/dgef/files/medias/documents/2026-01/examen-civique-naturalisation-questions-de-connaissance-20251212.pdf
+   + [V] Est-ce possible de punir physiquement ses enfants ?
+2026-10-26T14:57  ERROR <urlopen error [Errno 11001] getaddrinfo failed>
+2026-10-26T14:59  243 questions · 0 new · 0 removed · https://www.immigration.interieur.gouv.fr/sites/dgef/files/medias/documents/2026-01/examen-civique-naturalisation-questions-de-connaissance-20251212.pdf
