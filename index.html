@@ -91,7 +91,8 @@ table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--li
 <section id="dialogues"><div class="card"><h2>Dialogues du quotidien</h2><select id="dlTense"></select> <label><input type="checkbox" id="dlHide"> Masquer l'anglais</label></div><div id="dlList"></div></section>
 
 <section id="conj"><div class="card"><h2>Conjugaison</h2>
-<select id="cjVerb"></select> <select id="cjTense"></select><div id="cjTable" style="margin-top:10px"></div></div>
+<select id="cjVerb"></select> <select id="cjTense"></select> <span id="cjTools" hidden><button class="btn ghost" id="cjEdit">✏️ Modifier</button> <button class="btn ghost" id="cjDel">🗑 Supprimer</button></span>
+<div style="margin-top:10px"><input id="cjNew" autocomplete="off" placeholder="Nouveau verbe, ex. travailler, se laver"> <button class="btn" id="cjAdd">➕ Ajouter</button> <span id="cjMsg" class="muted"></span></div><div id="cjTable" style="margin-top:10px"></div></div>
 <div class="card"><h3>Exercice</h3><div id="cjDrill"></div></div>
 <div class="card"><h3>Rappels</h3><ul>
 <li><b>Présent</b>: action habituelle ou en cours. <i>Je travaille à Paris.</i></li>
@@ -380,18 +381,51 @@ $("dlTense").onchange=drawDL;$("dlHide").onchange=drawDL;
 
 // ---------------- CONJUGATION ----------------
 const TN=["Présent","Passé composé","Imparfait","Futur simple","Conditionnel"];
-$("cjVerb").innerHTML=Object.keys(V).map(v=>`<option>${v}</option>`).join("");
+// User-added verbs: generated from the regular -er / -ir (finir) / -re (vendre) patterns, persisted in localStorage
+const ETRE=new Set("aller venir revenir devenir arriver partir entrer rentrer sortir naître mourir rester tomber monter descendre retourner passer".split(" "));
+const elide=(p,w)=>/^[aeéèêiîoôuh]/.test(w)&&/^[mts]e$/.test(p)?p[0]+"'"+w:p+" "+w;
+function genVerb(inf){const m=inf.match(/^(?:se |s')(.+)$/),b=m?m[1]:inf,end=b.slice(-2),r=b.slice(0,-2);
+  if(!/^[a-zàâçéèêëîïôûùüÿœ]+$/.test(b)||!["er","ir","re"].includes(end)||!r)return null;
+  const IE=["ais","ais","ait","ions","iez","aient"],FE=["ai","as","a","ons","ez","ont"];let pres,is,pp;
+  if(end==="er"){const s=r.endsWith("c")?r.slice(0,-1)+"ç":r.endsWith("g")?r+"e":r; // commencer/manger
+    pres=[r+"e",r+"es",r+"e",s+"ons",r+"ez",r+"ent"];is=i=>(i===3||i===4?r:s);pp=r+"é"}
+  else if(end==="ir"){pres=["is","is","it","issons","issez","issent"].map(e=>r+e);is=()=>r+"iss";pp=r+"i"}
+  else{pres=["s","s","","ons","ez","ent"].map(e=>r+e);is=()=>r;pp=r+"u"}
+  const fs=end==="re"?b.slice(0,-1):b,etre=!!m||ETRE.has(b),
+    aux=etre?["suis","es","est","sommes","êtes","sont"]:["ai","as","a","avons","avez","ont"],
+    agr=etre?["(e)","(e)","(e)","(e)s","(e)(s)","(e)s"]:Array(6).fill(""),
+    o={"Présent":pres,"Passé composé":aux.map((a,i)=>a+" "+pp+agr[i]),"Imparfait":IE.map((e,i)=>is(i)+e),
+       "Futur simple":FE.map(e=>fs+e),"Conditionnel":IE.map(e=>fs+e)};
+  if(m)TN.forEach(t=>o[t]=o[t].map((f,i)=>elide(["me","te","se","nous","vous","se"][i],f)));
+  return o}
+store.verbs=store.verbs||{};Object.assign(V,store.verbs);
+const fillVerbs=()=>$("cjVerb").innerHTML=Object.keys(V).map(v=>`<option>${esc(v)}</option>`).join("");
+function addVerb(){const inf=$("cjNew").value.toLowerCase().trim().replace(/\s+/g," ").replace(/’/g,"'");if(!inf)return;
+  if(V[inf]){$("cjMsg").textContent="Déjà dans la liste.";}
+  else{const o=genVerb(inf);if(!o){$("cjMsg").textContent="Seuls les verbes en -er, -ir, -re sont générés automatiquement.";return}
+    V[inf]=store.verbs[inf]=o;save();fillVerbs();$("cjMsg").textContent="✓ Ajouté (modèle régulier : vérifiez si le verbe est irrégulier).";}
+  $("cjVerb").value=inf;$("cjNew").value="";drawCJ()}
+$("cjAdd").onclick=addVerb;$("cjNew").onkeydown=e=>{if(e.key==="Enter")addVerb()}; // block body: returning false from on* handlers cancels the keystroke
+fillVerbs();
 $("cjTense").innerHTML='<option value="">Tous les temps</option>'+TN.map(t=>`<option>${t}</option>`).join("");
-function drawCJ(){const v=$("cjVerb").value,t=$("cjTense").value,ts=t?[t]:TN;
+let cjEditing=false; // edit mode: only for user-added verbs, turns table cells into inputs
+function drawCJ(){const v=$("cjVerb").value,t=$("cjTense").value,ts=t?[t]:TN,own=!!store.verbs[v],ed=cjEditing&&own;
+  $("cjTools").hidden=!own;$("cjEdit").textContent=ed?"💾 Enregistrer":"✏️ Modifier";
   $("cjTable").innerHTML="<table><tr><th></th>"+ts.map(x=>`<th>${x}</th>`).join("")+"</tr>"+
-   P.map((p,i)=>`<tr><td><b>${p}</b></td>`+ts.map(x=>`<td>${V[v][x][i]}</td>`).join("")+"</tr>").join("")+"</table>"}
+   P.map((p,i)=>`<tr><td><b>${p}</b></td>`+ts.map(x=>`<td>${ed?`<input data-t="${x}" data-i="${i}" value="${esc(V[v][x][i])}" style="width:100%">`:esc(V[v][x][i])}</td>`).join("")+"</tr>").join("")+"</table>"}
+$("cjEdit").onclick=()=>{const v=$("cjVerb").value;
+  if(cjEditing){$("cjTable").querySelectorAll("input").forEach(e=>{const f=e.value.trim();if(f)store.verbs[v][e.dataset.t][+e.dataset.i]=f});save();$("cjMsg").textContent="✓ Corrections enregistrées."}
+  cjEditing=!cjEditing;drawCJ()};
+$("cjDel").onclick=()=>{const v=$("cjVerb").value;if(!confirm(`Supprimer « ${v} » ?`))return;
+  delete V[v];delete store.verbs[v];save();cjEditing=false;fillVerbs();$("cjMsg").textContent=`« ${v} » supprimé.`;drawCJ()};
 const norm=s=>s.toLowerCase().trim().replace(/\s+/g," ").replace(/\(e\)|\(s\)|\(e\)s/g,"").replace(/[’]/g,"'");
-function drill(){const vs=Object.keys(V),v=vs[Math.random()*vs.length|0],t=TN[Math.random()*TN.length|0],i=Math.random()*6|0,ans=V[v][t][i];
+function drill(){const a=document.activeElement,refocus=!a||a===document.body||$("cjDrill").contains(a); // don't steal focus from other inputs
+  const vs=Object.keys(V),v=vs[Math.random()*vs.length|0],t=TN[Math.random()*TN.length|0],i=Math.random()*6|0,ans=V[v][t][i];
   $("cjDrill").innerHTML=`<p><span class="tag">${t}</span> <b>${v}</b>, ${P[i]} … ?</p><input id="cjIn" autocomplete="off" placeholder="ex. suis allé"> <button class="btn" id="cjOk">Vérifier</button> <button class="btn ghost" onclick="drill()">Passer</button><p id="cjFb"></p>`;
   const chk=()=>{const g=norm($("cjIn").value),good=norm(ans)===g||norm(ans).replace(/^(me|te|se|nous|vous) /,"")===g;store.cj[1]++;if(good)store.cj[0]++;track(null);
     $("cjFb").innerHTML=good?`<b style="color:var(--ok)">✓ Correct !</b>`:`<b style="color:var(--bad)">✗</b> Réponse : <b>${ans}</b>`;setTimeout(drill,good?900:2500)};
-  $("cjOk").onclick=chk;$("cjIn").onkeydown=e=>e.key==="Enter"&&chk();$("cjIn").focus()}
-$("cjVerb").onchange=drawCJ;$("cjTense").onchange=drawCJ;
+  $("cjOk").onclick=chk;$("cjIn").onkeydown=e=>{if(e.key==="Enter")chk()};if(refocus)$("cjIn").focus()}
+$("cjVerb").onchange=()=>{cjEditing=false;drawCJ()};$("cjTense").onchange=drawCJ;
 
 buildFC();drawDL();drawCJ();drill();show(location.hash.slice(1)||"home");
 </script>
