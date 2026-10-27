@@ -53,6 +53,31 @@ table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--li
 .bar{height:4px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:8px}.bar>i{display:block;height:100%;background:var(--blue)}
 .big{font:700 30px Georgia,serif}
 @media(max-width:820px){body{grid-template-columns:1fr}.side{position:static;height:auto}nav{flex-direction:row;flex-wrap:wrap}main{padding:20px}}
+#dlList{display:block;max-width:760px;margin:0 auto}
+.book{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 32px;box-shadow:0 2px 0 var(--line),0 12px 30px #0001}
+.book .chap{font:700 11px Inter,Segoe UI;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.book h3{font:700 28px/1.2 Georgia,serif;margin:6px 0 4px}
+.narr{font:italic 16px/1.6 Georgia,serif;color:var(--muted);border-left:3px solid var(--blue);padding-left:14px;margin:14px 0 22px}
+.row{display:flex;gap:12px;align-items:flex-end;margin:16px 0;opacity:0;animation:pop .5s ease forwards;animation-delay:var(--d)}
+.row.V{flex-direction:row}.row.A{flex-direction:row-reverse}
+.av{width:68px;flex:none;text-align:center}.av small{display:block;font:600 11px Inter,Segoe UI;color:var(--muted)}
+.av-svg{width:68px;height:76px;animation:bob 3.2s ease-in-out infinite;animation-delay:var(--d)}
+.row.A .av-svg{animation-duration:2.6s}
+.eyes{transform-box:fill-box;transform-origin:center;animation:blink 4.5s infinite}
+.ant{animation:glow 1.8s ease-in-out infinite}
+.bub{max-width:calc(100% - 90px);padding:12px 16px;border-radius:18px;font:17px/1.55 Georgia,serif;background:var(--bg);border:1px solid var(--line)}
+.row.V .bub{border-bottom-left-radius:4px}
+.row.A .bub{border-bottom-right-radius:4px;background:color-mix(in srgb,var(--blue) 12%,var(--card));text-align:right}
+.row.talk .bub{outline:2px solid var(--blue)}
+.row.talk .av-svg{animation:talk .35s ease-in-out infinite}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:26px}
+.nav .btn[disabled]{opacity:.35;pointer-events:none}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes bob{50%{transform:translateY(-4px)}}
+@keyframes talk{50%{transform:translateY(-6px) scale(1.05)}}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+@keyframes glow{50%{opacity:.35}}
+@media(prefers-reduced-motion:reduce){.row{opacity:1;animation:none}.av-svg,.eyes,.ant{animation:none}}
 </style>
 
 </head>
@@ -88,7 +113,7 @@ table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--li
 <section id="interview"><div class="card"><h2>Entretien d'assimilation : questions fréquentes</h2>
 <p class="muted">Lisez la question, répondez à voix haute, puis comparez avec le modèle. Adaptez les réponses à votre histoire personnelle.</p><div id="ivList"></div></div></section>
 
-<section id="dialogues"><div class="card"><h2>Dialogues du quotidien</h2><select id="dlTense"></select> <label><input type="checkbox" id="dlHide"> Masquer l'anglais</label></div><div id="dlList"></div></section>
+<section id="dialogues"><div class="card"><h2>Histoires : Vipul &amp; Aïda</h2><select id="dlTense"></select> <label><input type="checkbox" id="dlHide"> Masquer l'anglais</label></div><div id="dlList"></div></section>
 
 <section id="conj"><div class="card"><h2>Conjugaison</h2>
 <select id="cjVerb"></select> <select id="cjTense"></select> <span id="cjTools" hidden><button class="btn ghost" id="cjEdit">✏️ Modifier</button> <button class="btn ghost" id="cjDel">🗑 Supprimer</button></span>
@@ -239,22 +264,57 @@ const IV=[
 ["Quelles fêtes françaises connaissez-vous ?","Le 14 juillet (fête nationale), le 11 novembre, le 8 mai, le 1er mai (fête du travail), Noël, la fête de la musique le 21 juin."]
 ];
 
-// Dialogues: [title, tense, [[speaker, fr, en],...]]
-const DL=[
-["À la boulangerie","Présent",[["Client","Bonjour, je voudrais une baguette et deux croissants, s'il vous plaît.","Hello, I'd like a baguette and two croissants, please."],["Vendeuse","Bien sûr. Ce sera tout ?","Of course. Will that be all?"],["Client","Oui, c'est combien ?","Yes, how much is it?"],["Vendeuse","Ça fait 3,40 €.","That's €3.40."],["Client","Voilà. Merci, bonne journée !","Here you go. Thanks, have a nice day!"]]],
-["Se présenter","Présent",[["A","Comment vous appelez-vous ?","What is your name?"],["B","Je m'appelle Vipul. J'habite à Paris depuis six ans.","My name is Vipul. I've lived in Paris for six years."],["A","Qu'est-ce que vous faites dans la vie ?","What do you do?"],["B","Je travaille dans l'informatique. Je suis architecte d'entreprise.","I work in IT. I'm an enterprise architect."]]],
-["Chez le médecin","Présent",[["Médecin","Qu'est-ce qui ne va pas ?","What's wrong?"],["Patient","J'ai mal à la gorge et j'ai de la fièvre.","I have a sore throat and a fever."],["Médecin","Depuis combien de temps ?","Since when?"],["Patient","Depuis deux jours.","For two days."]]],
-["Le week-end dernier","Passé composé",[["A","Qu'est-ce que tu as fait ce week-end ?","What did you do this weekend?"],["B","Je suis allé à Versailles avec ma famille. Nous avons visité le château.","I went to Versailles with my family. We visited the palace."],["A","Vous avez mangé là-bas ?","Did you eat there?"],["B","Oui, on a pique-niqué dans les jardins. Ensuite, nous sommes rentrés en RER.","Yes, we had a picnic in the gardens. Then we came back by RER."]]],
-["À la préfecture (passé)","Passé composé",[["Agent","Quand êtes-vous arrivé en France ?","When did you arrive in France?"],["Vous","Je suis arrivé en 2018. J'ai d'abord travaillé à Lyon, puis j'ai déménagé à Paris en 2020.","I arrived in 2018. I first worked in Lyon, then moved to Paris in 2020."],["Agent","Avez-vous suivi des cours de français ?","Did you take French classes?"],["Vous","Oui, j'ai pris des cours à l'Alliance française et j'ai obtenu le niveau B2.","Yes, I took classes at the Alliance française and got level B2."]]],
-["Mon enfance","Imparfait",[["A","Où habitais-tu quand tu étais petit ?","Where did you live as a child?"],["B","J'habitais en Inde. Il faisait chaud, et je jouais au cricket tous les jours.","I lived in India. It was hot and I played cricket every day."],["A","Tu allais à l'école à pied ?","Did you walk to school?"],["B","Oui, l'école était près de chez moi.","Yes, the school was near my home."]]],
-["Imparfait + passé composé","Imparfait / Passé composé",[["A","Qu'est-ce qui s'est passé ?","What happened?"],["B","Je marchais dans la rue quand il a commencé à pleuvoir.","I was walking in the street when it started to rain."],["A","Tu avais un parapluie ?","Did you have an umbrella?"],["B","Non, alors je suis entré dans un café.","No, so I went into a café."]]],
-["Projets de vacances","Futur proche",[["A","Qu'est-ce que tu vas faire cet été ?","What are you going to do this summer?"],["B","Je vais partir en Bretagne. On va louer une maison près de la mer.","I'm going to Brittany. We're going to rent a house by the sea."],["A","Vous allez y rester longtemps ?","Are you going to stay long?"],["B","On va rester deux semaines.","We'll stay two weeks."]]],
-["Mon avenir en France","Futur simple",[["Agent","Que ferez-vous si vous obtenez la nationalité ?","What will you do if you get citizenship?"],["Vous","Je voterai à chaque élection et je m'engagerai dans une association de mon quartier.","I'll vote in every election and get involved in a local association."],["Agent","Et vos enfants ?","And your children?"],["Vous","Ils grandiront en France et ils apprendront les valeurs de la République.","They'll grow up in France and learn the values of the Republic."]]],
-["Au restaurant (politesse)","Conditionnel",[["Serveur","Vous avez choisi ?","Have you chosen?"],["Client","Je voudrais le plat du jour, et pourriez-vous m'apporter une carafe d'eau ?","I'd like the dish of the day, and could you bring me a jug of water?"],["Serveur","Bien sûr. Vous aimeriez un dessert ?","Of course. Would you like a dessert?"],["Client","Oui, j'aimerais une crème brûlée.","Yes, I'd like a crème brûlée."]]],
-["Prendre rendez-vous","Conditionnel",[["Vous","Bonjour, je voudrais prendre rendez-vous avec le docteur Martin.","Hello, I'd like to make an appointment with Dr Martin."],["Secrétaire","Jeudi à 10 h, ça vous irait ?","Would Thursday at 10 suit you?"],["Vous","Ce serait parfait, merci.","That would be perfect, thanks."]]],
-["Depuis + présent (present perfect)","Présent + depuis",[["A","Depuis combien de temps vous habitez en France ?","How long have you lived in France?"],["B","J'habite en France depuis huit ans.","I have lived in France for eight years."],["A","Et vous travaillez chez Allianz depuis quand ?","And since when have you worked at Allianz?"],["B","J'y travaille depuis 2019.","I have worked there since 2019."]]],
-["Déjà / jamais (present perfect)","Passé composé",[["A","Tu as déjà visité le Mont-Saint-Michel ?","Have you ever visited Mont-Saint-Michel?"],["B","Non, je ne l'ai jamais visité, mais j'ai déjà vu la tour Eiffel plusieurs fois.","No, I've never visited it, but I've already seen the Eiffel Tower several times."],["A","Tu as fini ton dossier de naturalisation ?","Have you finished your naturalisation file?"],["B","Pas encore, je n'ai pas encore reçu mon extrait d'acte de naissance.","Not yet, I haven't received my birth certificate yet."]]],
-["Avant d'arriver","Plus-que-parfait",[["A","Tu parlais français avant de venir ?","Did you speak French before coming?"],["B","Un peu. J'avais suivi des cours en Inde avant de m'installer ici.","A little. I had taken classes in India before settling here."]]]
+// Story: [title, tenses, narrator [fr,en], lines [[V|A, fr, en],...]]  V = Vipul (man), A = Aïda (AI)
+const ST=[
+["Le premier jour","Présent",["Un soir à Paris, Vipul ouvre son ordinateur. Un petit robot lumineux apparaît à l'écran.","One evening in Paris, Vipul opens his laptop. A small glowing robot appears on the screen."],[
+["A","Bonjour ! Je m'appelle Aïda. Je suis ton assistante pour préparer la nationalité française.","Hello! My name is Aïda. I'm your assistant to prepare for French citizenship."],
+["V","Enchanté, Aïda. Moi, c'est Vipul. J'habite à Paris et je travaille dans l'informatique.","Nice to meet you, Aïda. I'm Vipul. I live in Paris and I work in IT."],
+["A","Pourquoi veux-tu devenir français ?","Why do you want to become French?"],
+["V","Parce que ma vie est ici. J'aime la France, sa langue et ses valeurs.","Because my life is here. I love France, its language and its values."],
+["A","Très bien. On commence demain ?","Very good. Shall we start tomorrow?"],
+["V","Non, on commence maintenant !","No, we start now!"]]],
+["Mon histoire","Passé composé / Imparfait",["Aïda veut connaître le parcours de Vipul. Il se souvient de son arrivée.","Aïda wants to know Vipul's journey. He remembers his arrival."],[
+["A","Raconte-moi ton arrivée en France.","Tell me about your arrival in France."],
+["V","Je suis arrivé en 2018. Il pleuvait et je ne parlais pas bien français.","I arrived in 2018. It was raining and I didn't speak French well."],
+["A","Qu'est-ce que tu as fait ensuite ?","What did you do next?"],
+["V","J'ai d'abord travaillé à Lyon, puis j'ai déménagé à Paris en 2020.","I first worked in Lyon, then I moved to Paris in 2020."],
+["A","Tu as suivi des cours de français ?","Did you take French classes?"],
+["V","Oui, j'ai suivi des cours le soir et j'ai beaucoup pratiqué avec mes collègues.","Yes, I took evening classes and practised a lot with my colleagues."]]],
+["Les valeurs de la République","Présent",["Ce soir, Aïda pose les questions les plus importantes de l'entretien.","Tonight, Aïda asks the most important questions of the interview."],[
+["A","Quelle est la devise de la France ?","What is the motto of France?"],
+["V","Liberté, Égalité, Fraternité.","Liberty, Equality, Fraternity."],
+["A","Que signifie la laïcité ?","What does secularism (laïcité) mean?"],
+["V","L'État est neutre. Chacun est libre de croire ou de ne pas croire.","The State is neutral. Everyone is free to believe or not to believe."],
+["A","Et quels sont les symboles de la République ?","And what are the symbols of the Republic?"],
+["V","Le drapeau tricolore, La Marseillaise, Marianne et le 14 juillet.","The tricolour flag, La Marseillaise, Marianne and the 14th of July."]]],
+["Révision à la boulangerie","Conditionnel (politesse)",["Pour pratiquer, Aïda joue la boulangère. Vipul doit rester poli.","To practise, Aïda plays the baker. Vipul must stay polite."],[
+["A","Bonjour monsieur, que désirez-vous ?","Good morning, sir, what would you like?"],
+["V","Bonjour. Je voudrais une baguette et deux croissants, s'il vous plaît.","Hello. I'd like a baguette and two croissants, please."],
+["A","Bien sûr. Ce sera tout ?","Of course. Will that be all?"],
+["V","Pourriez-vous aussi me donner un pain au chocolat ?","Could you also give me a pain au chocolat?"],
+["A","Avec plaisir. Ça fait 5,40 €.","With pleasure. That's €5.40."],
+["V","Voilà. Merci beaucoup, bonne journée !","Here you go. Thank you very much, have a nice day!"]]],
+["Le grand jour","Passé composé / Depuis",["Le jour de l'entretien. Aïda simule l'agent de la préfecture.","Interview day. Aïda simulates the préfecture officer."],[
+["A","Depuis combien de temps habitez-vous en France ?","How long have you been living in France?"],
+["V","J'habite en France depuis huit ans.","I have been living in France for eight years."],
+["A","Depuis quand travaillez-vous chez Allianz ?","Since when have you been working at Allianz?"],
+["V","J'y travaille depuis 2019. J'ai toujours payé mes impôts en France.","I have worked there since 2019. I have always paid my taxes in France."],
+["A","Avez-vous déjà voté ?","Have you ever voted?"],
+["V","Pas encore, mais je voterai à chaque élection dès que j'aurai la nationalité.","Not yet, but I'll vote in every election as soon as I have citizenship."]]],
+["Mes projets","Futur proche / Futur simple",["L'entretien se termine bien. Aïda demande à Vipul ses projets.","The interview ends well. Aïda asks Vipul about his plans."],[
+["A","Qu'est-ce que tu vas faire après l'entretien ?","What are you going to do after the interview?"],
+["V","Je vais fêter ça avec ma famille dans un bon restaurant.","I'm going to celebrate with my family in a nice restaurant."],
+["A","Et si tu obtiens la nationalité, que feras-tu ?","And if you get citizenship, what will you do?"],
+["V","Je m'engagerai dans une association de mon quartier.","I'll get involved in a local association in my neighbourhood."],
+["A","Et pour tes vacances ?","And for your holidays?"],
+["V","J'irai en Bretagne. Nous louerons une maison près de la mer.","I'll go to Brittany. We'll rent a house by the sea."]]],
+["Félicitations !","Plus-que-parfait / Passé composé",["Quelques semaines plus tard, un courrier arrive. Vipul sourit.","A few weeks later, a letter arrives. Vipul smiles."],[
+["V","Aïda, regarde ! J'ai reçu la réponse de la préfecture !","Aïda, look! I received the answer from the préfecture!"],
+["A","Alors ? Tu as réussi ?","So? Did you succeed?"],
+["V","Oui ! Avant l'entretien, j'avais beaucoup révisé grâce à toi.","Yes! Before the interview, I had revised a lot thanks to you."],
+["A","Bravo ! Tu avais appris l'histoire, les valeurs et la grammaire.","Bravo! You had learned the history, the values and the grammar."],
+["V","Je suis fier. Je suis maintenant français !","I'm proud. I am now French!"],
+["A","Vive la France, et vive Vipul !","Long live France, and long live Vipul!"]]]
 ];
 
 // Verbs: infinitive -> {tense: [je,tu,il,nous,vous,ils]}
@@ -369,15 +429,26 @@ function endQuiz(){clearInterval(tmr);const pct=Math.round(qz.score/qz.items.len
 // ---------------- INTERVIEW ----------------
 $("ivList").innerHTML=IV.map(([q,a],i)=>`<div class="card"><b>${i+1}. ${esc(q)}</b><br><button class="btn ghost" onclick="this.nextElementSibling.hidden=!this.nextElementSibling.hidden">Voir un modèle de réponse</button><p hidden>${esc(a)}</p></div>`).join("");
 
-// ---------------- DIALOGUES ----------------
-const tenses=[...new Set(DL.map(d=>d[1]))];
-$("dlTense").innerHTML='<option value="">Tous les temps</option>'+tenses.map(t=>`<option>${t}</option>`).join("");
-function drawDL(){const t=$("dlTense").value,h=$("dlHide").checked;
-  $("dlList").innerHTML=DL.filter(d=>!t||d[1]===t).map(([ti,te,ls])=>`<div class="card"><span class="tag">${te}</span><b>${esc(ti)}</b> <button class="btn ghost" onclick="speak(this)">🔊 Écouter</button>`+
-   ls.map(([s,fr,en])=>`<div class="line"><b>${esc(s)}:</b> <span class="fr">${esc(fr)}</span>${h?"":`<span class="en">${esc(en)}</span>`}</div>`).join("")+"</div>").join("")}
-function speak(btn){if(!window.speechSynthesis)return;speechSynthesis.cancel();
-  btn.parentElement.querySelectorAll(".fr").forEach(e=>{const u=new SpeechSynthesisUtterance(e.textContent);u.lang="fr-FR";u.rate=.9;speechSynthesis.speak(u)})}
-$("dlTense").onchange=drawDL;$("dlHide").onchange=drawDL;
+// ---------------- DIALOGUES (storybook) ----------------
+const AV={V:'<svg viewBox="0 0 80 90" class="av-svg"><path d="M12 90c0-22 12-30 28-30s28 8 28 30z" fill="#1f3a93"/><rect x="34" y="48" width="12" height="14" fill="#d9a077"/><circle cx="40" cy="34" r="19" fill="#e8b48c"/><path d="M20 32c0-16 10-22 21-22s20 7 19 22c-4-8-10-11-20-11s-15 3-20 11z" fill="#2b1a12"/><g class="eyes"><ellipse cx="33" cy="35" rx="2.4" ry="3" fill="#1c1917"/><ellipse cx="47" cy="35" rx="2.4" ry="3" fill="#1c1917"/></g><path class="mouth" d="M33 44q7 6 14 0" stroke="#7a3b2a" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>',
+A:'<svg viewBox="0 0 80 90" class="av-svg"><line x1="40" y1="6" x2="40" y2="16" stroke="#8b93ff" stroke-width="3"/><circle class="ant" cx="40" cy="6" r="4.5" fill="#ff7a59"/><rect x="14" y="16" width="52" height="42" rx="14" fill="#e9ebff" stroke="#8b93ff" stroke-width="3"/><rect x="21" y="26" width="38" height="22" rx="10" fill="#1b1d3a"/><g class="eyes"><circle cx="32" cy="37" r="4.5" fill="#6ff0ff"/><circle cx="48" cy="37" r="4.5" fill="#6ff0ff"/></g><path class="mouth" d="M34 44q6 4 12 0" stroke="#6ff0ff" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M20 90c0-18 8-26 20-26s20 8 20 26z" fill="#8b93ff"/><circle cx="40" cy="76" r="4" fill="#6ff0ff" class="ant"/></svg>'};
+const NAME={V:"Vipul",A:"Aïda"};
+let stI=0,stPlay=0;
+$("dlTense").innerHTML=ST.map((s,i)=>`<option value="${i}">${i+1}. ${esc(s[0])}</option>`).join("");
+function drawDL(){stStop();const [ti,te,nar,ls]=ST[stI],h=$("dlHide").checked;
+  $("dlList").innerHTML=`<article class="book"><div class="chap">Chapitre ${stI+1} / ${ST.length}</div><h3>${esc(ti)}</h3><span class="tag">${esc(te)}</span>
+  <p class="narr"><i>${esc(nar[0])}</i>${h?"":`<span class="en">${esc(nar[1])}</span>`}</p>`+
+  ls.map(([w,fr,en],i)=>`<div class="row ${w}" style="--d:${i*.35}s"><div class="av">${AV[w]}<small>${NAME[w]}</small></div><div class="bub"><span class="fr">${esc(fr)}</span>${h?"":`<span class="en">${esc(en)}</span>`}</div></div>`).join("")+
+  `<div class="nav"><button class="btn ghost" onclick="stGo(-1)" ${stI?"":"disabled"}>◀ Précédent</button><button class="btn" id="stPlay" onclick="stToggle()">▶ Écouter l'histoire</button><button class="btn ghost" onclick="stGo(1)" ${stI<ST.length-1?"":"disabled"}>Suivant ▶</button></div></article>`;
+  $("dlTense").value=stI}
+function stGo(d){stI=Math.max(0,Math.min(ST.length-1,stI+d));drawDL();scrollTo({top:0,behavior:"smooth"})}
+function stStop(){stPlay++;window.speechSynthesis&&speechSynthesis.cancel();document.querySelectorAll("#dlList .row.talk").forEach(r=>r.classList.remove("talk"));const b=$("stPlay");if(b){b.dataset.on="";b.textContent="▶ Écouter l'histoire"}}
+function stToggle(){const b=$("stPlay");if(b.dataset.on==="1")return stStop();
+  if(!window.speechSynthesis)return;stStop();b.dataset.on="1";b.textContent="⏸ Arrêter";const id=stPlay,rows=[...document.querySelectorAll("#dlList .row")];
+  (function next(i){if(id!==stPlay)return;if(i>=rows.length)return stStop();
+    const r=rows[i];r.classList.add("talk");const u=new SpeechSynthesisUtterance(r.querySelector(".fr").textContent);u.lang="fr-FR";u.rate=.9;
+    u.pitch=r.classList.contains("A")?1.3:.9;u.onend=u.onerror=()=>{r.classList.remove("talk");next(i+1)};speechSynthesis.speak(u)})(0)}
+$("dlTense").onchange=e=>{stI=+e.target.value;drawDL()};$("dlHide").onchange=drawDL;
 
 // ---------------- CONJUGATION ----------------
 const TN=["Présent","Passé composé","Imparfait","Futur simple","Conditionnel"];
