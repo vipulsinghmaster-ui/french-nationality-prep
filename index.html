@@ -59,20 +59,25 @@ table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--li
 .book h3{font:700 28px/1.2 Georgia,serif;margin:6px 0 4px}
 .narr{font:italic 16px/1.6 Georgia,serif;color:var(--muted);border-left:3px solid var(--blue);padding-left:14px;margin:14px 0 22px}
 .row{display:flex;gap:12px;align-items:flex-end;margin:16px 0;opacity:0;animation:pop .5s ease forwards;animation-delay:var(--d)}
-.row.V{flex-direction:row}.row.A{flex-direction:row-reverse}
+.row.L{flex-direction:row}.row.R{flex-direction:row-reverse}
 .av{width:68px;flex:none;text-align:center}.av small{display:block;font:600 11px Inter,Segoe UI;color:var(--muted)}
 .av-svg{width:68px;height:76px;animation:bob 3.2s ease-in-out infinite;animation-delay:var(--d)}
-.row.A .av-svg{animation-duration:2.6s}
+.row.R .av-svg{animation-duration:2.6s}
 .eyes{transform-box:fill-box;transform-origin:center;animation:blink 4.5s infinite}
 .ant{animation:glow 1.8s ease-in-out infinite}
 .bub{max-width:calc(100% - 90px);padding:12px 16px;border-radius:18px;font:17px/1.55 Georgia,serif;background:var(--bg);border:1px solid var(--line)}
-.row.V .bub{border-bottom-left-radius:4px}
-.row.A .bub{border-bottom-right-radius:4px;background:color-mix(in srgb,var(--blue) 12%,var(--card));text-align:right}
+.row.L .bub{border-bottom-left-radius:4px}
+.row.R .bub{border-bottom-right-radius:4px;background:color-mix(in srgb,var(--blue) 12%,var(--card));text-align:right}
 .row.talk .bub{outline:2px solid var(--blue)}
 .spk{float:right;margin:0 0 4px 10px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:50%;width:30px;height:30px;font-size:14px;line-height:1;cursor:pointer;transition:background .15s}
-.row.A .spk{float:left;margin:0 10px 4px 0}
+.row.R .spk{float:left;margin:0 10px 4px 0}
 .spk:hover,.row.talk .spk{background:var(--blue);border-color:var(--blue)}
 .row.talk .av-svg{animation:talk .35s ease-in-out infinite}
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin:12px 0}
+.bk{text-align:left;display:flex;flex-direction:column;gap:4px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);cursor:pointer;font:inherit;transition:border-color .15s,transform .15s}
+.bk:hover{transform:translateY(-2px);border-color:var(--blue)}
+.bk.on{border-color:var(--blue);box-shadow:0 0 0 2px var(--blue) inset}
+.bk .bke{font-size:28px;line-height:1}.bk b{font:700 15px Georgia,serif}.bk small{color:var(--muted);font:12px/1.4 Inter,Segoe UI}.bk em{color:var(--blue);font:700 11px Inter,Segoe UI;font-style:normal;letter-spacing:.08em;text-transform:uppercase}
 .nav{display:flex;justify-content:space-between;gap:10px;margin-top:26px}
 .nav .btn[disabled]{opacity:.35;pointer-events:none}
 @keyframes pop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
@@ -116,7 +121,7 @@ table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--li
 <section id="interview"><div class="card"><h2>Entretien d'assimilation : questions fréquentes</h2>
 <p class="muted">Lisez la question, répondez à voix haute, puis comparez avec le modèle. Adaptez les réponses à votre histoire personnelle.</p><div id="ivList"></div></div></section>
 
-<section id="dialogues"><div class="card"><h2>Histoires : Vipul &amp; Aïda</h2><select id="dlTense"></select> <label><input type="checkbox" id="dlHide"> Masquer l'anglais</label></div><div id="dlList"></div></section>
+<section id="dialogues"><div class="card"><h2>Histoires illustrées</h2><div id="bkShelf" class="shelf"></div><select id="dlTense"></select> <label><input type="checkbox" id="dlHide"> Masquer l'anglais</label></div><div id="dlList"></div></section>
 
 <section id="conj"><div class="card"><h2>Conjugaison</h2>
 <select id="cjVerb"></select> <select id="cjTense"></select> <span id="cjTools" hidden><button class="btn ghost" id="cjEdit">✏️ Modifier</button> <button class="btn ghost" id="cjDel">🗑 Supprimer</button></span>
@@ -319,6 +324,237 @@ const ST=[
 ["V","Je suis fier. Je suis maintenant français !","I'm proud. I am now French!"],
 ["A","Vive la France, et vive Vipul !","Long live France, and long live Vipul!"]]]
 ];
+// ---------------- BOOKS ----------------
+// cast: key -> [name, kind(man|woman|gran|girl|boy|robot|dog), [skin,hair,shirt], side(L|R), voice pitch]
+const BK=[
+{id:"aida",emoji:"🤖",title:"Vipul & Aïda",blurb:"Un homme prépare sa nationalité avec son assistante IA",
+ cast:{V:["Vipul","man",["#e8b48c","#2b1a12","#1f3a93"],"L",.9],A:["Aïda","robot",[],"R",1.3]},ch:ST},
+{id:"max",emoji:"🐕",title:"Max et moi",blurb:"Un homme parle de la vie avec son chien",
+ cast:{H:["Hugo","man",["#e8b48c","#4a3322","#2f6f4f"],"L",.9],M:["Max","dog",[],"R",1.15]},ch:[
+["Le matin","Présent",["Sept heures. Le soleil entre dans la chambre. Max pose sa tête sur le lit.","Seven o'clock. The sun comes into the bedroom. Max puts his head on the bed."],[
+["M","Hugo, réveille-toi ! Le jour est levé et j'ai faim !","Hugo, wake up! It's daylight and I'm hungry!"],
+["H","Doucement, Max. Il est tôt, je dors encore un peu.","Easy, Max. It's early, I'm still sleeping a little."],
+["M","Moi, je ne dors jamais le matin. Je surveille la maison.","I never sleep in the morning. I watch over the house."],
+["H","Tu surveilles surtout ton bol, non ?","You mostly watch your bowl, don't you?"],
+["M","Les deux ! Alors, tu te lèves ?","Both! So, are you getting up?"],
+["H","D'accord, je me lève, je prends mon café et on sort.","Okay, I'm getting up, I'm having my coffee and we're going out."]]],
+["La promenade au parc","Présent / Futur proche",["Au parc, l'herbe est encore mouillée. Max court partout.","In the park, the grass is still wet. Max is running everywhere."],[
+["M","Regarde ! Un écureuil ! Je vais l'attraper !","Look! A squirrel! I'm going to catch it!"],
+["H","Tu ne vas jamais l'attraper, il est beaucoup trop rapide.","You're never going to catch it, it's far too fast."],
+["M","Peut-être, mais j'adore essayer. C'est ça, la vie !","Maybe, but I love trying. That's life!"],
+["H","Tu as raison. Moi, je n'essaie plus assez de choses.","You're right. I don't try enough things anymore."],
+["M","Alors demain, on va explorer un autre chemin ?","Then tomorrow, are we going to explore another path?"],
+["H","Bonne idée. On va découvrir la forêt, toi et moi.","Good idea. We're going to discover the forest, you and I."]]],
+["Qu'est-ce que le bonheur ?","Présent",["Le soir, sur le canapé, Hugo regarde par la fenêtre. Max se couche contre ses pieds.","In the evening, on the sofa, Hugo looks out of the window. Max lies down against his feet."],[
+["H","Max, dis-moi, qu'est-ce que le bonheur pour un chien ?","Max, tell me, what is happiness for a dog?"],
+["M","C'est simple : un bâton, une promenade et quelqu'un qui rentre à la maison.","It's simple: a stick, a walk and someone who comes home."],
+["H","Seulement ça ? Moi, je cherche un grand bonheur depuis des années.","Only that? I've been looking for a big happiness for years."],
+["M","Les humains compliquent tout. Le bonheur, c'est maintenant.","Humans complicate everything. Happiness is now."],
+["H","Tu penses que je travaille trop et que je ne regarde pas assez autour de moi ?","Do you think I work too much and don't look around me enough?"],
+["M","Je pense que tu m'oublies un peu quand tu regardes ton téléphone.","I think you forget me a little when you look at your phone."]]],
+["Quand j'étais chiot","Imparfait",["Un dimanche pluvieux. Hugo sort une vieille photo.","A rainy Sunday. Hugo takes out an old photo."],[
+["H","Regarde cette photo. Tu étais si petit !","Look at this photo. You were so small!"],
+["M","Oui, je tenais dans tes mains. J'avais peur de tout.","Yes, I fit in your hands. I was afraid of everything."],
+["H","Tu pleurais la nuit. Alors je dormais par terre à côté de toi.","You cried at night. So I slept on the floor next to you."],
+["M","Je m'en souviens. Ton pull sentait bon, c'était ma maison.","I remember. Your jumper smelled good, it was my home."],
+["H","Moi, quand j'étais enfant, j'avais un chien aussi. Il s'appelait Rex.","When I was a child, I had a dog too. His name was Rex."],
+["M","Alors tu savais déjà être un bon ami avant de me rencontrer.","So you already knew how to be a good friend before meeting me."]]],
+["L'amitié","Passé composé",["Hugo raconte à Max le jour de leur rencontre.","Hugo tells Max about the day they met."],[
+["H","Tu sais comment je t'ai trouvé ?","Do you know how I found you?"],
+["M","Raconte-moi. J'aime cette histoire.","Tell me. I love that story."],
+["H","Je suis allé au refuge pour regarder un chien. J'en ai vu vingt, mais toi, tu m'as regardé.","I went to the shelter to look at a dog. I saw twenty, but you looked at me."],
+["M","Et tu as dit : « Celui-là, c'est le mien. »","And you said: «That one is mine.»"],
+["H","Oui. Ce jour-là, j'ai compris que l'amitié n'a pas besoin de mots.","Yes. That day I understood that friendship doesn't need words."],
+["M","Moi aussi, j'ai choisi. J'ai remué la queue, et ça a suffi !","I chose too. I wagged my tail, and that was enough!"]]],
+["Demain, on fera quoi ?","Futur simple / Conditionnel",["Le soir tombe. Hugo pense à l'avenir, et Max l'écoute.","Evening falls. Hugo thinks about the future, and Max listens."],[
+["H","Quand je serai vieux, tu seras encore avec moi ?","When I'm old, will you still be with me?"],
+["M","Je serai toujours près de toi, même si je cours moins vite.","I'll always be near you, even if I run less fast."],
+["H","Si j'étais riche, j'achèterais une maison avec un grand jardin pour toi.","If I were rich, I'd buy a house with a big garden for you."],
+["M","Je n'aurais pas besoin d'un grand jardin. Je voudrais seulement ta voix.","I wouldn't need a big garden. I'd only want your voice."],
+["H","Alors demain, nous irons à la forêt et nous marcherons longtemps.","Then tomorrow we'll go to the forest and we'll walk a long time."],
+["M","Et la vie sera belle, comme toujours. Bonne nuit, Hugo.","And life will be beautiful, as always. Good night, Hugo."]]]
+]},
+{id:"lea",emoji:"🌟",title:"Papa, pourquoi ?",blurb:"Un père et sa fille de sept ans parlent du sens de la vie",
+ cast:{P:["Papa","man",["#d9a077","#1c1917","#7c3aed"],"L",.9],L:["Léa","girl",["#f0c4a0","#6b3f1f","#f59e0b"],"R",1.4]},ch:[
+["Pourquoi le ciel est bleu ?","Présent",["Un samedi, dans le jardin. Léa regarde le ciel, la tête en arrière.","A Saturday in the garden. Léa looks at the sky, her head tilted back."],[
+["L","Papa, pourquoi le ciel est bleu ?","Dad, why is the sky blue?"],
+["P","Parce que la lumière du soleil se disperse dans l'air. Le bleu se disperse le plus.","Because sunlight scatters in the air. Blue scatters the most."],
+["L","Et pourquoi il y a un soleil ?","And why is there a sun?"],
+["P","Pour donner de la lumière et de la chaleur à la Terre.","To give light and warmth to the Earth."],
+["L","Et pourquoi il y a la Terre ? Et pourquoi on est là, nous ?","And why is there an Earth? And why are we here?"],
+["P","Ah, ça, c'est la plus grande question de toutes, ma chérie.","Ah, that is the biggest question of all, my dear."]]],
+["C'est quoi le bonheur ?","Présent",["Léa s'assoit sur les genoux de son père avec un chocolat chaud.","Léa sits on her father's lap with a hot chocolate."],[
+["L","Papa, toi, tu es heureux ?","Dad, are you happy?"],
+["P","Oui, surtout quand je suis avec toi et maman.","Yes, especially when I'm with you and Mum."],
+["L","Moi, je suis heureuse quand je dessine et quand je mange des crêpes.","I'm happy when I draw and when I eat pancakes."],
+["P","C'est très bien. Le bonheur, ce sont souvent des petites choses.","That's very good. Happiness is often little things."],
+["L","Et quand on est triste, on fait quoi ?","And when we're sad, what do we do?"],
+["P","On en parle avec quelqu'un qu'on aime, et on pleure un peu si on en a besoin.","We talk about it with someone we love, and we cry a little if we need to."]]],
+["Pourquoi on travaille ?","Présent / Futur proche",["Lundi matin. Papa prépare sa sacoche. Léa le regarde, intriguée.","Monday morning. Dad prepares his bag. Léa watches him, curious."],[
+["L","Papa, pourquoi tu travailles tous les jours ?","Dad, why do you work every day?"],
+["P","Pour gagner de l'argent, mais aussi parce que j'aime aider les autres.","To earn money, but also because I like helping others."],
+["L","Moi, plus tard, je vais être vétérinaire.","When I grow up, I'm going to be a vet."],
+["P","Super ! Tu vas soigner les animaux ?","Great! You're going to look after animals?"],
+["L","Oui, et je vais soigner Max, le chien de mamie.","Yes, and I'm going to look after Max, Granny's dog."],
+["P","Alors tu vas beaucoup étudier, mais je suis sûr que tu vas réussir.","Then you'll study a lot, but I'm sure you'll succeed."]]],
+["Quand grand-père est parti","Passé composé / Imparfait",["Un soir, Léa montre une vieille photo de son grand-père.","One evening, Léa shows an old photo of her grandfather."],[
+["L","Papa, grand-père est mort, mais je ne l'ai pas oublié.","Dad, Grandpa died, but I haven't forgotten him."],
+["P","Moi non plus. Il racontait toujours des histoires drôles.","Neither have I. He always told funny stories."],
+["L","Il avait une grosse moustache et il sentait le café.","He had a big moustache and he smelled of coffee."],
+["P","C'est ça. Il est parti il y a deux ans, mais il vit dans nos souvenirs.","That's right. He left two years ago, but he lives on in our memories."],
+["L","Alors on ne disparaît pas complètement ?","So we don't disappear completely?"],
+["P","Non, tant qu'on pense à ceux qu'on aime, ils restent avec nous.","No, as long as we think of those we love, they stay with us."]]],
+["Être gentil, ça sert à quoi ?","Conditionnel / Imparfait",["À l'école, Léa a vu un enfant tout seul dans la cour. Elle en parle à son père.","At school, Léa saw a child alone in the playground. She talks to her father about it."],[
+["L","Aujourd'hui, un garçon était seul à la récré. Je suis allée jouer avec lui.","Today a boy was alone at break. I went to play with him."],
+["P","C'est très gentil de ta part. Tu t'es senti bien ensuite ?","That was very kind of you. Did you feel good afterwards?"],
+["L","Oui ! Papa, être gentil, ça sert à quoi ?","Yes! Dad, what is being kind for?"],
+["P","Si tout le monde était gentil, le monde serait plus doux et plus juste.","If everyone were kind, the world would be gentler and fairer."],
+["L","Alors je voudrais être gentille toute ma vie.","Then I'd like to be kind all my life."],
+["P","Tu me rends très fier, Léa.","You make me very proud, Léa."]]],
+["Mes rêves","Futur simple",["La nuit tombe. Léa est dans son lit, la veilleuse allumée.","Night falls. Léa is in bed, the night light on."],[
+["L","Papa, quand je serai grande, je voyagerai partout dans le monde.","Dad, when I'm grown up, I'll travel all over the world."],
+["P","Et où iras-tu en premier ?","And where will you go first?"],
+["L","J'irai en Inde, puis au Japon. Et toi, tu viendras avec moi ?","I'll go to India, then Japan. And will you come with me?"],
+["P","Bien sûr. Je porterai ta valise et tu me montreras le chemin.","Of course. I'll carry your suitcase and you'll show me the way."],
+["L","Alors le sens de la vie, c'est d'être ensemble et de rêver ?","So the meaning of life is being together and dreaming?"],
+["P","Je crois que oui. Bonne nuit, ma petite étoile.","I think so. Good night, my little star."]]]
+]},
+{id:"suisse",emoji:"⛰️",title:"La famille Martin en Suisse",blurb:"Une famille de quatre voyage en Suisse et partage tout",
+ cast:{P:["Papa","man",["#e8b48c","#3b2a1e","#b91c1c"],"L",.9],M:["Maman","woman",["#f0c4a0","#7a4a21","#0e7490"],"R",1.15],T:["Tom","boy",["#e8b48c","#2b1a12","#16a34a"],"L",1.25],L:["Léa","girl",["#f0c4a0","#6b3f1f","#f59e0b"],"R",1.4]},ch:[
+["Les valises","Futur proche",["La veille du départ. Les valises sont ouvertes au milieu du salon.","The night before departure. The suitcases are open in the middle of the living room."],[
+["T","Papa, on va vraiment partir en Suisse demain ?","Dad, are we really going to Switzerland tomorrow?"],
+["P","Oui ! On va prendre le train à huit heures.","Yes! We're going to take the train at eight o'clock."],
+["M","N'oubliez pas vos manteaux. Il va faire froid dans les montagnes.","Don't forget your coats. It's going to be cold in the mountains."],
+["L","Moi, je vais emporter mon ours et mon carnet de dessins.","I'm going to take my teddy bear and my sketchbook."],
+["T","Et moi, mon appareil photo. Je vais tout photographier !","And me, my camera. I'm going to photograph everything!"],
+["M","Alors allons dormir, demain, on se lève tôt.","Then let's go to sleep, tomorrow we get up early."]]],
+["Dans le train","Présent",["Le train traverse des champs, puis des collines. Les enfants collent leur nez à la vitre.","The train crosses fields, then hills. The children press their noses to the window."],[
+["L","Maman, regarde les montagnes ! Elles sont énormes !","Mum, look at the mountains! They're enormous!"],
+["M","Nous arrivons bientôt à Genève. Tu as ton passeport, Tom ?","We're arriving in Geneva soon. Have you got your passport, Tom?"],
+["T","Oui, il est dans mon sac. Papa, on parle quelle langue en Suisse ?","Yes, it's in my bag. Dad, what language do they speak in Switzerland?"],
+["P","Ça dépend. À Genève, on parle français. Ailleurs, on parle allemand, italien ou romanche.","It depends. In Geneva they speak French. Elsewhere, German, Italian or Romansh."],
+["L","Quatre langues dans un seul pays ? C'est génial !","Four languages in one country? That's great!"],
+["M","Et ici, on paie en francs suisses, pas en euros.","And here, we pay in Swiss francs, not euros."]]],
+["Genève et le lac","Passé composé",["Le soir, à l'hôtel, la famille raconte sa première journée.","In the evening at the hotel, the family tells about their first day."],[
+["T","Aujourd'hui, on a vu le Jet d'eau. Il monte à cent quarante mètres !","Today we saw the Jet d'Eau. It goes up a hundred and forty metres!"],
+["L","Et moi, j'ai mangé du chocolat suisse. C'était le meilleur de ma vie.","And I ate Swiss chocolate. It was the best of my life."],
+["M","Nous avons aussi marché au bord du lac et nous avons pris un bateau.","We also walked by the lake and took a boat."],
+["P","Moi, j'ai acheté une montre pour ma collection. Je n'ai pas osé regarder le prix !","I bought a watch for my collection. I didn't dare look at the price!"],
+["T","Papa a failli tomber dans l'eau en prenant une photo.","Dad nearly fell into the water taking a photo."],
+["P","Ce n'est pas vrai, j'ai juste perdu l'équilibre une seconde !","That's not true, I just lost my balance for a second!"]]],
+["Dans les Alpes","Présent / Imparfait",["Le lendemain, un téléphérique emmène la famille au sommet. La neige brille.","The next day a cable car takes the family to the summit. The snow shines."],[
+["L","Maman, j'ai un peu peur, la cabine est très haute.","Mum, I'm a bit scared, the cabin is very high."],
+["M","Regarde plutôt la vue, ma chérie. On voit toute la vallée.","Look at the view instead, darling. You can see the whole valley."],
+["T","Il neigeait quand on est arrivés, et maintenant le ciel est tout bleu !","It was snowing when we arrived, and now the sky is all blue!"],
+["P","Ce soir, nous mangerons une vraie fondue au fromage.","Tonight we'll eat a proper cheese fondue."],
+["L","Et si mon morceau de pain tombe dans le fromage ?","And what if my piece of bread falls in the cheese?"],
+["P","Alors tu devras faire la vaisselle ! C'est la tradition.","Then you'll have to wash up! That's the tradition."]]],
+["Un petit problème","Passé composé / Imparfait",["À la gare de Lucerne, Tom n'est plus là. Le cœur de Maman bat très fort.","At Lucerne station, Tom isn't there anymore. Mum's heart beats very fast."],[
+["M","Où est Tom ? Il était là il y a une minute !","Where's Tom? He was here a minute ago!"],
+["P","Calme-toi. Il regardait les horloges quand je l'ai vu pour la dernière fois.","Stay calm. He was looking at the clocks when I last saw him."],
+["L","Je l'ai trouvé ! Il parlait avec un employé de la gare.","I found him! He was talking with a station employee."],
+["T","Je me suis perdu, mais j'ai demandé de l'aide, comme vous m'avez appris.","I got lost, but I asked for help, like you taught me."],
+["M","Oh Tom, tu nous as fait peur ! Mais tu as très bien réagi.","Oh Tom, you scared us! But you reacted very well."],
+["P","Et maintenant, personne ne lâche la main de personne jusqu'au train.","And now nobody lets go of anybody's hand until the train."]]],
+["Le retour","Passé composé / Conditionnel",["Dans le train du retour, la famille regarde les photos de Tom.","On the train home, the family looks at Tom's photos."],[
+["T","J'ai pris trois cents photos. Elles sont presque toutes réussies.","I took three hundred photos. Almost all of them turned out well."],
+["L","Ma préférée, c'est la photo où on rit tous ensemble devant la fondue.","My favourite is the photo where we're all laughing together in front of the fondue."],
+["M","Ce voyage nous a rapprochés. On a beaucoup parlé et beaucoup ri.","This trip brought us closer. We talked a lot and laughed a lot."],
+["P","Si on avait plus de temps, on irait voir les lacs italiens du Tessin.","If we had more time, we'd go and see the Italian lakes in Ticino."],
+["T","On reviendrait en hiver pour faire du ski, d'accord ?","We'd come back in winter to ski, okay?"],
+["M","Pourquoi pas ! Mais d'abord, rentrons à la maison.","Why not! But first, let's get home."]]]
+]},
+{id:"odette",emoji:"👵",title:"Grand-mère Odette raconte",blurb:"Une grand-mère raconte son enfance et sa vie à sa petite-fille",
+ cast:{O:["Odette","gran",["#f0c4a0","#d4d4d8","#9d174d"],"L",1.05],E:["Emma","girl",["#f0c4a0","#b45309","#2563eb"],"R",1.4]},ch:[
+["Le village de mon enfance","Imparfait",["Un dimanche après-midi, Emma s'installe près de sa grand-mère avec un album de photos.","On a Sunday afternoon, Emma sits next to her grandmother with a photo album."],[
+["E","Mamie, tu habitais où quand tu étais petite ?","Granny, where did you live when you were little?"],
+["O","J'habitais dans un petit village de Bretagne, près de la mer.","I lived in a small village in Brittany, near the sea."],
+["E","Comment c'était, ton village ?","What was your village like?"],
+["O","Il y avait une église, une boulangerie et une grande place où nous jouions.","There was a church, a bakery and a big square where we played."],
+["E","Vous aviez des téléphones ?","Did you have phones?"],
+["O","Pas du tout ! Nous parlions dans la rue, et tout le monde se connaissait.","Not at all! We talked in the street, and everybody knew each other."]]],
+["L'école d'autrefois","Imparfait",["Emma ouvre son cartable. Mamie sourit en voyant les cahiers.","Emma opens her school bag. Granny smiles when she sees the notebooks."],[
+["E","Et ton école, elle ressemblait à la mienne ?","And your school, did it look like mine?"],
+["O","Non. Nous écrivions avec des plumes et de l'encre, et le maître était très strict.","No. We wrote with pens and ink, and the teacher was very strict."],
+["E","Vous aviez des ordinateurs ?","Did you have computers?"],
+["O","Jamais ! Nous apprenions les poésies par cœur et nous chantions La Marseillaise.","Never! We learned poems by heart and we sang La Marseillaise."],
+["E","Moi, j'aime bien l'école. Toi aussi ?","I like school. Did you too?"],
+["O","Oui, j'adorais lire. Les livres étaient mes fenêtres sur le monde.","Yes, I loved reading. Books were my windows on the world."]]],
+["Les années difficiles","Imparfait / Plus-que-parfait",["Mamie regarde par la fenêtre. Sa voix devient plus douce.","Granny looks out of the window. Her voice becomes softer."],[
+["O","Quand j'étais petite, c'était une période difficile. Il y avait peu à manger.","When I was little, it was a hard time. There was little to eat."],
+["E","Vous aviez faim ?","Were you hungry?"],
+["O","Parfois. Mon père était parti travailler loin, et ma mère avait tout organisé seule.","Sometimes. My father had gone to work far away, and my mother had organised everything alone."],
+["E","Elle était courageuse, ta maman.","She was brave, your mum."],
+["O","Très. Elle avait appris à cultiver un jardin, alors nous mangions des légumes.","Very. She had learned to grow a garden, so we ate vegetables."],
+["E","Je comprends pourquoi tu ne gaspilles jamais le pain !","I understand why you never waste bread!"]]],
+["Le jour où j'ai rencontré ton grand-père","Passé composé / Imparfait",["Emma pose la photo d'un jeune homme souriant sur la table.","Emma puts a photo of a smiling young man on the table."],[
+["E","C'est lui, grand-père ? Il était beau !","Is that him, Grandpa? He was handsome!"],
+["O","Oui ! Je l'ai rencontré à un bal au mois de juin. Il pleuvait un peu.","Yes! I met him at a dance in June. It was raining a little."],
+["E","Il t'a parlé tout de suite ?","Did he talk to you straight away?"],
+["O","Il m'a regardée pendant une heure, puis il a eu le courage de m'inviter à danser.","He looked at me for an hour, then he found the courage to ask me to dance."],
+["E","Et tu as dit oui ?","And did you say yes?"],
+["O","J'ai dit oui, bien sûr. Il dansait très mal, mais il riait tout le temps.","I said yes, of course. He danced very badly, but he laughed all the time."]]],
+["Le mariage","Passé composé",["Mamie sort une robe blanche d'une vieille boîte.","Granny takes a white dress out of an old box."],[
+["E","C'est ta robe de mariée ? Elle est magnifique !","Is that your wedding dress? It's magnificent!"],
+["O","Ma mère l'a cousue elle-même. Nous nous sommes mariés en septembre.","My mother sewed it herself. We got married in September."],
+["E","Il y a eu beaucoup d'invités ?","Were there a lot of guests?"],
+["O","Tout le village est venu. Nous avons mangé, chanté et dansé jusqu'au matin.","The whole village came. We ate, sang and danced until morning."],
+["E","Et ensuite ?","And then?"],
+["O","Ensuite, nous avons construit notre vie, et ton papa est né deux ans plus tard.","Then we built our life, and your dad was born two years later."]]],
+["Ce que j'ai appris","Présent / Conditionnel",["La nuit approche. Emma pose sa tête sur l'épaule de sa grand-mère.","Night is approaching. Emma rests her head on her grandmother's shoulder."],[
+["E","Mamie, quel conseil tu me donnerais pour ma vie ?","Granny, what advice would you give me for my life?"],
+["O","Je te dirais : sois curieuse, lis beaucoup et ne perds jamais ta gentillesse.","I'd tell you: be curious, read a lot and never lose your kindness."],
+["E","Et si j'ai peur ?","And if I'm scared?"],
+["O","Alors tu devrais respirer, en parler à quelqu'un, et essayer quand même.","Then you should breathe, talk to someone, and try anyway."],
+["E","Je voudrais devenir comme toi, plus tard.","I'd like to become like you, later."],
+["O","Tu seras mieux que moi, ma chérie. Et je serai fière de toi.","You'll be better than me, my darling. And I'll be proud of you."]]]
+]},
+{id:"annee",emoji:"🗼",title:"Une année en France",blurb:"Karim et sa voisine découvrent les fêtes et les saisons françaises",
+ cast:{K:["Karim","man",["#c68c5a","#1c1917","#0f766e"],"L",.9],D:["Mme Dupont","woman",["#f0c4a0","#a8a29e","#be185d"],"R",1.1]},ch:[
+["Septembre : la rentrée","Présent",["Fin août, dans l'escalier de l'immeuble. Karim croise sa voisine, Madame Dupont.","End of August, on the staircase. Karim meets his neighbour, Madame Dupont."],[
+["D","Bonjour Karim ! C'est bientôt la rentrée, n'est-ce pas ?","Hello Karim! It's nearly back-to-school time, isn't it?"],
+["K","Oui, les enfants reprennent l'école en septembre. C'est une grande période en France.","Yes, children go back to school in September. It's a big time in France."],
+["D","Tout le monde rentre de vacances. Les rues sont de nouveau pleines.","Everybody comes back from holiday. The streets are full again."],
+["K","Moi, je commence aussi un nouveau cours de français le soir.","I'm also starting a new French evening class."],
+["D","Bravo ! Pour devenir français, il faut aimer la langue.","Bravo! To become French, you must love the language."],
+["K","Je l'aime beaucoup, surtout les verbes irréguliers... enfin, presque !","I love it a lot, especially the irregular verbs... well, almost!"]]],
+["Le 11 novembre","Présent / Passé composé",["Il fait froid. Madame Dupont porte un bleuet à son manteau.","It's cold. Madame Dupont wears a cornflower on her coat."],[
+["K","Pourquoi vous portez une petite fleur bleue ?","Why are you wearing a little blue flower?"],
+["D","C'est un bleuet. Le 11 novembre, on se souvient de la fin de la Première Guerre mondiale.","It's a cornflower. On the 11th of November we remember the end of the First World War."],
+["K","L'armistice a été signé en quelle année ?","In what year was the armistice signed?"],
+["D","En 1918. Aujourd'hui, c'est un jour férié et il y a des cérémonies devant les monuments aux morts.","In 1918. Today it's a public holiday and there are ceremonies in front of war memorials."],
+["K","Je suis allé à la cérémonie de notre mairie l'an dernier. C'était très émouvant.","I went to our town hall's ceremony last year. It was very moving."],
+["D","Vous voyez, vous êtes déjà un peu français dans le cœur.","You see, you're already a little French at heart."]]],
+["Noël en France","Présent / Futur proche",["Décembre. Les rues brillent. Karim aide Madame Dupont à porter ses courses.","December. The streets are shining. Karim helps Madame Dupont carry her shopping."],[
+["K","Qu'est-ce que vous allez préparer pour Noël ?","What are you going to prepare for Christmas?"],
+["D","Pour le réveillon du 24 décembre, je vais faire un grand repas : foie gras, dinde aux marrons et bûche.","For the Christmas Eve dinner on the 24th, I'm going to make a big meal: foie gras, turkey with chestnuts and a yule log."],
+["K","La bûche, c'est un gâteau en forme de tronc d'arbre, non ?","The bûche is a cake shaped like a tree trunk, isn't it?"],
+["D","Exactement. Les enfants ouvrent les cadeaux après minuit ou le matin du 25.","Exactly. Children open presents after midnight or on the morning of the 25th."],
+["K","Chez nous, on ne fête pas Noël, mais je vais venir voir votre sapin.","Where I'm from we don't celebrate Christmas, but I'm going to come and see your tree."],
+["D","Avec plaisir ! Vous goûterez ma bûche aussi.","With pleasure! You'll taste my bûche too."]]],
+["Le 1er mai et le 8 mai","Présent",["Au printemps, Madame Dupont offre un petit bouquet à Karim.","In spring, Madame Dupont gives Karim a little bouquet."],[
+["D","Tenez, Karim, du muguet ! Le 1er mai, on offre du muguet pour porter bonheur.","Here, Karim, lily of the valley! On the 1st of May, we give lily of the valley for good luck."],
+["K","Merci ! Et le 1er mai, c'est aussi la fête du travail, non ?","Thank you! And the 1st of May is also Labour Day, isn't it?"],
+["D","Oui, c'est un jour férié. Les syndicats défilent dans les rues.","Yes, it's a public holiday. The unions march in the streets."],
+["K","Et une semaine plus tard, il y a encore un jour férié, le 8 mai.","And a week later, there's another public holiday, the 8th of May."],
+["D","Le 8 mai 1945 marque la victoire des Alliés et la fin de la guerre en Europe.","The 8th of May 1945 marks the Allied victory and the end of the war in Europe."],
+["K","Je comprends mieux l'histoire de mon pays d'adoption chaque année.","I understand the history of my adopted country better every year."]]],
+["La fête de la musique","Passé composé",["Le 21 juin au soir, Karim et Madame Dupont rentrent d'un concert dans la rue.","On the evening of the 21st of June, Karim and Madame Dupont come home from a street concert."],[
+["D","Quelle soirée ! Vous avez entendu le groupe de jazz sur la place ?","What an evening! Did you hear the jazz band on the square?"],
+["K","Oui, j'ai écouté, et ensuite j'ai dansé avec des inconnus !","Yes, I listened, and then I danced with strangers!"],
+["D","La fête de la musique existe depuis 1982. Le ministre Jack Lang l'a créée.","The Fête de la Musique has existed since 1982. Minister Jack Lang created it."],
+["K","Tout le monde peut jouer dans la rue, et les concerts sont gratuits.","Anyone can play in the street, and the concerts are free."],
+["D","C'est la musique qui rassemble les Français, quel que soit leur âge.","It's music that brings the French together, whatever their age."],
+["K","Cette année, j'ai même chanté La Marseillaise avec la foule.","This year I even sang La Marseillaise with the crowd."]]],
+["Le 14 juillet","Présent / Futur simple",["C'est la veille de la fête nationale. Karim et Madame Dupont préparent la soirée.","It's the eve of the national holiday. Karim and Madame Dupont prepare the evening."],[
+["K","Demain, c'est le 14 juillet. Que fête-t-on exactement ?","Tomorrow is the 14th of July. What exactly do we celebrate?"],
+["D","La prise de la Bastille, en 1789, au début de la Révolution française.","The storming of the Bastille, in 1789, at the beginning of the French Revolution."],
+["K","Et c'est la fête nationale depuis 1880, je crois.","And it's been the national holiday since 1880, I think."],
+["D","Exact. Demain matin, il y aura un grand défilé militaire sur les Champs-Élysées.","Correct. Tomorrow morning there will be a big military parade on the Champs-Élysées."],
+["K","Le soir, nous regarderons les feux d'artifice et nous chanterons La Marseillaise.","In the evening, we'll watch the fireworks and sing La Marseillaise."],
+["D","Et un jour, Karim, vous la chanterez en tant que citoyen français. Vive la République !","And one day, Karim, you'll sing it as a French citizen. Long live the Republic!"]]]
+]}
+];
 
 // Verbs: infinitive -> {tense: [je,tu,il,nous,vous,ils]}
 const P=["je","tu","il/elle","nous","vous","ils/elles"];
@@ -432,28 +668,40 @@ function endQuiz(){clearInterval(tmr);const pct=Math.round(qz.score/qz.items.len
 // ---------------- INTERVIEW ----------------
 $("ivList").innerHTML=IV.map(([q,a],i)=>`<div class="card"><b>${i+1}. ${esc(q)}</b><br><button class="btn ghost" onclick="this.nextElementSibling.hidden=!this.nextElementSibling.hidden">Voir un modèle de réponse</button><p hidden>${esc(a)}</p></div>`).join("");
 
-// ---------------- DIALOGUES (storybook) ----------------
-const AV={V:'<svg viewBox="0 0 80 90" class="av-svg"><path d="M12 90c0-22 12-30 28-30s28 8 28 30z" fill="#1f3a93"/><rect x="34" y="48" width="12" height="14" fill="#d9a077"/><circle cx="40" cy="34" r="19" fill="#e8b48c"/><path d="M20 32c0-16 10-22 21-22s20 7 19 22c-4-8-10-11-20-11s-15 3-20 11z" fill="#2b1a12"/><g class="eyes"><ellipse cx="33" cy="35" rx="2.4" ry="3" fill="#1c1917"/><ellipse cx="47" cy="35" rx="2.4" ry="3" fill="#1c1917"/></g><path class="mouth" d="M33 44q7 6 14 0" stroke="#7a3b2a" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>',
-A:'<svg viewBox="0 0 80 90" class="av-svg"><line x1="40" y1="6" x2="40" y2="16" stroke="#8b93ff" stroke-width="3"/><circle class="ant" cx="40" cy="6" r="4.5" fill="#ff7a59"/><rect x="14" y="16" width="52" height="42" rx="14" fill="#e9ebff" stroke="#8b93ff" stroke-width="3"/><rect x="21" y="26" width="38" height="22" rx="10" fill="#1b1d3a"/><g class="eyes"><circle cx="32" cy="37" r="4.5" fill="#6ff0ff"/><circle cx="48" cy="37" r="4.5" fill="#6ff0ff"/></g><path class="mouth" d="M34 44q6 4 12 0" stroke="#6ff0ff" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M20 90c0-18 8-26 20-26s20 8 20 26z" fill="#8b93ff"/><circle cx="40" cy="76" r="4" fill="#6ff0ff" class="ant"/></svg>'};
-const NAME={V:"Vipul",A:"Aïda"};
-let stI=0,stPlay=0;
-$("dlTense").innerHTML=ST.map((s,i)=>`<option value="${i}">${i+1}. ${esc(s[0])}</option>`).join("");
-function drawDL(){stStop();const [ti,te,nar,ls]=ST[stI],h=$("dlHide").checked;
-  $("dlList").innerHTML=`<article class="book"><div class="chap">Chapitre ${stI+1} / ${ST.length}</div><h3>${esc(ti)}</h3><span class="tag">${esc(te)}</span>
+// ---------------- DIALOGUES (storybook library) ----------------
+const ROBOT='<line x1="40" y1="6" x2="40" y2="16" stroke="#8b93ff" stroke-width="3"/><circle class="ant" cx="40" cy="6" r="4.5" fill="#ff7a59"/><rect x="14" y="16" width="52" height="42" rx="14" fill="#e9ebff" stroke="#8b93ff" stroke-width="3"/><rect x="21" y="26" width="38" height="22" rx="10" fill="#1b1d3a"/><g class="eyes"><circle cx="32" cy="37" r="4.5" fill="#6ff0ff"/><circle cx="48" cy="37" r="4.5" fill="#6ff0ff"/></g><path class="mouth" d="M34 44q6 4 12 0" stroke="#6ff0ff" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M20 90c0-18 8-26 20-26s20 8 20 26z" fill="#8b93ff"/><circle cx="40" cy="76" r="4" fill="#6ff0ff" class="ant"/>';
+const DOGSVG='<path d="M14 90c0-20 10-26 26-26s26 6 26 26z" fill="#a8652e"/><rect x="26" y="60" width="28" height="7" rx="3" fill="#c0392b"/><ellipse cx="14" cy="38" rx="9" ry="18" fill="#7a4420" transform="rotate(12 14 38)"/><ellipse cx="66" cy="38" rx="9" ry="18" fill="#7a4420" transform="rotate(-12 66 38)"/><ellipse cx="40" cy="38" rx="21" ry="22" fill="#c98547"/><ellipse cx="40" cy="50" rx="12" ry="9" fill="#f1d3a8"/><ellipse cx="40" cy="45" rx="5" ry="3.5" fill="#1c1917"/><g class="eyes"><circle cx="31" cy="33" r="3" fill="#1c1917"/><circle cx="49" cy="33" r="3" fill="#1c1917"/></g><path class="mouth" d="M40 48v4M34 53q6 5 12 0" stroke="#1c1917" stroke-width="1.8" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="58" rx="3.5" ry="4.5" fill="#e87c8a"/>';
+function avatar(kind,c){const [sk,hr,sh]=c,eyes=(a,b,y,r)=>`<g class="eyes"><circle cx="${a}" cy="${y}" r="${r}" fill="#1c1917"/><circle cx="${b}" cy="${y}" r="${r}" fill="#1c1917"/></g>`;let g;
+  if(kind==="robot")g=ROBOT;else if(kind==="dog")g=DOGSVG;
+  else if(kind==="girl"||kind==="boy")
+    g=`<path d="M18 90c0-16 9-22 22-22s22 6 22 22z" fill="${sh}"/><rect x="34" y="58" width="12" height="10" fill="${sk}"/>`+(kind==="girl"?`<circle cx="21" cy="42" r="6" fill="${hr}"/><circle cx="59" cy="42" r="6" fill="${hr}"/>`:"")+
+      `<circle cx="40" cy="44" r="17" fill="${sk}"/><path d="M23 42c0-15 7-21 18-21s17 6 16 21c-3-6-8-9-17-9s-13 3-17 9z" fill="${hr}"/>${eyes(33,47,46,3)}<path class="mouth" d="M34 53q6 5 12 0" stroke="#7a3b2a" stroke-width="2.2" fill="none" stroke-linecap="round"/>`;
+  else g=`<path d="M12 90c0-22 12-30 28-30s28 8 28 30z" fill="${sh}"/>`+(kind==="woman"?`<path d="M18 36c0-20 9-28 22-28s22 8 22 28v24h-9V36H27v24h-9z" fill="${hr}"/>`:kind==="gran"?`<circle cx="40" cy="9" r="7" fill="${hr}"/>`:"")+
+      `<rect x="34" y="48" width="12" height="14" fill="${sk}"/><circle cx="40" cy="34" r="19" fill="${sk}"/><path d="M20 32c0-16 10-22 21-22s20 7 19 22c-4-8-10-11-20-11s-15 3-20 11z" fill="${hr}"/>${eyes(33,47,35,2.5)}`+
+      (kind==="gran"?'<g fill="none" stroke="#57534e" stroke-width="1.6"><circle cx="33" cy="35" r="6"/><circle cx="47" cy="35" r="6"/><path d="M39 35h2"/></g>':"")+
+      `<path class="mouth" d="M33 44q7 6 14 0" stroke="#7a3b2a" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 0 80 90" class="av-svg">${g}</svg>`}
+let bkI=0,stI=0,stPlay=0;
+const book=()=>BK[bkI];
+function drawShelf(){$("bkShelf").innerHTML=BK.map((b,i)=>`<button class="bk${i===bkI?" on":""}" onclick="bkGo(${i})"><span class="bke">${b.emoji}</span><b>${esc(b.title)}</b><small>${esc(b.blurb)}</small><em>${b.ch.length} chapitres</em></button>`).join("")}
+function fillSel(){$("dlTense").innerHTML=book().ch.map((s,i)=>`<option value="${i}">${i+1}. ${esc(s[0])}</option>`).join("")}
+function bkGo(i){bkI=i;stI=0;fillSel();drawShelf();drawDL()}
+function drawDL(){stStop();const bk=book(),n=bk.ch.length,[ti,te,nar,ls]=bk.ch[stI],h=$("dlHide").checked;
+  $("dlList").innerHTML=`<article class="book"><div class="chap">${esc(bk.title)} · Chapitre ${stI+1} / ${n}</div><h3>${esc(ti)}</h3><span class="tag">${esc(te)}</span>
   <p class="narr"><i>${esc(nar[0])}</i>${h?"":`<span class="en">${esc(nar[1])}</span>`}</p>`+
-  ls.map(([w,fr,en],i)=>`<div class="row ${w}" style="--d:${i*.35}s"><div class="av">${AV[w]}<small>${NAME[w]}</small></div><div class="bub"><button class="spk" title="Écouter cette réplique" aria-label="Écouter cette réplique" onclick="stSay(this.closest('.row'))">🔊</button><span class="fr">${esc(fr)}</span>${h?"":`<span class="en">${esc(en)}</span>`}</div></div>`).join("")+
-  `<div class="nav"><button class="btn ghost" onclick="stGo(-1)" ${stI?"":"disabled"}>◀ Précédent</button><button class="btn" id="stPlay" onclick="stToggle()">▶ Écouter l'histoire</button><button class="btn ghost" onclick="stGo(1)" ${stI<ST.length-1?"":"disabled"}>Suivant ▶</button></div></article>`;
+  ls.map(([w,fr,en],i)=>{const [nm,kd,col,sd,pt]=bk.cast[w];return `<div class="row ${sd}" data-p="${pt}" style="--d:${i*.35}s"><div class="av">${avatar(kd,col)}<small>${esc(nm)}</small></div><div class="bub"><button class="spk" title="Écouter cette réplique" aria-label="Écouter cette réplique" onclick="stSay(this.closest('.row'))">🔊</button><span class="fr">${esc(fr)}</span>${h?"":`<span class="en">${esc(en)}</span>`}</div></div>`}).join("")+
+  `<div class="nav"><button class="btn ghost" onclick="stGo(-1)" ${stI?"":"disabled"}>◀ Précédent</button><button class="btn" id="stPlay" onclick="stToggle()">▶ Écouter l'histoire</button><button class="btn ghost" onclick="stGo(1)" ${stI<n-1?"":"disabled"}>Suivant ▶</button></div></article>`;
   $("dlTense").value=stI}
-function stGo(d){stI=Math.max(0,Math.min(ST.length-1,stI+d));drawDL();scrollTo({top:0,behavior:"smooth"})}
-function stSay(r){if(!window.speechSynthesis)return;stStop();r.classList.add("talk");const u=new SpeechSynthesisUtterance(r.querySelector(".fr").textContent);u.lang="fr-FR";u.rate=.9;
-  u.pitch=r.classList.contains("A")?1.3:.9;u.onend=u.onerror=()=>r.classList.remove("talk");speechSynthesis.speak(u)}
+function stGo(d){stI=Math.max(0,Math.min(book().ch.length-1,stI+d));drawDL();scrollTo({top:0,behavior:"smooth"})}
+function say(r,done){const u=new SpeechSynthesisUtterance(r.querySelector(".fr").textContent);u.lang="fr-FR";u.rate=.9;u.pitch=+r.dataset.p;r.classList.add("talk");
+  u.onend=u.onerror=()=>{r.classList.remove("talk");done&&done()};speechSynthesis.speak(u)}
+function stSay(r){if(!window.speechSynthesis)return;stStop();say(r)}
 function stStop(){stPlay++;window.speechSynthesis&&speechSynthesis.cancel();document.querySelectorAll("#dlList .row.talk").forEach(r=>r.classList.remove("talk"));const b=$("stPlay");if(b){b.dataset.on="";b.textContent="▶ Écouter l'histoire"}}
 function stToggle(){const b=$("stPlay");if(b.dataset.on==="1")return stStop();
   if(!window.speechSynthesis)return;stStop();b.dataset.on="1";b.textContent="⏸ Arrêter";const id=stPlay,rows=[...document.querySelectorAll("#dlList .row")];
-  (function next(i){if(id!==stPlay)return;if(i>=rows.length)return stStop();
-    const r=rows[i];r.classList.add("talk");const u=new SpeechSynthesisUtterance(r.querySelector(".fr").textContent);u.lang="fr-FR";u.rate=.9;
-    u.pitch=r.classList.contains("A")?1.3:.9;u.onend=u.onerror=()=>{r.classList.remove("talk");next(i+1)};speechSynthesis.speak(u)})(0)}
+  (function next(i){if(id!==stPlay)return;if(i>=rows.length)return stStop();say(rows[i],()=>next(i+1))})(0)}
 $("dlTense").onchange=e=>{stI=+e.target.value;drawDL()};$("dlHide").onchange=drawDL;
+fillSel();drawShelf();
 
 // ---------------- CONJUGATION ----------------
 const TN=["Présent","Passé composé","Imparfait","Futur simple","Conditionnel"];
