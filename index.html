@@ -121,6 +121,11 @@ table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--li
 <section id="interview"><div class="card"><h2>Entretien d'assimilation : questions fréquentes</h2>
 <p class="muted">Lisez la question, répondez à voix haute, puis comparez avec le modèle. Adaptez les réponses à votre histoire personnelle.</p><div id="ivList"></div></div></section>
 
+<section id="hist"><div class="card"><h2>History &amp; Current Affairs</h2>
+<p class="muted">Histoire de France et cadre constitutionnel / juridique. Révisez avec les flashcards et le QCM (thèmes « Histoire » et « Institutions »).</p>
+<button class="btn" id="hsT0" onclick="hsGo(0)">📜 History</button><button class="btn ghost" id="hsT1" onclick="hsGo(1)">⚖️ Current Affairs</button></div>
+<div id="hsBody"></div></section>
+
 <section id="dialogues"><div class="card"><h2>Histoires illustrées</h2><div id="bkShelf" class="shelf"></div><select id="dlTense"></select> <label><input type="checkbox" id="dlHide"> Masquer l'anglais</label></div><div id="dlList"></div></section>
 
 <section id="conj"><div class="card"><h2>Conjugaison</h2>
@@ -583,7 +588,7 @@ const $=id=>document.getElementById(id);
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
-const TABS=[["home","🏠 Accueil"],["sources","🔗 Sources"],["flash","🃏 Flashcards"],["quiz","✅ QCM / Examen blanc"],["interview","🗣️ Entretien"],["dialogues","💬 Dialogues"],["conj","📚 Conjugaison"]];
+const TABS=[["home","🏠 Accueil"],["sources","🔗 Sources"],["flash","🃏 Flashcards"],["quiz","✅ QCM / Examen blanc"],["interview","🗣️ Entretien"],["hist","📜 History &amp; Current Affairs"],["dialogues","💬 Dialogues"],["conj","📚 Conjugaison"]];
 $("nav").innerHTML=TABS.map(([k,l])=>`<button data-t="${k}">${l}</button>`).join("");
 function show(k){document.querySelectorAll("section").forEach(s=>s.classList.toggle("active",s.id===k));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.t===k));if(k==="home")renderStats();location.hash=k}
 $("nav").onclick=e=>e.target.dataset.t&&show(e.target.dataset.t);
@@ -667,6 +672,88 @@ function endQuiz(){clearInterval(tmr);const pct=Math.round(qz.score/qz.items.len
 
 // ---------------- INTERVIEW ----------------
 $("ivList").innerHTML=IV.map(([q,a],i)=>`<div class="card"><b>${i+1}. ${esc(q)}</b><br><button class="btn ghost" onclick="this.nextElementSibling.hidden=!this.nextElementSibling.hidden">Voir un modèle de réponse</button><p hidden>${esc(a)}</p></div>`).join("");
+
+// ---------------- HISTORY & CURRENT AFFAIRS ----------------
+const HS_TIME=[
+["52 av. J.-C.","Vercingétorix, chef gaulois, est vaincu par Jules César à Alésia : la Gaule devient romaine."],
+["vers 496","Baptême de Clovis, roi des Francs : début de la royauté chrétienne en France."],
+["800","Charlemagne est couronné empereur à Rome."],
+["987","Hugues Capet devient roi : début de la dynastie des Capétiens."],
+["1337–1453","Guerre de Cent Ans contre l'Angleterre. Jeanne d'Arc délivre Orléans (1429) ; elle est brûlée à Rouen (1431)."],
+["1515","Victoire de François Ier à Marignan ; début de la Renaissance en France."],
+["1598","Édit de Nantes (Henri IV) : tolérance envers les protestants, révoqué en 1685."],
+["1643–1715","Règne de Louis XIV, le Roi-Soleil ; château de Versailles."],
+["XVIIIᵉ siècle","Siècle des Lumières : Voltaire, Rousseau, Montesquieu, Diderot (l'Encyclopédie)."],
+["1789","Révolution française : prise de la Bastille (14 juillet), abolition des privilèges (4 août), Déclaration des droits de l'homme et du citoyen (26 août)."],
+["1792–1793","Proclamation de la Iʳᵉ République (22 septembre 1792). La Marseillaise (Rouget de Lisle, 1792). Louis XVI est exécuté en 1793."],
+["1804","Napoléon Bonaparte est sacré empereur ; Code civil. Défaite finale à Waterloo en 1815."],
+["1848","IIᵉ République : abolition définitive de l'esclavage (27 avril, Victor Schœlcher) et suffrage universel masculin."],
+["1870","Défaite de Sedan, chute de Napoléon III ; naissance de la IIIᵉ République."],
+["1881–1882","Lois de Jules Ferry : école publique gratuite, laïque et obligatoire."],
+["1905","Loi de séparation des Églises et de l'État (9 décembre) : laïcité."],
+["1914–1918","Première Guerre mondiale ; armistice du 11 novembre 1918."],
+["1940","Défaite, régime de Vichy (Pétain). Appel du 18 juin du général de Gaulle depuis Londres. Jean Moulin unifie la Résistance."],
+["1944–1945","Débarquement (6 juin 1944), Libération de Paris (août 1944). Droit de vote des femmes (ordonnance de 1944, premier vote en 1945). Fin de la guerre en Europe le 8 mai 1945."],
+["1946","IVᵉ République ; Préambule de la Constitution (droits économiques et sociaux, égalité femmes-hommes)."],
+["1957","Traité de Rome : la France est membre fondateur de la CEE (future Union européenne)."],
+["1958","Constitution de la Vᵉ République (4 octobre), de Gaulle premier président (1959-1969)."],
+["1962","Le président de la République est élu au suffrage universel direct (référendum)."],
+["1968","Mai 68 : mouvement étudiant et grève générale."],
+["1974","Majorité à 18 ans (vote à 18 ans)."],
+["1975","Loi Veil sur l'interruption volontaire de grossesse (IVG)."],
+["1981","Abolition de la peine de mort (loi Badinter), présidence de François Mitterrand."],
+["1992–2002","Traité de Maastricht (1992) ; l'euro en circulation depuis 2002 ; quinquennat (référendum 2000, appliqué 2002)."],
+["1999","Création du PACS (pacte civil de solidarité)."],
+["2004","Loi interdisant les signes religieux ostensibles à l'école publique ; Charte de l'environnement (2005 dans la Constitution)."],
+["2013","Loi du 17 mai : mariage pour tous."],
+["2016","Réforme territoriale : 13 régions en métropole (18 avec l'outre-mer)."],
+["2019–2024","Incendie de Notre-Dame (2019), réouverture en décembre 2024 ; Jeux olympiques de Paris (été 2024)."]];
+const HS_FIG=[
+["Clovis","Premier roi des Francs chrétien"],["Charlemagne","Empereur (800), école et administration"],["Jeanne d'Arc","Héroïne de la guerre de Cent Ans"],["Louis XIV","Le Roi-Soleil, Versailles"],
+["Voltaire, Rousseau, Montesquieu","Philosophes des Lumières"],["Napoléon Bonaparte","Empereur, Code civil (1804)"],["Victor Hugo","Écrivain, « Les Misérables » (1862)"],["Victor Schœlcher","Abolition de l'esclavage (1848)"],
+["Louis Pasteur","Vaccin, microbiologie"],["Jules Ferry","École gratuite, laïque, obligatoire"],["Georges Clemenceau","« Le Tigre », Premier ministre de la victoire de 1918"],["Charles de Gaulle","Appel du 18 juin, fondateur de la Vᵉ République"],
+["Jean Moulin","Chef de la Résistance, au Panthéon"],["Marie Curie","Deux prix Nobel, au Panthéon"],["Simone Veil","Loi sur l'IVG (1975), rescapée de la Shoah"],["Robert Badinter","Abolition de la peine de mort (1981)"],["Robert Schuman","Père de l'Europe (déclaration du 9 mai 1950)"]];
+const HS_DATES=[
+["1ᵉʳ janvier","Jour de l'An"],["Lundi de Pâques · Ascension · lundi de Pentecôte","Fêtes religieuses fériées (dates variables)"],["1ᵉʳ mai","Fête du Travail"],["8 mai","Victoire de 1945"],["14 juillet","Fête nationale (Bastille 1789, Fête de la Fédération 1790)"],["15 août","Assomption"],["1ᵉʳ novembre","Toussaint"],["11 novembre","Armistice de 1918"],["25 décembre","Noël"]];
+const HS_LAW=[
+["Principes et textes fondateurs",[
+ "<b>Constitution du 4 octobre 1958</b> (Vᵉ République). Art. 1ᵉʳ : la France est une République <b>indivisible, laïque, démocratique et sociale</b>.",
+ "<b>Art. 2</b> : langue = français ; emblème = drapeau tricolore ; hymne = La Marseillaise ; devise = Liberté, Égalité, Fraternité ; principe = gouvernement du peuple, par le peuple et pour le peuple.",
+ "<b>Bloc de constitutionnalité</b> : Constitution + Déclaration des droits de l'homme et du citoyen (1789) + Préambule de 1946 + Charte de l'environnement (2004).",
+ "Souveraineté nationale : elle appartient au peuple, par ses représentants et par la voie du référendum (art. 3)."]],
+["Les pouvoirs",[
+ "<b>Exécutif</b> : le Président (5 ans, suffrage universel direct, deux tours, deux mandats consécutifs maximum) nomme le Premier ministre, préside le Conseil des ministres, promulgue les lois, est chef des armées, peut dissoudre l'Assemblée (art. 12) et organiser un référendum (art. 11). Le Gouvernement conduit la politique de la nation.",
+ "<b>Législatif</b> : le Parlement vote la loi et contrôle le Gouvernement. <b>Assemblée nationale</b> : 577 députés, élus 5 ans au suffrage direct (Palais Bourbon). <b>Sénat</b> : 348 sénateurs, élus 6 ans au suffrage indirect, renouvelé par moitié tous les 3 ans (Palais du Luxembourg). L'Assemblée peut renverser le Gouvernement par une motion de censure (art. 49).",
+ "<b>Judiciaire</b> : justice indépendante, rendue au nom du peuple français. Cour de cassation (justice civile et pénale), <b>Conseil d'État</b> (justice administrative).",
+ "<b>Conseil constitutionnel</b> : 9 membres nommés pour 9 ans, contrôle la conformité des lois à la Constitution et veille aux élections. <b>Défenseur des droits</b> : lutte contre les discriminations."]],
+["Élections et collectivités",[
+ "Mandats : présidentielle 5 ans · législatives 5 ans · européennes 5 ans · municipales, départementales, régionales 6 ans. Prochaine présidentielle : 2027.",
+ "Vote à 18 ans, sur inscription sur les listes électorales ; le vote est un droit et un devoir civique, non obligatoire.",
+ "~35 000 communes (maire élu par le conseil municipal), 101 départements, 18 régions (13 en métropole). Le <b>préfet</b>, nommé par décret du Président, représente l'État dans le département.",
+ "Union européenne : membre fondateur (Traité de Rome, 1957), monnaie = euro, drapeau = 12 étoiles dorées sur fond bleu. Les citoyens de l'UE résidant en France votent aux municipales et aux européennes."]],
+["Lois marquantes",[
+ "<b>1881</b> liberté de la presse · <b>1901</b> liberté d'association · <b>1905</b> séparation des Églises et de l'État · <b>1975</b> IVG · <b>1981</b> abolition de la peine de mort · <b>1999</b> PACS · <b>2004</b> signes religieux à l'école · <b>2010</b> interdiction de dissimuler son visage dans l'espace public · <b>2013</b> mariage pour tous.",
+ "Mariage : le mariage civil en mairie est obligatoire avant toute cérémonie religieuse ; âge minimal 18 ans ; mariage forcé et polygamie interdits.",
+ "Égalité : discrimination (origine, religion, sexe, handicap…) punie par la loi ; égalité femmes-hommes garantie par le Préambule de 1946."]],
+["Droits et devoirs du citoyen",[
+ "<b>Droits</b> : liberté d'expression (dans le respect de la loi : ni diffamation, ni injure, ni appel à la haine), liberté de conscience et de culte, égalité devant la loi, présomption d'innocence, sûreté, propriété, droit de grève et syndicats, droit à l'éducation et à la santé.",
+ "<b>Devoirs</b> : respecter la loi, payer ses impôts (art. 13 DDHC), scolariser ses enfants (instruction obligatoire de 3 à 16 ans, formation jusqu'à 18 ans), participer à la défense (JDC à 16-18 ans), être juré d'assises si tiré au sort, respecter la laïcité et l'environnement.",
+ "<b>Laïcité</b> : l'État est neutre, garantit la liberté de croire ou de ne pas croire ; les agents publics doivent la neutralité ; les usagers peuvent porter des signes religieux, sauf élèves de l'école publique (loi de 2004).",
+ "Un Français naturalisé a les mêmes droits et devoirs que tout autre Français."]],
+["Naturalisation (Code civil, art. 21 et suivants)",[
+ "Par décret, après <b>5 ans de résidence</b> en France (réductions possibles, par ex. 2 ans après deux années d'études supérieures réussies en France), majeur, résidence stable, bonnes mœurs, pas de condamnation incompatible.",
+ "<b>Assimilation</b> : langue (niveau <b>B2</b> depuis le 1ᵉʳ janvier 2026), histoire, culture, société françaises, adhésion aux principes et valeurs de la République ; <b>examen civique</b> (40 QCM, 32 bonnes réponses) et <b>entretien d'assimilation</b> en préfecture. Charte des droits et devoirs du citoyen français.",
+ "Par mariage avec un(e) Français(e) : déclaration après 4 ans de mariage et de vie commune (art. 21-2), sous conditions de langue et d'assimilation."]],
+["Numéros d'urgence",[
+ "<b>15</b> SAMU · <b>17</b> police · <b>18</b> pompiers · <b>112</b> urgence européenne · <b>119</b> enfance en danger · <b>3919</b> violences faites aux femmes · <b>114</b> urgences par SMS pour sourds et malentendants."]]];
+let hsI=0;
+function hsGo(i){hsI=i;$("hsT0").classList.toggle("ghost",i!==0);$("hsT1").classList.toggle("ghost",i!==1);
+ $("hsBody").innerHTML=i===0
+  ?`<div class="card"><h3>Chronologie</h3><table>${HS_TIME.map(([y,t])=>`<tr><td style="white-space:nowrap;width:130px"><span class="tag">${esc(y)}</span></td><td>${esc(t)}</td></tr>`).join("")}</table></div>`+
+   `<div class="card"><h3>Grandes figures</h3><div class="grid">${HS_FIG.map(([n,d])=>`<div class="k"><b style="font-size:17px">${esc(n)}</b><small>${esc(d)}</small></div>`).join("")}</div></div>`+
+   `<div class="card"><h3>Jours fériés et dates à retenir</h3><table>${HS_DATES.map(([d,t])=>`<tr><td style="width:260px"><b>${esc(d)}</b></td><td>${esc(t)}</td></tr>`).join("")}</table></div>`
+  :HS_LAW.map(([h,items])=>`<div class="card"><h3>${esc(h)}</h3><ul>${items.map(x=>`<li style="margin:8px 0">${x}</li>`).join("")}</ul></div>`).join("")}
+hsGo(0);
 
 // ---------------- DIALOGUES (storybook library) ----------------
 const ROBOT='<line x1="40" y1="6" x2="40" y2="16" stroke="#8b93ff" stroke-width="3"/><circle class="ant" cx="40" cy="6" r="4.5" fill="#ff7a59"/><rect x="14" y="16" width="52" height="42" rx="14" fill="#e9ebff" stroke="#8b93ff" stroke-width="3"/><rect x="21" y="26" width="38" height="22" rx="10" fill="#1b1d3a"/><g class="eyes"><circle cx="32" cy="37" r="4.5" fill="#6ff0ff"/><circle cx="48" cy="37" r="4.5" fill="#6ff0ff"/></g><path class="mouth" d="M34 44q6 4 12 0" stroke="#6ff0ff" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M20 90c0-18 8-26 20-26s20 8 20 26z" fill="#8b93ff"/><circle cx="40" cy="76" r="4" fill="#6ff0ff" class="ant"/>';
