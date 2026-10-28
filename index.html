@@ -131,6 +131,7 @@ table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--li
 <section id="conj"><div class="card"><h2>Conjugaison</h2>
 <select id="cjVerb"></select> <select id="cjTense"></select> <span id="cjTools" hidden><button class="btn ghost" id="cjEdit">✏️ Modifier</button> <button class="btn ghost" id="cjDel">🗑 Supprimer</button></span>
 <div style="margin-top:10px"><input id="cjNew" autocomplete="off" placeholder="Nouveau verbe, ex. travailler, se laver"> <button class="btn" id="cjAdd">➕ Ajouter</button> <span id="cjMsg" class="muted"></span></div><div id="cjTable" style="margin-top:10px"></div></div>
+<div class="card"><h3>Phrases</h3><p class="muted">10 phrases par temps pour le verbe choisi ci-dessus.</p><div id="snTabs"></div><div style="display:flex;gap:28px;flex-wrap:wrap;margin-top:6px"><div id="snList" style="flex:1 1 320px"></div><div id="snStory" style="flex:1 1 320px;align-self:flex-start;margin-top:14px;padding:14px 18px;border-left:3px solid var(--blue);background:var(--side);border-radius:8px"></div></div></div>
 <div class="card"><h3>Exercice</h3><div id="cjDrill"></div></div>
 <div class="card"><h3>Rappels</h3><ul>
 <li><b>Présent</b>: action habituelle ou en cours. <i>Je travaille à Paris.</i></li>
@@ -578,7 +579,7 @@ const V={
 "savoir":{"Présent":["sais","sais","sait","savons","savez","savent"],"Passé composé":["ai su","as su","a su","avons su","avez su","ont su"],"Imparfait":["savais","savais","savait","savions","saviez","savaient"],"Futur simple":["saurai","sauras","saura","saurons","saurez","sauront"],"Conditionnel":["saurais","saurais","saurait","saurions","sauriez","sauraient"]},
 "voir":{"Présent":["vois","vois","voit","voyons","voyez","voient"],"Passé composé":["ai vu","as vu","a vu","avons vu","avez vu","ont vu"],"Imparfait":["voyais","voyais","voyait","voyions","voyiez","voyaient"],"Futur simple":["verrai","verras","verra","verrons","verrez","verront"],"Conditionnel":["verrais","verrais","verrait","verrions","verriez","verraient"]},
 "habiter":{"Présent":["habite","habites","habite","habitons","habitez","habitent"],"Passé composé":["ai habité","as habité","a habité","avons habité","avez habité","ont habité"],"Imparfait":["habitais","habitais","habitait","habitions","habitiez","habitaient"],"Futur simple":["habiterai","habiteras","habitera","habiterons","habiterez","habiteront"],"Conditionnel":["habiterais","habiterais","habiterait","habiterions","habiteriez","habiteraient"]},
-"se lever":{"Présent":["me lève","te lèves","se lève","nous levons","vous levez","se lèvent"],"Passé composé":["me suis levé(e)","t'es levé(e)","s'est levé(e)","nous sommes levé(e)s","vous êtes levé(e)(s)","se sont levé(e)s"],"Imparfait":["me levais","te levais","se levait","nous levions","vous leviez","se levaient"],"Futur simple":["me lèverai","te lèveras","se lèvera","nous lèverons","vous lèverez","se lèveront"],"Conditionnel":["me lèverais","te lèverais","se lèverait","nous lèverions","vous lèveriez","se lèveraient"]}
+"se lever":{"Présent":["me lève","te lèves","se lève","nous levons","vous levez","se lèvent"],"Passé composé":["me suis levé(e)","t'es levé(e)","s'est levé(e)","nous nous sommes levé(e)s","vous vous êtes levé(e)(s)","se sont levé(e)s"],"Imparfait":["me levais","te levais","se levait","nous levions","vous leviez","se levaient"],"Futur simple":["me lèverai","te lèveras","se lèvera","nous lèverons","vous lèverez","se lèveront"],"Conditionnel":["me lèverais","te lèverais","se lèverait","nous lèverions","vous lèveriez","se lèveraient"]}
 };
 
 // ---------------- STATE ----------------
@@ -823,7 +824,57 @@ let cjEditing=false; // edit mode: only for user-added verbs, turns table cells 
 function drawCJ(){const v=$("cjVerb").value,t=$("cjTense").value,ts=t?[t]:TN,own=!!store.verbs[v],ed=cjEditing&&own;
   $("cjTools").hidden=!own;$("cjEdit").textContent=ed?"💾 Enregistrer":"✏️ Modifier";
   $("cjTable").innerHTML="<table><tr><th></th>"+ts.map(x=>`<th>${x}</th>`).join("")+"</tr>"+
-   P.map((p,i)=>`<tr><td><b>${p}</b></td>`+ts.map(x=>`<td>${ed?`<input data-t="${x}" data-i="${i}" value="${esc(V[v][x][i])}" style="width:100%">`:esc(V[v][x][i])}</td>`).join("")+"</tr>").join("")+"</table>"}
+   P.map((p,i)=>`<tr><td><b>${p}</b></td>`+ts.map(x=>`<td>${ed?`<input data-t="${x}" data-i="${i}" value="${esc(V[v][x][i])}" style="width:100%">`:esc(V[v][x][i])}</td>`).join("")+"</tr>").join("")+"</table>";drawSN()}
+// Sentences: 10 per verb per tense, built from the conjugation table so the verb forms always match the table above
+const SC={
+"être":["à Paris","en France","à la maison","au travail","chez le médecin","à la mairie","en retard","à l'heure","dans le salon","en vacances"],
+"avoir":["deux enfants","un chat","un passeport français","de la chance","faim","besoin d'aide","un rendez-vous à la préfecture","une voiture","du temps libre","raison"],
+"aller":["à la préfecture","au marché","à l'école","en France","chez le dentiste","à la mairie","au cinéma","à la gare","au travail à pied","à Lyon"],
+"faire":["la cuisine","du sport","les courses","un gâteau","un effort","une promenade","le ménage","attention","la queue","un voyage"],
+"parler":["français","avec le voisin","au téléphone","de la France","de politique","à la directrice","avec l'agent","de l'histoire de France","lentement","anglais"],
+"finir":["le livre","le repas","le dossier","la réunion","à l'heure","les devoirs","le projet","la leçon","le café","l'examen"],
+"prendre":["le train","le métro","un café","des notes","une photo","le bus","un médicament","une douche","du temps","une décision"],
+"venir":["à la fête","d'Italie","avec un ami","en avance","à pied","à la réunion","en voiture","au cours de français","ici","à la mairie"],
+"pouvoir":["aider un ami","voter en France","répondre à la question","parler français","attendre","conduire","ouvrir la fenêtre","partir tôt","lire ce texte","payer par carte"],
+"vouloir":["un café","devenir français","apprendre le français","voyager","un nouvel appartement","de l'eau","voter","travailler à Paris","voir la mer","une réponse"],
+"devoir":["payer les impôts","remplir un formulaire","partir tôt","respecter la loi","travailler","attendre","apporter des documents","étudier l'histoire","répondre au courrier","signer le contrat"],
+"savoir":["la réponse","nager","la vérité","conduire","l'hymne national","lire le français","cuisiner","chanter La Marseillaise","où est la mairie","le chemin"],
+"voir":["un ami","la tour Eiffel","un film","le médecin","la mer","le président","un accident","des amis","le problème","un spectacle"],
+"habiter":["à Paris","près de la gare","en France","dans un petit appartement","à Lyon","en banlieue","au centre-ville","dans une maison","loin du bureau","à Marseille"],
+"se lever":["tôt","tard","à sept heures","à six heures et demie","vers huit heures","avant le soleil","en retard","à l'aube","de bonne heure","à midi"]};
+const SPAT=[0,1,2,3,4,5,0,2,5,3]; // person index per sentence: every person appears at least once
+const SPF={"Présent":["Aujourd'hui, ","D'habitude, "],"Passé composé":["Hier, ","La semaine dernière, "],"Imparfait":["Autrefois, ","À cette époque, "],"Futur simple":["Demain, ","L'année prochaine, "],"Conditionnel":["Avec plus de temps, ","Si c'était possible, "]};
+let snT=0;
+// Added verbs: transitivity is unknown, so use adverbial endings that fit almost any verb
+const SCG=["avec plaisir","sans difficulté","avec attention","en silence","avec des amis","très bien","rapidement","à la maison","avec courage","calmement"];
+function sentences(v,t){const c=SC[v]||SCG;
+  return c.map((x,k)=>{const i=SPAT[k],f=V[v][t][i],
+    s=/^(nous|vous) /.test(f)?f:i===0?(/^[aeéèêiîoôuh]/.test(f)?"j'"+f:"je "+f):
+      (["","tu",k%2?"elle":"il","nous","vous",k%2?"elles":"ils"][i])+" "+f;
+    return SPF[t][k%2]+s+" "+x+"."})}
+// Mini story per verb x tense: Karim, Léa, then both; verb forms come from the table so every tense stays correct
+const STC={"être":["à la mairie","chez le médecin","à la maison"],"avoir":["un rendez-vous à la préfecture","de la chance","un passeport français"],
+"aller":["à la mairie","à la gare","à la préfecture"],"faire":["les courses","un gâteau","une promenade"],
+"parler":["français avec le voisin","à la directrice","de l'histoire de France"],"finir":["le dossier","les devoirs","le repas"],
+"prendre":["le train","le bus","un café à la gare"],"venir":["à pied","en voiture","à la réunion"],
+"pouvoir":["aider un ami","parler français","voter en France"],"vouloir":["devenir français","apprendre le français","un nouvel appartement"],
+"devoir":["remplir un formulaire","apporter des documents","respecter la loi"],"savoir":["la réponse","chanter La Marseillaise","où est la mairie"],
+"voir":["la tour Eiffel","un film","des amis"],"habiter":["à Paris","près de la gare","en France"],"se lever":["à sept heures","tôt","à l'aube"]};
+// Narrator (je), his friend Finch (il), Léa (elle), tu / nous / vous / ils: 8 long sentences mixing 1st, 2nd and 3rd person
+const ag=(s,fem)=>s.replace(/\(e\)\(s\)/g,"s").replace(/\(e\)s/g,"s").replace(/\(e\)/g,fem?"e":"");
+function story(v,t){const f=V[v][t],h=STC[v],
+  c=h?h.concat(SC[v].filter(x=>!h.includes(x))).slice(0,9):SCG.slice(0,9), // 3 hand-picked + spare sentence endings
+  S=(i,x)=>ag(/^(nous|vous) /.test(x)?x:i===0?(/^[aeéèêiîoôuh]/.test(x)?"j'"+x:"je "+x):["","tu","","nous","vous"][i]+" "+x),
+  a=ag(f[2]),b=ag(f[2],1),p=ag(f[5]);
+  return [`${SPF[t][0]}${S(0,f[0])} ${c[0]}, un carnet sous le bras.`,`Mon ami Finch ${a} ${c[1]}, sans jamais se presser.`,
+    `Léa, elle, ${b} ${c[2]}, avec beaucoup de sérieux.`,`Toi, ${S(1,f[1])} ${c[3]}, devant tout le monde.`,
+    `Ensemble, ${S(3,f[3])} ${c[4]}, malgré la fatigue.`,`Vous aussi, ${S(4,f[4])} ${c[5]}, à votre façon.`,
+    `Léa et Finch ${p} ${c[6]}, sous les yeux de tout le monde.`,`Enfin, ils ${p} ${c[7]}, et moi, ${S(0,f[0])} ${c[8]}, comme prévu.`].join(" ")}
+function drawSN(){const v=$("cjVerb").value,L=sentences(v,TN[snT]);
+  $("snTabs").innerHTML=TN.map((x,i)=>`<button class="btn${i===snT?"":" ghost"}" onclick="snGo(${i})">${x}</button>`).join(" ");
+  $("snList").innerHTML=`<ol>${L.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>`+(SC[v]?"":`<p class="muted">Phrases génériques pour un verbe ajouté.</p>`);
+  $("snStory").innerHTML=`<span class="tag">📖 Petite histoire · ${TN[snT]}</span><p style="margin:8px 0 0;line-height:1.7">${esc(story(v,TN[snT]))}</p>`}
+function snGo(i){snT=i;drawSN()}
 $("cjEdit").onclick=()=>{const v=$("cjVerb").value;
   if(cjEditing){$("cjTable").querySelectorAll("input").forEach(e=>{const f=e.value.trim();if(f)store.verbs[v][e.dataset.t][+e.dataset.i]=f});save();$("cjMsg").textContent="✓ Corrections enregistrées."}
   cjEditing=!cjEditing;drawCJ()};
