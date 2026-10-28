@@ -71,6 +71,7 @@ table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--li
 .row.talk .bub{outline:2px solid var(--blue)}
 .spk{float:right;margin:0 0 4px 10px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:50%;width:30px;height:30px;font-size:14px;line-height:1;cursor:pointer;transition:background .15s}
 .row.R .spk{float:left;margin:0 10px 4px 0}
+.spk.in{float:none;margin:0 6px 0 0;vertical-align:middle;width:26px;height:26px;font-size:12px}
 .spk:hover,.row.talk .spk{background:var(--blue);border-color:var(--blue)}
 .row.talk .av-svg{animation:talk .35s ease-in-out infinite}
 .shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin:12px 0}
@@ -591,7 +592,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 
 const TABS=[["home","🏠 Accueil"],["sources","🔗 Sources"],["flash","🃏 Flashcards"],["quiz","✅ QCM / Examen blanc"],["interview","🗣️ Entretien"],["hist","📜 History &amp; Current Affairs"],["dialogues","💬 Dialogues"],["conj","📚 Conjugaison"]];
 $("nav").innerHTML=TABS.map(([k,l])=>`<button data-t="${k}">${l}</button>`).join("");
-function show(k){document.querySelectorAll("section").forEach(s=>s.classList.toggle("active",s.id===k));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.t===k));if(k==="home")renderStats();location.hash=k}
+function show(k){document.querySelectorAll("section").forEach(s=>s.classList.toggle("active",s.id===k));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.t===k));if(k==="home")renderStats();location.hash=k;if(typeof stStop==="function"){stStop();document.querySelectorAll(".pgSpk").forEach(x=>{x.dataset.on="";x.textContent="🔊"})}}
 $("nav").onclick=e=>e.target.dataset.t&&show(e.target.dataset.t);
 
 {const nw=Q.filter(isNew),O=window.OFFICIAL;
@@ -659,7 +660,7 @@ function startQuiz(){
   if(n===40){let s=45*60;tmr=setInterval(()=>{s--;$("timer").textContent=`⏱ ${s/60|0}:${String(s%60).padStart(2,"0")}`;if(s<=0){clearInterval(tmr);endQuiz()}},1000)}
   drawQuiz()}
 function drawQuiz(){const it=qz.items[qz.i];
-  $("qzBox").innerHTML=`<div class="muted">Question ${qz.i+1}/${qz.items.length} · Score ${qz.score}</div><span class="tag">${T[it.q[0]]}</span><h3>${esc(it.q[1])}</h3>`+
+  $("qzBox").innerHTML=`<div class="muted">Question ${qz.i+1}/${qz.items.length} · Score ${qz.score}</div><span class="tag">${T[it.q[0]]}</span><h3><button class="spk pgSpk" style="float:none;margin:0 10px 0 0;vertical-align:middle" title="Lire la question" aria-label="Lire la question" onclick="pgRead(this,[this.parentNode.textContent,...[...$('qzBox').querySelectorAll('.opt')].map(o=>o.textContent)])">🔊</button>${esc(it.q[1])}</h3>`+
    it.o.map((o,j)=>`<button class="opt" data-j="${j}">${"ABCD"[j]}. ${esc(o[0])}</button>`).join("")+`<div id="qzFb"></div>`;
   $("qzBox").querySelectorAll(".opt").forEach(b=>b.onclick=()=>answer(+b.dataset.j))}
 function answer(j){const it=qz.items[qz.i],btns=$("qzBox").querySelectorAll(".opt");if(btns[0].disabled)return;
@@ -672,7 +673,7 @@ function endQuiz(){clearInterval(tmr);const pct=Math.round(qz.score/qz.items.len
    (qz.wrong.length?"<h3>À revoir</h3>"+qz.wrong.map(q=>`<div class="line">• ${esc(q[1])} → <b>${esc(q[2][q[3]])}</b></div>`).join(""):"")}
 
 // ---------------- INTERVIEW ----------------
-$("ivList").innerHTML=IV.map(([q,a],i)=>`<div class="card"><b>${i+1}. ${esc(q)}</b><br><button class="btn ghost" onclick="this.nextElementSibling.hidden=!this.nextElementSibling.hidden">Voir un modèle de réponse</button><p hidden>${esc(a)}</p></div>`).join("");
+$("ivList").innerHTML=IV.map(([q,a],i)=>`<div class="card"><button class="spk pgSpk" style="float:none;margin:0 8px 0 0;vertical-align:middle" title="Lire" aria-label="Lire la question" onclick="const p=this.parentNode.querySelector('p');pgRead(this,[this.nextElementSibling.textContent.replace(/^\\d+\\.\\s*/,''),...(p.hidden?[]:[p.textContent])])">🔊</button><b>${i+1}. ${esc(q)}</b><br><button class="btn ghost" onclick="this.nextElementSibling.hidden=!this.nextElementSibling.hidden">Voir un modèle de réponse</button><p hidden>${esc(a)}</p></div>`).join("");
 
 // ---------------- HISTORY & CURRENT AFFAIRS ----------------
 const HS_TIME=[
@@ -781,7 +782,12 @@ function drawDL(){stStop();const bk=book(),n=bk.ch.length,[ti,te,nar,ls]=bk.ch[s
   `<div class="nav"><button class="btn ghost" onclick="stGo(-1)" ${stI?"":"disabled"}>◀ Précédent</button><button class="btn" id="stPlay" onclick="stToggle()">▶ Écouter l'histoire</button><button class="btn ghost" onclick="stGo(1)" ${stI<n-1?"":"disabled"}>Suivant ▶</button></div></article>`;
   $("dlTense").value=stI}
 function stGo(d){stI=Math.max(0,Math.min(book().ch.length-1,stI+d));drawDL();scrollTo({top:0,behavior:"smooth"})}
-function say(r,done){const u=new SpeechSynthesisUtterance(r.querySelector(".fr").textContent);u.lang="fr-FR";u.rate=.9;u.pitch=+r.dataset.p;r.classList.add("talk");
+// Best French voice: Edge's neural "Online (Natural)" voices (Denise, Vivienne, Henri…) sound human; old desktop SAPI voices sound robotic
+function frVoice(){const vs=(window.speechSynthesis?speechSynthesis.getVoices():[]).filter(v=>/^fr[-_]FR/i.test(v.lang)),
+  rank=v=>(/natural/i.test(v.name)?4:0)+(/online|google/i.test(v.name)?2:0)+(/denise|vivienne/i.test(v.name)?1:0);
+  return vs.sort((a,b)=>rank(b)-rank(a))[0]||null}
+window.speechSynthesis&&speechSynthesis.getVoices();
+function say(r,done){const u=new SpeechSynthesisUtterance(r.querySelector(".fr").textContent);u.lang="fr-FR";u.voice=frVoice();u.rate=.95;u.pitch=+r.dataset.p;r.classList.add("talk");
   u.onend=u.onerror=()=>{r.classList.remove("talk");done&&done()};speechSynthesis.speak(u)}
 function stSay(r){if(!window.speechSynthesis)return;stStop();say(r)}
 function stStop(){stPlay++;window.speechSynthesis&&speechSynthesis.cancel();document.querySelectorAll("#dlList .row.talk").forEach(r=>r.classList.remove("talk"));const b=$("stPlay");if(b){b.dataset.on="";b.textContent="▶ Écouter l'histoire"}}
@@ -789,6 +795,19 @@ function stToggle(){const b=$("stPlay");if(b.dataset.on==="1")return stStop();
   if(!window.speechSynthesis)return;stStop();b.dataset.on="1";b.textContent="⏸ Arrêter";const id=stPlay,rows=[...document.querySelectorAll("#dlList .row")];
   (function next(i){if(id!==stPlay)return;if(i>=rows.length)return stStop();say(rows[i],()=>next(i+1))})(0)}
 $("dlTense").onchange=e=>{stI=+e.target.value;drawDL()};$("dlHide").onchange=drawDL;
+// Page reader: 🔊 in each section's heading reads the visible text of that section, sentence by sentence
+// (Chrome cuts long utterances, so chunk). Clicking again stops.
+function pgRead(b,lines){const on=b.dataset.on==="1";stStop();document.querySelectorAll(".pgSpk").forEach(x=>{x.dataset.on="";x.textContent="🔊"});if(on||!window.speechSynthesis)return;
+  const s=b.closest("section"),c=s.cloneNode(true);c.querySelectorAll("button,select,script,style,input,.spk").forEach(e=>e.remove());
+  const parts=(lines?lines.join("\n").replace(/🔊|⏸/g,""):c.innerText||c.textContent).split(/(?<=[.!?…:])\s+|\n+/).map(t=>t.trim()).filter(t=>/\w/.test(t));
+  b.dataset.on="1";b.textContent="⏸";const id=stPlay;
+  (function next(i){if(id!==stPlay||i>=parts.length){b.dataset.on="";b.textContent="🔊";return}
+    const u=new SpeechSynthesisUtterance(parts[i]);u.lang="fr-FR";u.voice=frVoice();u.rate=.95;u.onend=u.onerror=()=>next(i+1);speechSynthesis.speak(u)})(0)}
+// Conjugaison: t = one tense column ("je suis, tu es…"), s = that tense's 10 sentences, h = petite histoire
+function cjRead(b,k,i){const v=$("cjVerb").value,t=TN[i];
+  pgRead(b,k==="t"?P.map((p,j)=>{const s=p.split("/")[0],f=V[v][t][j];return (s==="je"&&/^[aeéèêiîouhâ]/i.test(f)?"j'":s+" ")+f}):k==="s"?sentences(v,t):[story(v,t)])}
+document.querySelectorAll("section:not(#quiz):not(#interview):not(#conj)").forEach(s=>{const h=s.querySelector("h2");if(!h)return;const b=document.createElement("button");
+  b.className="spk pgSpk";b.textContent="🔊";b.title=b.ariaLabel="Lire la page à voix haute";b.onclick=()=>pgRead(b);h.prepend(b)});
 fillSel();drawShelf();
 
 // ---------------- CONJUGATION ----------------
@@ -823,7 +842,7 @@ $("cjTense").innerHTML='<option value="">Tous les temps</option>'+TN.map(t=>`<op
 let cjEditing=false; // edit mode: only for user-added verbs, turns table cells into inputs
 function drawCJ(){const v=$("cjVerb").value,t=$("cjTense").value,ts=t?[t]:TN,own=!!store.verbs[v],ed=cjEditing&&own;
   $("cjTools").hidden=!own;$("cjEdit").textContent=ed?"💾 Enregistrer":"✏️ Modifier";
-  $("cjTable").innerHTML="<table><tr><th></th>"+ts.map(x=>`<th>${x}</th>`).join("")+"</tr>"+
+  $("cjTable").innerHTML="<table><tr><th></th>"+ts.map(x=>`<th><button class="spk in pgSpk" title="Écouter ce temps" aria-label="Écouter ${x}" onclick="cjRead(this,'t',${TN.indexOf(x)})">🔊</button>${x}</th>`).join("")+"</tr>"+
    P.map((p,i)=>`<tr><td><b>${p}</b></td>`+ts.map(x=>`<td>${ed?`<input data-t="${x}" data-i="${i}" value="${esc(V[v][x][i])}" style="width:100%">`:esc(V[v][x][i])}</td>`).join("")+"</tr>").join("")+"</table>";drawSN()}
 // Sentences: 10 per verb per tense, built from the conjugation table so the verb forms always match the table above
 const SC={
@@ -871,9 +890,9 @@ function story(v,t){const f=V[v][t],h=STC[v],
     `Ensemble, ${S(3,f[3])} ${c[4]}, malgré la fatigue.`,`Vous aussi, ${S(4,f[4])} ${c[5]}, à votre façon.`,
     `Léa et Finch ${p} ${c[6]}, sous les yeux de tout le monde.`,`Enfin, ils ${p} ${c[7]}, et moi, ${S(0,f[0])} ${c[8]}, comme prévu.`].join(" ")}
 function drawSN(){const v=$("cjVerb").value,L=sentences(v,TN[snT]);
-  $("snTabs").innerHTML=TN.map((x,i)=>`<button class="btn${i===snT?"":" ghost"}" onclick="snGo(${i})">${x}</button>`).join(" ");
+  $("snTabs").innerHTML=TN.map((x,i)=>`<button class="btn${i===snT?"":" ghost"}" onclick="snGo(${i})">${x}</button><button class="spk in pgSpk" title="Écouter les phrases" aria-label="Écouter les phrases : ${x}" onclick="cjRead(this,'s',${i})">🔊</button>`).join(" ");
   $("snList").innerHTML=`<ol>${L.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>`+(SC[v]?"":`<p class="muted">Phrases génériques pour un verbe ajouté.</p>`);
-  $("snStory").innerHTML=`<span class="tag">📖 Petite histoire · ${TN[snT]}</span><p style="margin:8px 0 0;line-height:1.7">${esc(story(v,TN[snT]))}</p>`}
+  $("snStory").innerHTML=`<button class="spk in pgSpk" title="Écouter l'histoire" aria-label="Écouter l'histoire" onclick="cjRead(this,'h',${snT})">🔊</button><span class="tag">📖 Petite histoire · ${TN[snT]}</span><p style="margin:8px 0 0;line-height:1.7">${esc(story(v,TN[snT]))}</p>`}
 function snGo(i){snT=i;drawSN()}
 $("cjEdit").onclick=()=>{const v=$("cjVerb").value;
   if(cjEditing){$("cjTable").querySelectorAll("input").forEach(e=>{const f=e.value.trim();if(f)store.verbs[v][e.dataset.t][+e.dataset.i]=f});save();$("cjMsg").textContent="✓ Corrections enregistrées."}
