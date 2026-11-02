@@ -53,8 +53,14 @@ table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--li
 .bar{height:4px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:8px}.bar>i{display:block;height:100%;background:var(--blue)}
 .big{font:700 30px Georgia,serif}
 @media(max-width:820px){body{grid-template-columns:1fr}.side{position:static;height:auto}nav{flex-direction:row;flex-wrap:wrap}main{padding:20px}}
-#dlList{display:block;max-width:760px;margin:0 auto}
-.book{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 32px;box-shadow:0 2px 0 var(--line),0 12px 30px #0001}
+#dlList{display:block;width:100%;perspective:2200px}
+.book{position:relative;min-height:calc(100vh - 120px);background:linear-gradient(90deg,#0002 0,#0000 28px),var(--card);border:1px solid var(--line);border-radius:6px 14px 14px 6px;padding:40px clamp(28px,6vw,96px) 32px;box-shadow:-6px 0 0 var(--line),0 2px 0 var(--line),0 12px 30px #0001}
+.book.flipN{transform-origin:left center;animation:flipN .4s cubic-bezier(.33,1,.68,1)}
+.book.flipP{transform-origin:right center;animation:flipP .4s cubic-bezier(.33,1,.68,1)}
+@keyframes flipN{from{transform:rotateY(-70deg);opacity:.2}to{transform:none;opacity:1}}
+@keyframes flipP{from{transform:rotateY(70deg);opacity:.2}to{transform:none;opacity:1}}
+@media(prefers-reduced-motion:reduce){.book.flipN,.book.flipP{animation:none}}
+.book .pgno{text-align:center;font:600 12px Inter,Segoe UI;color:var(--muted);margin-top:18px}
 .book .chap{font:700 11px Inter,Segoe UI;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
 .book h3{font:700 28px/1.2 Georgia,serif;margin:6px 0 4px}
 .narr{font:italic 16px/1.6 Georgia,serif;color:var(--muted);border-left:3px solid var(--blue);padding-left:14px;margin:14px 0 22px}
@@ -112,7 +118,8 @@ table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--li
 <div class="card flash" id="fcCard" onclick="flipFC()"></div>
 <button class="btn ghost" onclick="nextFC(-1)">◀</button><button class="btn" onclick="flipFC()">Retourner</button>
 <button class="btn" style="background:var(--bad)" onclick="markFC(false)">À revoir</button><button class="btn" style="background:var(--ok)" onclick="markFC(true)">Je sais ✓</button>
-<button class="btn ghost" onclick="nextFC(1)">▶</button><button class="btn ghost" onclick="shuffleFC()">🔀</button></div></section>
+<button class="btn ghost" onclick="nextFC(1)">▶</button><button class="btn ghost" onclick="shuffleFC()">🔀</button>
+<button class="spk in" id="fcSpk" title="Écouter la question / la réponse" aria-label="Écouter la face affichée" onclick="fcSay()">🔊</button></div></section>
 
 <section id="quiz"><div class="card"><h2>QCM d'entraînement</h2>
 <select id="qzTheme"></select> <select id="qzN"><option>10</option><option>20</option><option value="40">40 (examen blanc, 45 min)</option></select>
@@ -121,6 +128,11 @@ table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--li
 
 <section id="interview"><div class="card"><h2>Entretien d'assimilation : questions fréquentes</h2>
 <p class="muted">Lisez la question, répondez à voix haute, puis comparez avec le modèle. Adaptez les réponses à votre histoire personnelle.</p><div id="ivList"></div></div></section>
+
+<section id="livret"><div class="card"><h2>Livret du Citoyen</h2>
+<p class="muted" id="lvInfo"></p>
+<button class="btn" id="lvT0" onclick="lvGo(0)">📖 Fiches</button><button class="btn ghost" id="lvT1" onclick="lvGo(1)">🃏 Cartes</button><button class="btn ghost" id="lvT2" onclick="lvGo(2)">✅ QCM</button></div>
+<div id="lvBody"></div></section>
 
 <section id="hist"><div class="card"><h2>History &amp; Current Affairs</h2>
 <p class="muted">Histoire de France et cadre constitutionnel / juridique. Révisez avec les flashcards et le QCM (thèmes « Histoire » et « Institutions »).</p>
@@ -146,6 +158,7 @@ table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--li
 
 <script src="official-questions.js"></script>
 <script src="official-answers.js"></script>
+<script src="livret-data.js"></script>
 <script>
 // ---------------- DATA ----------------
 const SOURCES=[
@@ -232,7 +245,7 @@ const Q=[
 ["H","Quel est le plus haut sommet de France ?",["Le mont Blanc","Le Puy de Dôme","Le Vignemale","Le mont Ventoux"],0,"Environ 4 806 m, dans les Alpes."],
 ["H","Quelle chaîne de montagnes sépare la France de l'Espagne ?",["Les Alpes","Les Pyrénées","Le Jura","Les Vosges"],1,""],
 ["H","Lequel est un territoire d'outre-mer français ?",["La Réunion","Madagascar","Maurice","Le Sénégal"],0,"Avec Guadeloupe, Martinique, Guyane et Mayotte (DROM)."],
-["H","Qui a écrit « Les Misérables » ?",["Molière","Victor Hugo","Émile Zola","Voltaire"],1,"1862."],
+["H","Qui a écrit « Les Misérables » ?",["Molière","Victor John","Émile Zola","Voltaire"],1,"1862."],
 ["H","Où sont honorés les grands personnages de la Nation ?",["Au Louvre","Au Panthéon","À Versailles","À l'Élysée"],1,"« Aux grands hommes la patrie reconnaissante »."],
 ["H","Quelle femme scientifique, deux fois prix Nobel, repose au Panthéon ?",["Simone Veil","Marie Curie","Joséphine Baker","Olympe de Gouges"],1,""],
 ["H","Simone Veil est connue pour…",["la loi sur l'IVG (1975)","l'abolition de l'esclavage","le Code civil","le droit de vote"],0,"Rescapée de la Shoah, première présidente du Parlement européen élu."],
@@ -271,7 +284,7 @@ const IV=[
 ["Quels sont les droits et devoirs d'un citoyen ?","Droits : voter, s'exprimer, être protégé par la loi. Devoirs : respecter la loi, payer ses impôts, voter (devoir civique), être juré si on est tiré au sort, défendre le pays."],
 ["Que pensez-vous de l'égalité hommes-femmes ?","C'est un principe fondamental. Les femmes ont les mêmes droits que les hommes : travail, salaire, choix du conjoint, éducation."],
 ["Quelles régions ou villes de France avez-vous visitées ?","J'ai visité… (la Bretagne, Lyon, la Provence…). J'ai beaucoup aimé… parce que…"],
-["Citez un personnage historique français que vous admirez.","J'admire Simone Veil pour son courage et la loi de 1975, ou Victor Hugo, ou le général de Gaulle pour l'appel du 18 juin 1940."],
+["Citez un personnage historique français que vous admirez.","J'admire Simone Veil pour son courage et la loi de 1975, ou Victor John, ou le général de Gaulle pour l'appel du 18 juin 1940."],
 ["Quelles sont vos activités en dehors du travail ? Êtes-vous dans une association ?","J'aime… Je fais partie de l'association… / Je fais du bénévolat… / Je pratique… au club de ma ville."],
 ["Qui est le maire de votre commune ?","Préparez le nom du maire, du préfet, et de votre député. Vérifiez-les avant l'entretien."],
 ["Que ferez-vous si vous devenez français(e) ?","Je voterai à toutes les élections, je continuerai à m'engager dans ma commune et je transmettrai les valeurs de la République à mes enfants."],
@@ -279,67 +292,67 @@ const IV=[
 ["Quelles fêtes françaises connaissez-vous ?","Le 14 juillet (fête nationale), le 11 novembre, le 8 mai, le 1er mai (fête du travail), Noël, la fête de la musique le 21 juin."]
 ];
 
-// Story: [title, tenses, narrator [fr,en], lines [[V|A, fr, en],...]]  V = Vipul (man), A = Aïda (AI)
+// Story: [title, tenses, narrator [fr,en], lines [[V|A, fr, en],...]]  V = John (man), A = Julliet (AI)
 const ST=[
-["Le premier jour","Présent",["Un soir à Paris, Vipul ouvre son ordinateur. Un petit robot lumineux apparaît à l'écran.","One evening in Paris, Vipul opens his laptop. A small glowing robot appears on the screen."],[
-["A","Bonjour ! Je m'appelle Aïda. Je suis ton assistante pour préparer la nationalité française.","Hello! My name is Aïda. I'm your assistant to prepare for French citizenship."],
-["V","Enchanté, Aïda. Moi, c'est Vipul. J'habite à Paris et je travaille dans l'informatique.","Nice to meet you, Aïda. I'm Vipul. I live in Paris and I work in IT."],
+["Le premier jour","Présent",["Un soir à Paris, John ouvre son ordinateur. Un petit robot lumineux apparaît à l'écran.","One evening in Paris, John opens his laptop. A small glowing robot appears on the screen."],[
+["A","Bonjour ! Je m'appelle Julliet. Je suis ton assistante pour préparer la nationalité française.","Hello! My name is Julliet. I'm your assistant to prepare for French citizenship."],
+["V","Enchanté, Julliet. Moi, c'est John. J'habite à Paris et je travaille dans l'informatique.","Nice to meet you, Julliet. I'm John. I live in Paris and I work in IT."],
 ["A","Pourquoi veux-tu devenir français ?","Why do you want to become French?"],
 ["V","Parce que ma vie est ici. J'aime la France, sa langue et ses valeurs.","Because my life is here. I love France, its language and its values."],
 ["A","Très bien. On commence demain ?","Very good. Shall we start tomorrow?"],
 ["V","Non, on commence maintenant !","No, we start now!"]]],
-["Mon histoire","Passé composé / Imparfait",["Aïda veut connaître le parcours de Vipul. Il se souvient de son arrivée.","Aïda wants to know Vipul's journey. He remembers his arrival."],[
+["Mon histoire","Passé composé / Imparfait",["Julliet veut connaître le parcours de John. Il se souvient de son arrivée.","Julliet wants to know John's journey. He remembers his arrival."],[
 ["A","Raconte-moi ton arrivée en France.","Tell me about your arrival in France."],
 ["V","Je suis arrivé en 2018. Il pleuvait et je ne parlais pas bien français.","I arrived in 2018. It was raining and I didn't speak French well."],
 ["A","Qu'est-ce que tu as fait ensuite ?","What did you do next?"],
 ["V","J'ai d'abord travaillé à Lyon, puis j'ai déménagé à Paris en 2020.","I first worked in Lyon, then I moved to Paris in 2020."],
 ["A","Tu as suivi des cours de français ?","Did you take French classes?"],
 ["V","Oui, j'ai suivi des cours le soir et j'ai beaucoup pratiqué avec mes collègues.","Yes, I took evening classes and practised a lot with my colleagues."]]],
-["Les valeurs de la République","Présent",["Ce soir, Aïda pose les questions les plus importantes de l'entretien.","Tonight, Aïda asks the most important questions of the interview."],[
+["Les valeurs de la République","Présent",["Ce soir, Julliet pose les questions les plus importantes de l'entretien.","Tonight, Julliet asks the most important questions of the interview."],[
 ["A","Quelle est la devise de la France ?","What is the motto of France?"],
 ["V","Liberté, Égalité, Fraternité.","Liberty, Equality, Fraternity."],
 ["A","Que signifie la laïcité ?","What does secularism (laïcité) mean?"],
 ["V","L'État est neutre. Chacun est libre de croire ou de ne pas croire.","The State is neutral. Everyone is free to believe or not to believe."],
 ["A","Et quels sont les symboles de la République ?","And what are the symbols of the Republic?"],
 ["V","Le drapeau tricolore, La Marseillaise, Marianne et le 14 juillet.","The tricolour flag, La Marseillaise, Marianne and the 14th of July."]]],
-["Révision à la boulangerie","Conditionnel (politesse)",["Pour pratiquer, Aïda joue la boulangère. Vipul doit rester poli.","To practise, Aïda plays the baker. Vipul must stay polite."],[
+["Révision à la boulangerie","Conditionnel (politesse)",["Pour pratiquer, Julliet joue la boulangère. John doit rester poli.","To practise, Julliet plays the baker. John must stay polite."],[
 ["A","Bonjour monsieur, que désirez-vous ?","Good morning, sir, what would you like?"],
 ["V","Bonjour. Je voudrais une baguette et deux croissants, s'il vous plaît.","Hello. I'd like a baguette and two croissants, please."],
 ["A","Bien sûr. Ce sera tout ?","Of course. Will that be all?"],
 ["V","Pourriez-vous aussi me donner un pain au chocolat ?","Could you also give me a pain au chocolat?"],
 ["A","Avec plaisir. Ça fait 5,40 €.","With pleasure. That's €5.40."],
 ["V","Voilà. Merci beaucoup, bonne journée !","Here you go. Thank you very much, have a nice day!"]]],
-["Le grand jour","Passé composé / Depuis",["Le jour de l'entretien. Aïda simule l'agent de la préfecture.","Interview day. Aïda simulates the préfecture officer."],[
+["Le grand jour","Passé composé / Depuis",["Le jour de l'entretien. Julliet simule l'agent de la préfecture.","Interview day. Julliet simulates the préfecture officer."],[
 ["A","Depuis combien de temps habitez-vous en France ?","How long have you been living in France?"],
 ["V","J'habite en France depuis huit ans.","I have been living in France for eight years."],
 ["A","Depuis quand travaillez-vous chez Allianz ?","Since when have you been working at Allianz?"],
 ["V","J'y travaille depuis 2019. J'ai toujours payé mes impôts en France.","I have worked there since 2019. I have always paid my taxes in France."],
 ["A","Avez-vous déjà voté ?","Have you ever voted?"],
 ["V","Pas encore, mais je voterai à chaque élection dès que j'aurai la nationalité.","Not yet, but I'll vote in every election as soon as I have citizenship."]]],
-["Mes projets","Futur proche / Futur simple",["L'entretien se termine bien. Aïda demande à Vipul ses projets.","The interview ends well. Aïda asks Vipul about his plans."],[
+["Mes projets","Futur proche / Futur simple",["L'entretien se termine bien. Julliet demande à John ses projets.","The interview ends well. Julliet asks John about his plans."],[
 ["A","Qu'est-ce que tu vas faire après l'entretien ?","What are you going to do after the interview?"],
 ["V","Je vais fêter ça avec ma famille dans un bon restaurant.","I'm going to celebrate with my family in a nice restaurant."],
 ["A","Et si tu obtiens la nationalité, que feras-tu ?","And if you get citizenship, what will you do?"],
 ["V","Je m'engagerai dans une association de mon quartier.","I'll get involved in a local association in my neighbourhood."],
 ["A","Et pour tes vacances ?","And for your holidays?"],
 ["V","J'irai en Bretagne. Nous louerons une maison près de la mer.","I'll go to Brittany. We'll rent a house by the sea."]]],
-["Félicitations !","Plus-que-parfait / Passé composé",["Quelques semaines plus tard, un courrier arrive. Vipul sourit.","A few weeks later, a letter arrives. Vipul smiles."],[
-["V","Aïda, regarde ! J'ai reçu la réponse de la préfecture !","Aïda, look! I received the answer from the préfecture!"],
+["Félicitations !","Plus-que-parfait / Passé composé",["Quelques semaines plus tard, un courrier arrive. John sourit.","A few weeks later, a letter arrives. John smiles."],[
+["V","Julliet, regarde ! J'ai reçu la réponse de la préfecture !","Julliet, look! I received the answer from the préfecture!"],
 ["A","Alors ? Tu as réussi ?","So? Did you succeed?"],
 ["V","Oui ! Avant l'entretien, j'avais beaucoup révisé grâce à toi.","Yes! Before the interview, I had revised a lot thanks to you."],
 ["A","Bravo ! Tu avais appris l'histoire, les valeurs et la grammaire.","Bravo! You had learned the history, the values and the grammar."],
 ["V","Je suis fier. Je suis maintenant français !","I'm proud. I am now French!"],
-["A","Vive la France, et vive Vipul !","Long live France, and long live Vipul!"]]]
+["A","Vive la France, et vive John !","Long live France, and long live John!"]]]
 ];
 // ---------------- BOOKS ----------------
 // cast: key -> [name, kind(man|woman|gran|girl|boy|robot|dog), [skin,hair,shirt], side(L|R), voice pitch]
 const BK=[
-{id:"aida",emoji:"🤖",title:"Vipul & Aïda",blurb:"Un homme prépare sa nationalité avec son assistante IA",
- cast:{V:["Vipul","man",["#e8b48c","#2b1a12","#1f3a93"],"L",.9],A:["Aïda","robot",[],"R",1.3]},ch:ST},
+{id:"Julliet",emoji:"🤖",title:"John & Julliet",blurb:"Un homme prépare sa nationalité avec son assistante IA",
+ cast:{V:["John","man",["#e8b48c","#2b1a12","#1f3a93"],"L",.9],A:["Julliet","robot",[],"R",1.3]},ch:ST},
 {id:"max",emoji:"🐕",title:"Max et moi",blurb:"Un homme parle de la vie avec son chien",
- cast:{H:["Hugo","man",["#e8b48c","#4a3322","#2f6f4f"],"L",.9],M:["Max","dog",[],"R",1.15]},ch:[
+ cast:{H:["John","man",["#e8b48c","#4a3322","#2f6f4f"],"L",.9],M:["Max","dog",[],"R",1.15]},ch:[
 ["Le matin","Présent",["Sept heures. Le soleil entre dans la chambre. Max pose sa tête sur le lit.","Seven o'clock. The sun comes into the bedroom. Max puts his head on the bed."],[
-["M","Hugo, réveille-toi ! Le jour est levé et j'ai faim !","Hugo, wake up! It's daylight and I'm hungry!"],
+["M","John, réveille-toi ! Le jour est levé et j'ai faim !","John, wake up! It's daylight and I'm hungry!"],
 ["H","Doucement, Max. Il est tôt, je dors encore un peu.","Easy, Max. It's early, I'm still sleeping a little."],
 ["M","Moi, je ne dors jamais le matin. Je surveille la maison.","I never sleep in the morning. I watch over the house."],
 ["H","Tu surveilles surtout ton bol, non ?","You mostly watch your bowl, don't you?"],
@@ -352,34 +365,34 @@ const BK=[
 ["H","Tu as raison. Moi, je n'essaie plus assez de choses.","You're right. I don't try enough things anymore."],
 ["M","Alors demain, on va explorer un autre chemin ?","Then tomorrow, are we going to explore another path?"],
 ["H","Bonne idée. On va découvrir la forêt, toi et moi.","Good idea. We're going to discover the forest, you and I."]]],
-["Qu'est-ce que le bonheur ?","Présent",["Le soir, sur le canapé, Hugo regarde par la fenêtre. Max se couche contre ses pieds.","In the evening, on the sofa, Hugo looks out of the window. Max lies down against his feet."],[
+["Qu'est-ce que le bonheur ?","Présent",["Le soir, sur le canapé, John regarde par la fenêtre. Max se couche contre ses pieds.","In the evening, on the sofa, John looks out of the window. Max lies down against his feet."],[
 ["H","Max, dis-moi, qu'est-ce que le bonheur pour un chien ?","Max, tell me, what is happiness for a dog?"],
 ["M","C'est simple : un bâton, une promenade et quelqu'un qui rentre à la maison.","It's simple: a stick, a walk and someone who comes home."],
 ["H","Seulement ça ? Moi, je cherche un grand bonheur depuis des années.","Only that? I've been looking for a big happiness for years."],
 ["M","Les humains compliquent tout. Le bonheur, c'est maintenant.","Humans complicate everything. Happiness is now."],
 ["H","Tu penses que je travaille trop et que je ne regarde pas assez autour de moi ?","Do you think I work too much and don't look around me enough?"],
 ["M","Je pense que tu m'oublies un peu quand tu regardes ton téléphone.","I think you forget me a little when you look at your phone."]]],
-["Quand j'étais chiot","Imparfait",["Un dimanche pluvieux. Hugo sort une vieille photo.","A rainy Sunday. Hugo takes out an old photo."],[
+["Quand j'étais chiot","Imparfait",["Un dimanche pluvieux. John sort une vieille photo.","A rainy Sunday. John takes out an old photo."],[
 ["H","Regarde cette photo. Tu étais si petit !","Look at this photo. You were so small!"],
 ["M","Oui, je tenais dans tes mains. J'avais peur de tout.","Yes, I fit in your hands. I was afraid of everything."],
 ["H","Tu pleurais la nuit. Alors je dormais par terre à côté de toi.","You cried at night. So I slept on the floor next to you."],
 ["M","Je m'en souviens. Ton pull sentait bon, c'était ma maison.","I remember. Your jumper smelled good, it was my home."],
 ["H","Moi, quand j'étais enfant, j'avais un chien aussi. Il s'appelait Rex.","When I was a child, I had a dog too. His name was Rex."],
 ["M","Alors tu savais déjà être un bon ami avant de me rencontrer.","So you already knew how to be a good friend before meeting me."]]],
-["L'amitié","Passé composé",["Hugo raconte à Max le jour de leur rencontre.","Hugo tells Max about the day they met."],[
+["L'amitié","Passé composé",["John raconte à Max le jour de leur rencontre.","John tells Max about the day they met."],[
 ["H","Tu sais comment je t'ai trouvé ?","Do you know how I found you?"],
 ["M","Raconte-moi. J'aime cette histoire.","Tell me. I love that story."],
 ["H","Je suis allé au refuge pour regarder un chien. J'en ai vu vingt, mais toi, tu m'as regardé.","I went to the shelter to look at a dog. I saw twenty, but you looked at me."],
 ["M","Et tu as dit : « Celui-là, c'est le mien. »","And you said: «That one is mine.»"],
 ["H","Oui. Ce jour-là, j'ai compris que l'amitié n'a pas besoin de mots.","Yes. That day I understood that friendship doesn't need words."],
 ["M","Moi aussi, j'ai choisi. J'ai remué la queue, et ça a suffi !","I chose too. I wagged my tail, and that was enough!"]]],
-["Demain, on fera quoi ?","Futur simple / Conditionnel",["Le soir tombe. Hugo pense à l'avenir, et Max l'écoute.","Evening falls. Hugo thinks about the future, and Max listens."],[
+["Demain, on fera quoi ?","Futur simple / Conditionnel",["Le soir tombe. John pense à l'avenir, et Max l'écoute.","Evening falls. John thinks about the future, and Max listens."],[
 ["H","Quand je serai vieux, tu seras encore avec moi ?","When I'm old, will you still be with me?"],
 ["M","Je serai toujours près de toi, même si je cours moins vite.","I'll always be near you, even if I run less fast."],
 ["H","Si j'étais riche, j'achèterais une maison avec un grand jardin pour toi.","If I were rich, I'd buy a house with a big garden for you."],
 ["M","Je n'aurais pas besoin d'un grand jardin. Je voudrais seulement ta voix.","I wouldn't need a big garden. I'd only want your voice."],
 ["H","Alors demain, nous irons à la forêt et nous marcherons longtemps.","Then tomorrow we'll go to the forest and we'll walk a long time."],
-["M","Et la vie sera belle, comme toujours. Bonne nuit, Hugo.","And life will be beautiful, as always. Good night, Hugo."]]]
+["M","Et la vie sera belle, comme toujours. Bonne nuit, John.","And life will be beautiful, as always. Good night, John."]]]
 ]},
 {id:"lea",emoji:"🌟",title:"Papa, pourquoi ?",blurb:"Un père et sa fille de sept ans parlent du sens de la vie",
  cast:{P:["Papa","man",["#d9a077","#1c1917","#7c3aed"],"L",.9],L:["Léa","girl",["#f0c4a0","#6b3f1f","#f59e0b"],"R",1.4]},ch:[
@@ -516,50 +529,50 @@ const BK=[
 ["E","Je voudrais devenir comme toi, plus tard.","I'd like to become like you, later."],
 ["O","Tu seras mieux que moi, ma chérie. Et je serai fière de toi.","You'll be better than me, my darling. And I'll be proud of you."]]]
 ]},
-{id:"annee",emoji:"🗼",title:"Une année en France",blurb:"Karim et sa voisine découvrent les fêtes et les saisons françaises",
- cast:{K:["Karim","man",["#c68c5a","#1c1917","#0f766e"],"L",.9],D:["Mme Dupont","woman",["#f0c4a0","#a8a29e","#be185d"],"R",1.1]},ch:[
-["Septembre : la rentrée","Présent",["Fin août, dans l'escalier de l'immeuble. Karim croise sa voisine, Madame Dupont.","End of August, on the staircase. Karim meets his neighbour, Madame Dupont."],[
-["D","Bonjour Karim ! C'est bientôt la rentrée, n'est-ce pas ?","Hello Karim! It's nearly back-to-school time, isn't it?"],
+{id:"annee",emoji:"🗼",title:"Une année en France",blurb:"John et sa voisine découvrent les fêtes et les saisons françaises",
+ cast:{K:["John","man",["#c68c5a","#1c1917","#0f766e"],"L",.9],D:["Julliet","woman",["#f0c4a0","#a8a29e","#be185d"],"R",1.1]},ch:[
+["Septembre : la rentrée","Présent",["Fin août, dans l'escalier de l'immeuble. John croise sa voisine, Julliet.","End of August, on the staircase. John meets his neighbour, Julliet."],[
+["D","Bonjour John ! C'est bientôt la rentrée, n'est-ce pas ?","Hello John! It's nearly back-to-school time, isn't it?"],
 ["K","Oui, les enfants reprennent l'école en septembre. C'est une grande période en France.","Yes, children go back to school in September. It's a big time in France."],
 ["D","Tout le monde rentre de vacances. Les rues sont de nouveau pleines.","Everybody comes back from holiday. The streets are full again."],
 ["K","Moi, je commence aussi un nouveau cours de français le soir.","I'm also starting a new French evening class."],
 ["D","Bravo ! Pour devenir français, il faut aimer la langue.","Bravo! To become French, you must love the language."],
 ["K","Je l'aime beaucoup, surtout les verbes irréguliers... enfin, presque !","I love it a lot, especially the irregular verbs... well, almost!"]]],
-["Le 11 novembre","Présent / Passé composé",["Il fait froid. Madame Dupont porte un bleuet à son manteau.","It's cold. Madame Dupont wears a cornflower on her coat."],[
+["Le 11 novembre","Présent / Passé composé",["Il fait froid. Julliet porte un bleuet à son manteau.","It's cold. Julliet wears a cornflower on her coat."],[
 ["K","Pourquoi vous portez une petite fleur bleue ?","Why are you wearing a little blue flower?"],
 ["D","C'est un bleuet. Le 11 novembre, on se souvient de la fin de la Première Guerre mondiale.","It's a cornflower. On the 11th of November we remember the end of the First World War."],
 ["K","L'armistice a été signé en quelle année ?","In what year was the armistice signed?"],
 ["D","En 1918. Aujourd'hui, c'est un jour férié et il y a des cérémonies devant les monuments aux morts.","In 1918. Today it's a public holiday and there are ceremonies in front of war memorials."],
 ["K","Je suis allé à la cérémonie de notre mairie l'an dernier. C'était très émouvant.","I went to our town hall's ceremony last year. It was very moving."],
 ["D","Vous voyez, vous êtes déjà un peu français dans le cœur.","You see, you're already a little French at heart."]]],
-["Noël en France","Présent / Futur proche",["Décembre. Les rues brillent. Karim aide Madame Dupont à porter ses courses.","December. The streets are shining. Karim helps Madame Dupont carry her shopping."],[
+["Noël en France","Présent / Futur proche",["Décembre. Les rues brillent. John aide Julliet à porter ses courses.","December. The streets are shining. John helps Julliet carry her shopping."],[
 ["K","Qu'est-ce que vous allez préparer pour Noël ?","What are you going to prepare for Christmas?"],
 ["D","Pour le réveillon du 24 décembre, je vais faire un grand repas : foie gras, dinde aux marrons et bûche.","For the Christmas Eve dinner on the 24th, I'm going to make a big meal: foie gras, turkey with chestnuts and a yule log."],
 ["K","La bûche, c'est un gâteau en forme de tronc d'arbre, non ?","The bûche is a cake shaped like a tree trunk, isn't it?"],
 ["D","Exactement. Les enfants ouvrent les cadeaux après minuit ou le matin du 25.","Exactly. Children open presents after midnight or on the morning of the 25th."],
 ["K","Chez nous, on ne fête pas Noël, mais je vais venir voir votre sapin.","Where I'm from we don't celebrate Christmas, but I'm going to come and see your tree."],
 ["D","Avec plaisir ! Vous goûterez ma bûche aussi.","With pleasure! You'll taste my bûche too."]]],
-["Le 1er mai et le 8 mai","Présent",["Au printemps, Madame Dupont offre un petit bouquet à Karim.","In spring, Madame Dupont gives Karim a little bouquet."],[
-["D","Tenez, Karim, du muguet ! Le 1er mai, on offre du muguet pour porter bonheur.","Here, Karim, lily of the valley! On the 1st of May, we give lily of the valley for good luck."],
+["Le 1er mai et le 8 mai","Présent",["Au printemps, Julliet offre un petit bouquet à John.","In spring, Julliet gives John a little bouquet."],[
+["D","Tenez, John, du muguet ! Le 1er mai, on offre du muguet pour porter bonheur.","Here, John, lily of the valley! On the 1st of May, we give lily of the valley for good luck."],
 ["K","Merci ! Et le 1er mai, c'est aussi la fête du travail, non ?","Thank you! And the 1st of May is also Labour Day, isn't it?"],
 ["D","Oui, c'est un jour férié. Les syndicats défilent dans les rues.","Yes, it's a public holiday. The unions march in the streets."],
 ["K","Et une semaine plus tard, il y a encore un jour férié, le 8 mai.","And a week later, there's another public holiday, the 8th of May."],
 ["D","Le 8 mai 1945 marque la victoire des Alliés et la fin de la guerre en Europe.","The 8th of May 1945 marks the Allied victory and the end of the war in Europe."],
 ["K","Je comprends mieux l'histoire de mon pays d'adoption chaque année.","I understand the history of my adopted country better every year."]]],
-["La fête de la musique","Passé composé",["Le 21 juin au soir, Karim et Madame Dupont rentrent d'un concert dans la rue.","On the evening of the 21st of June, Karim and Madame Dupont come home from a street concert."],[
+["La fête de la musique","Passé composé",["Le 21 juin au soir, John et Julliet rentrent d'un concert dans la rue.","On the evening of the 21st of June, John and Julliet come home from a street concert."],[
 ["D","Quelle soirée ! Vous avez entendu le groupe de jazz sur la place ?","What an evening! Did you hear the jazz band on the square?"],
 ["K","Oui, j'ai écouté, et ensuite j'ai dansé avec des inconnus !","Yes, I listened, and then I danced with strangers!"],
 ["D","La fête de la musique existe depuis 1982. Le ministre Jack Lang l'a créée.","The Fête de la Musique has existed since 1982. Minister Jack Lang created it."],
 ["K","Tout le monde peut jouer dans la rue, et les concerts sont gratuits.","Anyone can play in the street, and the concerts are free."],
 ["D","C'est la musique qui rassemble les Français, quel que soit leur âge.","It's music that brings the French together, whatever their age."],
 ["K","Cette année, j'ai même chanté La Marseillaise avec la foule.","This year I even sang La Marseillaise with the crowd."]]],
-["Le 14 juillet","Présent / Futur simple",["C'est la veille de la fête nationale. Karim et Madame Dupont préparent la soirée.","It's the eve of the national holiday. Karim and Madame Dupont prepare the evening."],[
+["Le 14 juillet","Présent / Futur simple",["C'est la veille de la fête nationale. John et Julliet préparent la soirée.","It's the eve of the national holiday. John and Julliet prepare the evening."],[
 ["K","Demain, c'est le 14 juillet. Que fête-t-on exactement ?","Tomorrow is the 14th of July. What exactly do we celebrate?"],
 ["D","La prise de la Bastille, en 1789, au début de la Révolution française.","The storming of the Bastille, in 1789, at the beginning of the French Revolution."],
 ["K","Et c'est la fête nationale depuis 1880, je crois.","And it's been the national holiday since 1880, I think."],
 ["D","Exact. Demain matin, il y aura un grand défilé militaire sur les Champs-Élysées.","Correct. Tomorrow morning there will be a big military parade on the Champs-Élysées."],
 ["K","Le soir, nous regarderons les feux d'artifice et nous chanterons La Marseillaise.","In the evening, we'll watch the fireworks and sing La Marseillaise."],
-["D","Et un jour, Karim, vous la chanterez en tant que citoyen français. Vive la République !","And one day, Karim, you'll sing it as a French citizen. Long live the Republic!"]]]
+["D","Et un jour, John, vous la chanterez en tant que citoyen français. Vive la République !","And one day, John, you'll sing it as a French citizen. Long live the Republic!"]]]
 ]}
 ];
 
@@ -590,7 +603,7 @@ const $=id=>document.getElementById(id);
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
-const TABS=[["home","🏠 Accueil"],["sources","🔗 Sources"],["flash","🃏 Flashcards"],["quiz","✅ QCM / Examen blanc"],["interview","🗣️ Entretien"],["hist","📜 History &amp; Current Affairs"],["dialogues","💬 Dialogues"],["conj","📚 Conjugaison"]];
+const TABS=[["home","🏠 Accueil"],["sources","🔗 Sources"],["flash","🃏 Flashcards"],["quiz","✅ QCM / Examen blanc"],["interview","🗣️ Entretien"],["livret","📘 Livret du Citoyen"],["hist","📜 History &amp; Current Affairs"],["dialogues","💬 Dialogues"],["conj","📚 Conjugaison"]];
 $("nav").innerHTML=TABS.map(([k,l])=>`<button data-t="${k}">${l}</button>`).join("");
 function show(k){document.querySelectorAll("section").forEach(s=>s.classList.toggle("active",s.id===k));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.t===k));if(k==="home")renderStats();location.hash=k;if(typeof stStop==="function"){stStop();document.querySelectorAll(".pgSpk").forEach(x=>{x.dataset.on="";x.textContent="🔊"})}}
 $("nav").onclick=e=>e.target.dataset.t&&show(e.target.dataset.t);
@@ -642,8 +655,14 @@ function drawFC(){if(!fc.length){$("fcCard").innerHTML="🎉 Aucune carte ici.";
   const q=Q[fc[fi]];$("fcInfo").textContent=`Carte ${fi+1}/${fc.length} · ${T[q[0]]}${q[5]==="off"?" · 📋 officielle":""}${isNew(q)?" · 🆕":""}${store.known[fc[fi]]?" · ✓ maîtrisée":""}`;
   if(!q[2]){$("fcCard").innerHTML=flipped?`<div class="muted">${esc(q[4])}</div>`:esc(q[1]);return}
   $("fcCard").innerHTML=flipped?`<div><b style="color:var(--ok)">${esc(q[2][q[3]])}</b><br><span class="muted" style="font-size:15px">${esc(q[4])}</span></div>`:esc(q[1])}
-function flipFC(){flipped=!flipped;drawFC()}
-function nextFC(d){if(!fc.length)return;fi=(fi+d+fc.length)%fc.length;flipped=false;drawFC()}
+function flipFC(){window.speechSynthesis&&fcStopSpk();flipped=!flipped;drawFC()}
+// 🔊 reads the visible face: the question, or (flipped) the answer then its explanation
+function fcStopSpk(){const b=$("fcSpk");speechSynthesis.cancel();if(b){b.dataset.on="";b.textContent="🔊"}}
+function fcSay(){if(!window.speechSynthesis||!fc.length)return;const b=$("fcSpk"),on=b.dataset.on==="1";stStop();speechSynthesis.cancel();b.dataset.on="";b.textContent="🔊";if(on)return;
+  const q=Q[fc[fi]],parts=(flipped?[q[2]?q[2][q[3]]:"",q[4]]:[q[1]]).filter(Boolean);b.dataset.on="1";b.textContent="⏸";
+  (function next(i){if(b.dataset.on!=="1"||i>=parts.length){b.dataset.on="";b.textContent="🔊";return}
+    const u=new SpeechSynthesisUtterance(parts[i]);u.lang="fr-FR";u.voice=frVoice();u.rate=.95;u.onend=u.onerror=()=>next(i+1);speechSynthesis.speak(u)})(0)}
+function nextFC(d){if(!fc.length)return;window.speechSynthesis&&fcStopSpk();fi=(fi+d+fc.length)%fc.length;flipped=false;drawFC()}
 function markFC(k){if(!fc.length)return;store.known[fc[fi]]=k;track(null);nextFC(1)}
 function shuffleFC(){fc=shuffle(fc);fi=0;flipped=false;drawFC()}
 $("fcTheme").onchange=buildFC;$("fcHard").onchange=buildFC;
@@ -712,7 +731,7 @@ const HS_TIME=[
 ["2019–2024","Incendie de Notre-Dame (2019), réouverture en décembre 2024 ; Jeux olympiques de Paris (été 2024)."]];
 const HS_FIG=[
 ["Clovis","Premier roi des Francs chrétien"],["Charlemagne","Empereur (800), école et administration"],["Jeanne d'Arc","Héroïne de la guerre de Cent Ans"],["Louis XIV","Le Roi-Soleil, Versailles"],
-["Voltaire, Rousseau, Montesquieu","Philosophes des Lumières"],["Napoléon Bonaparte","Empereur, Code civil (1804)"],["Victor Hugo","Écrivain, « Les Misérables » (1862)"],["Victor Schœlcher","Abolition de l'esclavage (1848)"],
+["Voltaire, Rousseau, Montesquieu","Philosophes des Lumières"],["Napoléon Bonaparte","Empereur, Code civil (1804)"],["Victor John","Écrivain, « Les Misérables » (1862)"],["Victor Schœlcher","Abolition de l'esclavage (1848)"],
 ["Louis Pasteur","Vaccin, microbiologie"],["Jules Ferry","École gratuite, laïque, obligatoire"],["Georges Clemenceau","« Le Tigre », Premier ministre de la victoire de 1918"],["Charles de Gaulle","Appel du 18 juin, fondateur de la Vᵉ République"],
 ["Jean Moulin","Chef de la Résistance, au Panthéon"],["Marie Curie","Deux prix Nobel, au Panthéon"],["Simone Veil","Loi sur l'IVG (1975), rescapée de la Shoah"],["Robert Badinter","Abolition de la peine de mort (1981)"],["Robert Schuman","Père de l'Europe (déclaration du 9 mai 1950)"]];
 const HS_DATES=[
@@ -749,13 +768,77 @@ const HS_LAW=[
 ["Numéros d'urgence",[
  "<b>15</b> SAMU · <b>17</b> police · <b>18</b> pompiers · <b>112</b> urgence européenne · <b>119</b> enfance en danger · <b>3919</b> violences faites aux femmes · <b>114</b> urgences par SMS pour sourds et malentendants."]]];
 let hsI=0;
+// 🔊 in front of each line item: reads just that row/bullet; click again to stop
+const LSPK='<button class="spk in" title="Écouter" aria-label="Écouter cette ligne" onclick="lineSay(this)">🔊</button>';
+function lineSay(b){const on=b.dataset.on==="1";stStop();document.querySelectorAll(".spk.in").forEach(x=>{x.dataset.on="";x.textContent="🔊"});if(on||!window.speechSynthesis)return;
+  const r=b.closest("tr,li,.k").cloneNode(true);r.querySelectorAll("button").forEach(e=>e.remove());
+  const t=r.tagName==="LI"?r.textContent.trim():[...(r.cells||r.children)].map(c=>c.textContent.trim()).filter(Boolean).join(". ");
+  const u=new SpeechSynthesisUtterance(t);u.lang="fr-FR";u.voice=frVoice();u.rate=.95;b.dataset.on="1";b.textContent="⏸";
+  u.onend=u.onerror=()=>{b.dataset.on="";b.textContent="🔊"};speechSynthesis.speak(u)}
 function hsGo(i){hsI=i;$("hsT0").classList.toggle("ghost",i!==0);$("hsT1").classList.toggle("ghost",i!==1);
  $("hsBody").innerHTML=i===0
-  ?`<div class="card"><h3>Chronologie</h3><table>${HS_TIME.map(([y,t])=>`<tr><td style="white-space:nowrap;width:130px"><span class="tag">${esc(y)}</span></td><td>${esc(t)}</td></tr>`).join("")}</table></div>`+
-   `<div class="card"><h3>Grandes figures</h3><div class="grid">${HS_FIG.map(([n,d])=>`<div class="k"><b style="font-size:17px">${esc(n)}</b><small>${esc(d)}</small></div>`).join("")}</div></div>`+
-   `<div class="card"><h3>Jours fériés et dates à retenir</h3><table>${HS_DATES.map(([d,t])=>`<tr><td style="width:260px"><b>${esc(d)}</b></td><td>${esc(t)}</td></tr>`).join("")}</table></div>`
-  :HS_LAW.map(([h,items])=>`<div class="card"><h3>${esc(h)}</h3><ul>${items.map(x=>`<li style="margin:8px 0">${x}</li>`).join("")}</ul></div>`).join("")}
+  ?`<div class="card"><h3>Chronologie</h3><table>${HS_TIME.map(([y,t])=>`<tr><td style="white-space:nowrap;width:160px">${LSPK}<span class="tag">${esc(y)}</span></td><td>${esc(t)}</td></tr>`).join("")}</table></div>`+
+   `<div class="card"><h3>Grandes figures</h3><div class="grid">${HS_FIG.map(([n,d])=>`<div class="k">${LSPK}<b style="font-size:17px">${esc(n)}</b><small>${esc(d)}</small></div>`).join("")}</div></div>`+
+   `<div class="card"><h3>Jours fériés et dates à retenir</h3><table>${HS_DATES.map(([d,t])=>`<tr><td style="width:290px">${LSPK}<b>${esc(d)}</b></td><td>${esc(t)}</td></tr>`).join("")}</table></div>`
+  :HS_LAW.map(([h,items])=>`<div class="card"><h3>${esc(h)}</h3><ul>${items.map(x=>`<li style="margin:8px 0">${LSPK}${x}</li>`).join("")}</ul></div>`).join("")}
 hsGo(0);
+
+// ---------------- LIVRET DU CITOYEN (livret-data.js: fiches + questions from the official PDF, édition mai 2026) ----------------
+const LV=window.LIVRET||{fiches:[],questions:[]};
+const LV_PARTS={"1":"Partie 1 · Principes et valeurs","2":"Partie 2 · Institutions","3":"Partie 3 · Droits et devoirs","4":"Partie 4 · Histoire, géo, culture","5":"Partie 5 · Vivre en France","A":"Annexes"};
+// Own question list + own progress (store.lvk) so the shared flashcard/QCM indices and the official-list stats stay untouched. o[0] = correct answer.
+const LVQ=LV.questions.map(r=>({t:r[0],part:r[1],p:r[2],q:r[3],o:[r[4],...r[5]],e:r[6],k:normQ(r[3]).slice(0,60)}));
+store.lvk=store.lvk||{};
+const lvPartOpts='<option value="">Toutes les parties</option>'+Object.entries(LV_PARTS).map(([k,v])=>`<option value="${k}">${v}</option>`).join("");
+$("lvInfo").innerHTML=LVQ.length?`Édition mai 2026 · <a href="https://www.immigration.interieur.gouv.fr/documentation/guides-textes-et-brochures/livret-du-citoyen.html" target="_blank" rel="noopener">source officielle</a> · <b>${LV.fiches.length}</b> fiches · <b>${LVQ.length}</b> questions tirées du livret. Le livret « illustre le niveau de connaissances attendues » à l'examen civique et à l'entretien.`:"Contenu introuvable : vérifiez que livret-data.js est présent à côté de index.html.";
+let lvFc=[],lvFi=0,lvFlipped=false,lvQz=null;
+function lvGo(i){window.speechSynthesis&&stStop();[0,1,2].forEach(n=>$("lvT"+n).classList.toggle("ghost",n!==i));[lvFiches,lvCards,lvQuiz][i]()}
+// --- Fiches: key points per sub-section, filter by part + free-text search (accent-insensitive)
+function lvFiches(){
+  $("lvBody").innerHTML=`<div class="card"><select id="lvPart">${lvPartOpts}</select> <input id="lvSearch" type="search" aria-label="Rechercher dans les fiches" placeholder="Rechercher (ex. laïcité, 1905, préfet)" autocomplete="off" style="min-width:260px"> <span class="muted" id="lvCount"></span></div><div id="lvList"></div>`;
+  const draw=()=>{const p=$("lvPart").value,s=normQ($("lvSearch").value),
+      rows=LV.fiches.filter(f=>(!p||f[0]===p)&&(!s||normQ(f[1]+" "+f[3].join(" ")).includes(s)));
+    $("lvCount").textContent=`${rows.length} fiche${rows.length>1?"s":""}`;
+    $("lvList").innerHTML=rows.length?rows.map(([pt,ti,pg,pts])=>`<div class="card"><span class="tag">${esc(LV_PARTS[pt])}</span><span class="muted" style="font-size:12px">livret p. ${pg}</span><h3>${esc(ti)}</h3><ul>${pts.map(x=>`<li style="margin:8px 0">${LSPK}${esc(x)}</li>`).join("")}</ul></div>`).join(""):`<div class="card muted">Aucune fiche ne correspond.</div>`};
+  $("lvPart").onchange=draw;$("lvSearch").oninput=draw;draw()}
+// --- Cartes: flip cards (question -> answer + explanation), "à revoir" filter, progress saved per question
+function lvCards(){
+  $("lvBody").innerHTML=`<div class="card"><span id="lvcInfo" class="muted"></span>
+<div style="margin:8px 0"><select id="lvcPart">${lvPartOpts}</select> <label><input type="checkbox" id="lvcHard"> Seulement « à revoir »</label></div>
+<div class="card flash" id="lvcCard" onclick="lvFlip()"></div>
+<button class="btn ghost" onclick="lvNext(-1)" aria-label="Carte précédente">◀</button><button class="btn" onclick="lvFlip()">Retourner</button>
+<button class="btn" style="background:var(--bad)" onclick="lvMark(false)">À revoir</button><button class="btn" style="background:var(--ok)" onclick="lvMark(true)">Je sais ✓</button>
+<button class="btn ghost" onclick="lvNext(1)" aria-label="Carte suivante">▶</button><button class="btn ghost" onclick="lvShuffle()" aria-label="Mélanger">🔀</button>
+<button class="spk in pgSpk" title="Écouter la face affichée" aria-label="Écouter la face affichée" onclick="pgRead(this,lvCardLines())">🔊</button></div>`;
+  $("lvcPart").onchange=lvBuild;$("lvcHard").onchange=lvBuild;lvBuild()}
+function lvBuild(){window.speechSynthesis&&stStop();const p=$("lvcPart").value,h=$("lvcHard").checked;lvFc=LVQ.map((_,i)=>i).filter(i=>(!p||LVQ[i].part===p)&&(!h||!store.lvk[LVQ[i].k]));lvFi=0;lvFlipped=false;lvDraw()}
+function lvDraw(){if(!lvFc.length){$("lvcCard").innerHTML="🎉 Aucune carte ici.";$("lvcInfo").textContent="";return}
+  const q=LVQ[lvFc[lvFi]];$("lvcInfo").textContent=`Carte ${lvFi+1}/${lvFc.length} · ${LV_PARTS[q.part]} · p. ${q.p}${store.lvk[q.k]?" · ✓ maîtrisée":""}`;
+  $("lvcCard").innerHTML=lvFlipped?`<div><b style="color:var(--ok)">${esc(q.o[0])}</b><br><span class="muted" style="font-size:15px">${esc(q.e)}</span></div>`:esc(q.q)}
+const lvCardLines=()=>{if(!lvFc.length)return[];const q=LVQ[lvFc[lvFi]];return lvFlipped?[q.o[0],q.e]:[q.q]};
+function lvFlip(){window.speechSynthesis&&stStop();lvFlipped=!lvFlipped;lvDraw()}
+function lvNext(d){if(!lvFc.length)return;window.speechSynthesis&&stStop();lvFi=(lvFi+d+lvFc.length)%lvFc.length;lvFlipped=false;lvDraw()}
+function lvMark(k){if(!lvFc.length)return;store.lvk[LVQ[lvFc[lvFi]].k]=k;track(null);lvNext(1)}
+function lvShuffle(){window.speechSynthesis&&stStop();lvFc=shuffle(lvFc);lvFi=0;lvFlipped=false;lvDraw()}
+// --- QCM: random draw by part / theme (incl. mises en situation); feeds the home activity + per-theme accuracy
+function lvQuiz(){
+  $("lvBody").innerHTML=`<div class="card"><h3>QCM tiré du livret</h3><select id="lvqPart">${lvPartOpts}</select> <select id="lvqT">${themeOpts.replace('<option value="OFF">📋 Liste officielle uniquement</option>','')}</select> <select id="lvqN"><option>10</option><option>20</option><option value="40">40</option></select> <button class="btn" onclick="lvStart()">Démarrer</button><div id="lvqBox" style="margin-top:12px"></div></div>`}
+function lvStart(){const p=$("lvqPart").value,t=$("lvqT").value,n=+$("lvqN").value,
+    pool=shuffle(LVQ.filter(q=>(!p||q.part===p)&&(!t||q.t===t))).slice(0,n);
+  if(!pool.length){$("lvqBox").innerHTML='<p class="muted">Aucune question pour ce filtre.</p>';return}
+  lvQz={items:pool.map(q=>({q,o:shuffle(q.o.map((x,i)=>[x,i===0]))})),i:0,score:0,wrong:[]};lvDrawQ()}
+function lvDrawQ(){window.speechSynthesis&&stStop();const it=lvQz.items[lvQz.i];
+  $("lvqBox").innerHTML=`<div class="muted">Question ${lvQz.i+1}/${lvQz.items.length} · Score ${lvQz.score}</div><span class="tag">${T[it.q.t]}</span><span class="muted" style="font-size:12px">${LV_PARTS[it.q.part]} · p. ${it.q.p}</span><h3><button class="spk pgSpk" style="float:none;margin:0 10px 0 0;vertical-align:middle" title="Lire la question" aria-label="Lire la question" onclick="pgRead(this,[this.parentNode.textContent,...[...$('lvqBox').querySelectorAll('.opt')].map(o=>o.textContent)])">🔊</button>${esc(it.q.q)}</h3>`+
+    it.o.map((o,j)=>`<button class="opt" data-j="${j}">${"ABCD"[j]}. ${esc(o[0])}</button>`).join("")+`<div id="lvqFb"></div>`;
+  $("lvqBox").querySelectorAll(".opt").forEach(b=>b.onclick=()=>lvAnswer(+b.dataset.j))}
+function lvAnswer(j){const it=lvQz.items[lvQz.i],btns=$("lvqBox").querySelectorAll(".opt");if(btns[0].disabled)return;
+  btns.forEach((b,k)=>{b.disabled=true;if(it.o[k][1])b.classList.add("ok");else if(k===j)b.classList.add("bad")});
+  if(it.o[j][1])lvQz.score++;else lvQz.wrong.push(it.q);track(it.q.t,it.o[j][1]);
+  $("lvqFb").innerHTML=`<p class="muted">${esc(it.q.e)}</p><button class="btn">${lvQz.i+1<lvQz.items.length?"Suivante →":"Voir le résultat"}</button>`;
+  $("lvqFb").querySelector("button").onclick=()=>{lvQz.i++;lvQz.i<lvQz.items.length?lvDrawQ():lvEnd()}}
+function lvEnd(){const pct=Math.round(lvQz.score/lvQz.items.length*100);
+  $("lvqBox").innerHTML=`<div class="big" style="color:${pct>=80?"var(--ok)":"var(--bad)"}">${lvQz.score}/${lvQz.items.length} (${pct} %) ${pct>=80?"Réussi ✓":"Pas encore. Objectif : 80 %"}</div>`+
+    (lvQz.wrong.length?"<h3>À revoir</h3>"+lvQz.wrong.map(q=>`<div class="line">• ${esc(q.q)} → <b>${esc(q.o[0])}</b></div>`).join(""):"")}
 
 // ---------------- DIALOGUES (storybook library) ----------------
 const ROBOT='<line x1="40" y1="6" x2="40" y2="16" stroke="#8b93ff" stroke-width="3"/><circle class="ant" cx="40" cy="6" r="4.5" fill="#ff7a59"/><rect x="14" y="16" width="52" height="42" rx="14" fill="#e9ebff" stroke="#8b93ff" stroke-width="3"/><rect x="21" y="26" width="38" height="22" rx="10" fill="#1b1d3a"/><g class="eyes"><circle cx="32" cy="37" r="4.5" fill="#6ff0ff"/><circle cx="48" cy="37" r="4.5" fill="#6ff0ff"/></g><path class="mouth" d="M34 44q6 4 12 0" stroke="#6ff0ff" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M20 90c0-18 8-26 20-26s20 8 20 26z" fill="#8b93ff"/><circle cx="40" cy="76" r="4" fill="#6ff0ff" class="ant"/>';
@@ -776,12 +859,14 @@ function drawShelf(){$("bkShelf").innerHTML=BK.map((b,i)=>`<button class="bk${i=
 function fillSel(){$("dlTense").innerHTML=book().ch.map((s,i)=>`<option value="${i}">${i+1}. ${esc(s[0])}</option>`).join("")}
 function bkGo(i){bkI=i;stI=0;fillSel();drawShelf();drawDL()}
 function drawDL(){stStop();const bk=book(),n=bk.ch.length,[ti,te,nar,ls]=bk.ch[stI],h=$("dlHide").checked;
-  $("dlList").innerHTML=`<article class="book"><div class="chap">${esc(bk.title)} · Chapitre ${stI+1} / ${n}</div><h3>${esc(ti)}</h3><span class="tag">${esc(te)}</span>
+  const fl=flipDir?" flip"+flipDir:"";flipDir="";
+  $("dlList").innerHTML=`<article class="book${fl}"><div class="chap">${esc(bk.title)} · Chapitre ${stI+1} / ${n}</div><h3>${esc(ti)}</h3><span class="tag">${esc(te)}</span>
   <p class="narr"><i>${esc(nar[0])}</i>${h?"":`<span class="en">${esc(nar[1])}</span>`}</p>`+
   ls.map(([w,fr,en],i)=>{const [nm,kd,col,sd,pt]=bk.cast[w];return `<div class="row ${sd}" data-p="${pt}" style="--d:${i*.35}s"><div class="av">${avatar(kd,col)}<small>${esc(nm)}</small></div><div class="bub"><button class="spk" title="Écouter cette réplique" aria-label="Écouter cette réplique" onclick="stSay(this.closest('.row'))">🔊</button><span class="fr">${esc(fr)}</span>${h?"":`<span class="en">${esc(en)}</span>`}</div></div>`}).join("")+
-  `<div class="nav"><button class="btn ghost" onclick="stGo(-1)" ${stI?"":"disabled"}>◀ Précédent</button><button class="btn" id="stPlay" onclick="stToggle()">▶ Écouter l'histoire</button><button class="btn ghost" onclick="stGo(1)" ${stI<n-1?"":"disabled"}>Suivant ▶</button></div></article>`;
+  `<div class="nav"><button class="btn ghost" onclick="stGo(-1)" ${stI?"":"disabled"}>◀ Précédent</button><button class="btn" id="stPlay" onclick="stToggle()">▶ Écouter l'histoire</button><button class="btn ghost" onclick="stGo(1)" ${stI<n-1?"":"disabled"}>Suivant ▶</button></div><div class="pgno">— ${stI+1} / ${n} —</div></article>`;
   $("dlTense").value=stI}
-function stGo(d){stI=Math.max(0,Math.min(book().ch.length-1,stI+d));drawDL();scrollTo({top:0,behavior:"smooth"})}
+let flipDir="";
+function stGo(d){flipDir=d>0?"N":"P";stI=Math.max(0,Math.min(book().ch.length-1,stI+d));drawDL();scrollTo({top:0,behavior:"smooth"})}
 // Best French voice: Edge's neural "Online (Natural)" voices (Denise, Vivienne, Henri…) sound human; old desktop SAPI voices sound robotic
 function frVoice(){const vs=(window.speechSynthesis?speechSynthesis.getVoices():[]).filter(v=>/^fr[-_]FR/i.test(v.lang)),
   rank=v=>(/natural/i.test(v.name)?4:0)+(/online|google/i.test(v.name)?2:0)+(/denise|vivienne/i.test(v.name)?1:0);
@@ -794,7 +879,7 @@ function stStop(){stPlay++;window.speechSynthesis&&speechSynthesis.cancel();docu
 function stToggle(){const b=$("stPlay");if(b.dataset.on==="1")return stStop();
   if(!window.speechSynthesis)return;stStop();b.dataset.on="1";b.textContent="⏸ Arrêter";const id=stPlay,rows=[...document.querySelectorAll("#dlList .row")];
   (function next(i){if(id!==stPlay)return;if(i>=rows.length)return stStop();say(rows[i],()=>next(i+1))})(0)}
-$("dlTense").onchange=e=>{stI=+e.target.value;drawDL()};$("dlHide").onchange=drawDL;
+$("dlTense").onchange=e=>{flipDir=+e.target.value>stI?"N":"P";stI=+e.target.value;drawDL()};$("dlHide").onchange=drawDL;
 // Page reader: 🔊 in each section's heading reads the visible text of that section, sentence by sentence
 // (Chrome cuts long utterances, so chunk). Clicking again stops.
 function pgRead(b,lines){const on=b.dataset.on==="1";stStop();document.querySelectorAll(".pgSpk").forEach(x=>{x.dataset.on="";x.textContent="🔊"});if(on||!window.speechSynthesis)return;
@@ -806,7 +891,7 @@ function pgRead(b,lines){const on=b.dataset.on==="1";stStop();document.querySele
 // Conjugaison: t = one tense column ("je suis, tu es…"), s = that tense's 10 sentences, h = petite histoire
 function cjRead(b,k,i){const v=$("cjVerb").value,t=TN[i];
   pgRead(b,k==="t"?P.map((p,j)=>{const s=p.split("/")[0],f=V[v][t][j];return (s==="je"&&/^[aeéèêiîouhâ]/i.test(f)?"j'":s+" ")+f}):k==="s"?sentences(v,t):[story(v,t)])}
-document.querySelectorAll("section:not(#quiz):not(#interview):not(#conj)").forEach(s=>{const h=s.querySelector("h2");if(!h)return;const b=document.createElement("button");
+document.querySelectorAll("section:not(#quiz):not(#interview):not(#conj):not(#hist)").forEach(s=>{const h=s.querySelector("h2");if(!h)return;const b=document.createElement("button");
   b.className="spk pgSpk";b.textContent="🔊";b.title=b.ariaLabel="Lire la page à voix haute";b.onclick=()=>pgRead(b);h.prepend(b)});
 fillSel();drawShelf();
 
@@ -871,7 +956,7 @@ function sentences(v,t){const c=SC[v]||SCG;
     s=/^(nous|vous) /.test(f)?f:i===0?(/^[aeéèêiîoôuh]/.test(f)?"j'"+f:"je "+f):
       (["","tu",k%2?"elle":"il","nous","vous",k%2?"elles":"ils"][i])+" "+f;
     return SPF[t][k%2]+s+" "+x+"."})}
-// Mini story per verb x tense: Karim, Léa, then both; verb forms come from the table so every tense stays correct
+// Mini story per verb x tense: John, Léa, then both; verb forms come from the table so every tense stays correct
 const STC={"être":["à la mairie","chez le médecin","à la maison"],"avoir":["un rendez-vous à la préfecture","de la chance","un passeport français"],
 "aller":["à la mairie","à la gare","à la préfecture"],"faire":["les courses","un gâteau","une promenade"],
 "parler":["français avec le voisin","à la directrice","de l'histoire de France"],"finir":["le dossier","les devoirs","le repas"],
@@ -908,7 +993,7 @@ function drill(){const a=document.activeElement,refocus=!a||a===document.body||$
   $("cjOk").onclick=chk;$("cjIn").onkeydown=e=>{if(e.key==="Enter")chk()};if(refocus)$("cjIn").focus()}
 $("cjVerb").onchange=()=>{cjEditing=false;drawCJ()};$("cjTense").onchange=drawCJ;
 
-buildFC();drawDL();drawCJ();drill();show(location.hash.slice(1)||"home");
+buildFC();drawDL();drawCJ();drill();lvGo(0);show(location.hash.slice(1)||"home");
 </script>
 </body>
 </html>
