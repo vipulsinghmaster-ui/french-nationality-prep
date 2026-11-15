@@ -292,14 +292,14 @@ body.dark .opt.ok{color:var(--ok)}
 #path{margin:0 0 14px}
 #path .unit{background:var(--blue);box-shadow:0 4px 0 var(--blueD);border-radius:20px;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
 #path .unit small{display:block;opacity:.85;font:800 12px var(--rounded);text-transform:uppercase;letter-spacing:.06em}#path .unit b{font:800 18px var(--rounded)}
-#path .nodes{display:flex;flex-direction:column;align-items:center;gap:26px;padding:44px 0 14px}
-.pnode{display:flex;flex-direction:column;align-items:center;gap:10px;background:none;border:0;padding:0;color:var(--ink);cursor:pointer;font:800 15px var(--rounded);text-align:center;max-width:220px;position:relative}
-.pnode .c{width:78px;height:70px;border-radius:50%;display:grid;place-items:center;font-size:30px;color:#fff;background:var(--blue);box-shadow:0 6px 0 var(--blueD);transition:transform .08s,box-shadow .08s}
+#path .nodes{display:grid;grid-template-columns:repeat(3,1fr);gap:46px 6px;padding:46px 0 14px;justify-items:center;align-items:start}
+.pnode{display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:0;padding:0;color:var(--ink);cursor:pointer;font:800 13px/1.2 var(--rounded);text-align:center;width:100%;position:relative}
+.pnode .c{width:66px;height:60px;border-radius:50%;display:grid;place-items:center;font-size:30px;color:#fff;background:var(--blue);box-shadow:0 6px 0 var(--blueD);transition:transform .08s,box-shadow .08s}
 .pnode:active .c{transform:translateY(6px);box-shadow:none}
 .pnode.gold .c{background:var(--gold);box-shadow:0 6px 0 var(--goldD)}
 .pnode.new .c{background:var(--line);box-shadow:0 6px 0 color-mix(in srgb,var(--line) 70%,#000);color:var(--muted)}
 .pnode.cur .c::before{content:attr(data-l);position:absolute;top:-36px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--card);color:var(--ok);border:2px solid var(--line);border-bottom-width:4px;border-radius:12px;padding:3px 10px;font:800 12px var(--rounded);letter-spacing:.06em}
-.pnode small{display:block;font:600 13px var(--sans);color:var(--muted)}
+.pnode small{display:block;font:600 11px/1.25 var(--sans);color:var(--muted)}
 #themeBars{display:none}
 /* lesson mode: QCM + Livret QCM become a focused flow */
 body.lesson #mtabs,body.lesson #mlt,body.lesson #mchips,body.lesson #mnb{display:none}
