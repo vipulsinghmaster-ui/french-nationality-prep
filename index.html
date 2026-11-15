@@ -257,8 +257,6 @@ body[data-cur="home"] #mchips,body[data-cur="flash"] #mchips,body[data-cur="quiz
 #mchips{gap:18px;padding:6px 4px 0;font:800 17px var(--rounded);letter-spacing:0}
 .mc{display:inline-flex;align-items:center;gap:6px}.mc.o{color:var(--orange)}.mc.g{color:#d9a900}.mc.b{color:var(--blue)}
 .thw{margin-left:auto;position:relative}.thb{width:34px;height:34px;border-radius:50%;border:0;background:var(--fill);color:var(--ink);font-size:17px;display:grid;place-items:center;cursor:pointer;padding:0}
-.thm{position:absolute;right:0;top:40px;z-index:50;min-width:160px;background:var(--card);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.25);overflow:hidden;font:500 15px var(--sans)}
-.thm button{display:flex;justify-content:space-between;width:100%;border:0;border-bottom:.5px solid var(--line);background:none;color:var(--ink);padding:11px 14px;font:inherit;cursor:pointer}.thm button:last-child{border-bottom:0}
 /* thick-bordered cards */
 .card{border:2px solid var(--line);border-bottom-width:4px;border-radius:20px}
 .card .card{border:0;border-radius:0}
@@ -915,11 +913,9 @@ function applyTheme(p){const dark=p==="dark"||(p==="auto"&&mqDark.matches);docum
 const mChips=()=>{const known=Object.values(store.known).filter(Boolean).length,last=store.quiz.slice(-5),avg=last.length?Math.round(last.reduce((a,b)=>a+b,0)/last.length)+" %":"—";
   $("mchips").innerHTML=`<span class="mc o">🔥 ${streak()}</span><span class="mc g">🃏 ${known}</span><span class="mc b">🎯 ${avg}</span>`+thHtml()};
 const TH_IC={auto:"◐",light:"☀️",dark:"🌙"},thPref=()=>localStorage.getItem("frnat-theme")||"auto";
-function thHtml(){const p=thPref();return `<span class="thw"><button class="thb" id="thBtn" aria-label="Apparence" aria-haspopup="true">${TH_IC[p]}</button><div class="thm" id="thMenu" hidden>`+
-  [["auto","Auto"],["light","Clair"],["dark","Sombre"]].map(([k,l])=>`<button data-th="${k}">${TH_IC[k]} ${l}<span>${k===p?"✓":""}</span></button>`).join("")+`</div></span>`}
-$("mchips").addEventListener("click",e=>{const m=$("thMenu");if(e.target.closest("#thBtn")){e.stopPropagation();m.hidden=!m.hidden;return}
-  const b=e.target.closest("#thMenu button");if(b){e.stopPropagation();localStorage.setItem("frnat-theme",b.dataset.th);applyTheme(b.dataset.th);mChips()}});
-document.addEventListener("click",()=>{const m=$("thMenu");if(m)m.hidden=true});
+function thHtml(){const p=thPref(),L={auto:"Auto",light:"Clair",dark:"Sombre"};return `<span class="thw"><button class="thb" id="thBtn" aria-label="Apparence : ${L[p]} (toucher pour changer)" title="${L[p]}">${TH_IC[p]}</button></span>`}
+$("mchips").addEventListener("click",e=>{if(!e.target.closest("#thBtn"))return;const o=["auto","light","dark"],n=o[(o.indexOf(thPref())+1)%3];
+  localStorage.setItem("frnat-theme",n);applyTheme(n);mChips()});
 const GOAL=25,TICON={P:"📖",I:"🏛️",D:"⚖️",H:"📜",V:"🏠",S:"🗣️"};
 function mHome(){const n=store.days[dayKey(new Date())]||0,pc=Math.min(100,Math.round(n/GOAL*100));
   $("goal").innerHTML=`<h4>Objectif du jour</h4><div class="muted">${n} / ${GOAL} réponses${n>=GOAL?" · objectif atteint 🎉":""}</div><div class="pbar"><i style="width:${pc}%"></i></div>`;
