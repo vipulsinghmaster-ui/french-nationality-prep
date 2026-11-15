@@ -967,7 +967,7 @@ function renderKpis(){
   const known=Object.values(store.known).filter(Boolean).length;
   const last=store.quiz.slice(-5);const avg=last.length?Math.round(last.reduce((a,b)=>a+b,0)/last.length):0;
   const [ok,tot]=store.cj,st=streak();
-  const K={flash:["Flashcards",`${known}/${Q.length}`,known/Q.length*100,"var(--blue)"],quiz:["Moyenne QCM",last.length?`${avg} %`:"—",avg,"var(--ok)"],
+  const K={flash:["Flashcards",`${known}/${Q.length}`,known/Q.length*100,"var(--blue)"],quiz:qz&&!qz.done?[`Question ${qz.i+1}/${qz.items.length}`,`Score ${qz.score}`,qz.i/qz.items.length*100,"var(--ok)"]:["Moyenne QCM",last.length?`${avg} %`:"—",avg,"var(--ok)"],
    conj:["Conjugaison",tot?`${Math.round(ok/tot*100)} %`:"—",tot?ok/tot*100:0,"#af52de"],more:["Série",`${st} jour${st>1?"s":""}`,Math.min(st/14,1)*100,"#ff9500"]};
   for(const[id,[l,v,p,c]]of Object.entries(K)){const el=$("kpi-"+id);if(el)el.innerHTML=`<div class="k kt" style="--c:${c}"><small>${l}</small><b>${v}</b><div class="bar"><i style="width:${p}%${id==="more"?";background:var(--ok)":""}"></i></div></div>`}}
 function renderStats(){
@@ -998,7 +998,7 @@ function qotd(){const d=new Date(),seed=d.getFullYear()*372+d.getMonth()*31+d.ge
 let fc=[],fi=0,flipped=false;
 function buildFC(){const t=$("fcTheme").value,h=$("fcHard").checked;fc=Q.map((q,i)=>i).filter(i=>match(Q[i],t)&&(!h||!store.known[i]));fi=0;flipped=false;drawFC()}
 function drawFC(){if(!fc.length){$("fcCard").innerHTML="🎉 Aucune carte ici.";$("fcInfo").textContent="";return}
-  const q=Q[fc[fi]];$("fcInfo").textContent=`Carte ${fi+1}/${fc.length} · ${T[q[0]]}${q[5]==="off"?" · 📋 officielle":""}${isNew(q)?" · 🆕":""}${store.known[fc[fi]]?" · ✓ maîtrisée":""}`;
+  const q=Q[fc[fi]];$("fcInfo").textContent=`${T[q[0]]}${q[5]==="off"?" · 📋 officielle":""}${isNew(q)?" · 🆕":""}${store.known[fc[fi]]?" · ✓ maîtrisée":""}`;
   if(!q[2]){$("fcCard").innerHTML=flipped?`<div class="muted">${esc(q[4])}</div>`:esc(q[1]);return}
   $("fcCard").innerHTML=flipped?`<div><b style="color:var(--ok)">${esc(q[2][q[3]])}</b><br><span class="muted" style="font-size:15px">${esc(q[4])}</span></div>`:esc(q[1])}
 function flipFC(){window.speechSynthesis&&fcStopSpk();flipped=!flipped;drawFC()}
@@ -1024,8 +1024,8 @@ function startQuiz(){
   clearInterval(tmr);$("timer").textContent="";
   if(n===40){let s=45*60;tmr=setInterval(()=>{s--;$("timer").textContent=`⏱ ${s/60|0}:${String(s%60).padStart(2,"0")}`;if(s<=0){clearInterval(tmr);endQuiz()}},1000)}
   drawQuiz()}
-function drawQuiz(){const it=qz.items[qz.i];
-  $("qzBox").innerHTML=`<div class="muted">Question ${qz.i+1}/${qz.items.length} · Score ${qz.score}</div><span class="tag">${T[it.q[0]]}</span><h3><button class="spk pgSpk" style="float:none;margin:0 10px 0 0;vertical-align:middle" title="Lire la question" aria-label="Lire la question" onclick="pgRead(this,[this.parentNode.textContent,...[...$('qzBox').querySelectorAll('.opt')].map(o=>o.textContent)])">🔊</button>${esc(it.q[1])}</h3>`+
+function drawQuiz(){const it=qz.items[qz.i];renderKpis();
+  $("qzBox").innerHTML=`<span class="tag">${T[it.q[0]]}</span><h3><button class="spk pgSpk" style="float:none;margin:0 10px 0 0;vertical-align:middle" title="Lire la question" aria-label="Lire la question" onclick="pgRead(this,[this.parentNode.textContent,...[...$('qzBox').querySelectorAll('.opt')].map(o=>o.textContent)])">🔊</button>${esc(it.q[1])}</h3>`+
    it.o.map((o,j)=>`<button class="opt" data-j="${j}">${"ABCD"[j]}. ${esc(o[0])}</button>`).join("")+`<div id="qzFb"></div>`;
   $("qzBox").querySelectorAll(".opt").forEach(b=>b.onclick=()=>answer(+b.dataset.j))}
 function answer(j){const it=qz.items[qz.i],btns=$("qzBox").querySelectorAll(".opt");if(btns[0].disabled)return;
@@ -1033,7 +1033,7 @@ function answer(j){const it=qz.items[qz.i],btns=$("qzBox").querySelectorAll(".op
   if(it.o[j][1])qz.score++;else qz.wrong.push(it.q);track(it.q[0],it.o[j][1]);
   $("qzFb").innerHTML=`<p class="muted">${esc(it.q[4])}</p><button class="btn">${qz.i+1<qz.items.length?"Suivante →":"Voir le résultat"}</button>`;
   $("qzFb").querySelector("button").onclick=()=>{qz.i++;qz.i<qz.items.length?drawQuiz():endQuiz()}}
-function endQuiz(){clearInterval(tmr);const pct=Math.round(qz.score/qz.items.length*100);store.quiz.push(pct);save();refreshCounters();
+function endQuiz(){clearInterval(tmr);const pct=Math.round(qz.score/qz.items.length*100);qz.done=true;store.quiz.push(pct);save();refreshCounters();
   $("qzBox").innerHTML=`<div class="big" style="color:${pct>=80?"var(--ok)":"var(--bad)"}">${qz.score}/${qz.items.length} (${pct} %) ${pct>=80?"Réussi ✓":"Pas encore. Objectif : 80 %"}</div>`+
    (qz.wrong.length?"<h3>À revoir</h3>"+qz.wrong.map(q=>`<div class="line">• ${esc(q[1])} → <b>${esc(q[2][q[3]])}</b></div>`).join(""):"")}
 
@@ -1159,7 +1159,7 @@ function lvCards(){
   $("lvcPart").onchange=lvBuild;$("lvcHard").onchange=lvBuild;lvBuild()}
 function lvBuild(){window.speechSynthesis&&stStop();const p=$("lvcPart").value,h=$("lvcHard").checked;lvFc=LVQ.map((_,i)=>i).filter(i=>(!p||LVQ[i].part===p)&&(!h||!store.lvk[LVQ[i].k]));lvFi=0;lvFlipped=false;lvDraw()}
 function lvDraw(){if(!lvFc.length){$("lvcCard").innerHTML="🎉 Aucune carte ici.";$("lvcInfo").textContent="";return}
-  const q=LVQ[lvFc[lvFi]];$("lvcInfo").textContent=`Carte ${lvFi+1}/${lvFc.length} · ${LV_PARTS[q.part]} · p. ${q.p}${store.lvk[q.k]?" · ✓ maîtrisée":""}`;
+  const q=LVQ[lvFc[lvFi]];$("lvcInfo").textContent=`${LV_PARTS[q.part]} · p. ${q.p}${store.lvk[q.k]?" · ✓ maîtrisée":""}`;
   $("lvcCard").innerHTML=lvFlipped?`<div><b style="color:var(--ok)">${esc(q.o[0])}</b><br><span class="muted" style="font-size:15px">${esc(q.e)}</span></div>`:esc(q.q)}
 const lvCardLines=()=>{if(!lvFc.length)return[];const q=LVQ[lvFc[lvFi]];return lvFlipped?[q.o[0],q.e]:[q.q]};
 function lvFlip(){window.speechSynthesis&&stStop();lvFlipped=!lvFlipped;lvDraw()}
