@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FR Prep — mobile design options</title>
+<style>
+:root{--bg:#f5f1ea;--card:#fffdf8;--ink:#1c1917;--muted:#78716c;--blue:#c2410c;--accent2:#1f3a93;--ok:#15803d;--line:#e7e0d4;--bar:#fffdf8;--sel:#efe9df}
+body.dark{--bg:#08090a;--card:#0f1012;--ink:#e6e6e6;--muted:#8a8f98;--blue:#8b93ff;--accent2:#5e6ad2;--ok:#4cb782;--line:#1f2023;--bar:#0f1012;--sel:#16171a}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.4 Inter,Segoe UI,system-ui,sans-serif;background:#d9d3c7;color:#1c1917;padding:24px}
+body.dark{background:#000}
+h1{font:400 26px Georgia,serif;margin:0 0 4px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:1700px;margin:0 auto 20px}
+.top p{margin:0;color:#57534e}body.dark .top p,body.dark h1{color:#ccc}
+.tg{border:1px solid #a8a29e;background:transparent;border-radius:99px;padding:8px 16px;cursor:pointer;font:600 13px Inter,Segoe UI;color:inherit}
+.row{display:flex;flex-wrap:wrap;gap:34px;justify-content:center;max-width:1700px;margin:0 auto}
+.opt{width:390px}
+.cap{margin:0 4px 12px}.cap b{font:700 13px Inter;letter-spacing:.12em;text-transform:uppercase;color:var(--accent2)}body.dark .cap b{color:#9aa2ff}
+.cap h2{font:400 22px Georgia,serif;margin:2px 0 4px;color:#1c1917}body.dark .cap h2{color:#e6e6e6}
+.cap p{margin:0;font-size:13px;color:#57534e}body.dark .cap p{color:#9a9a9a}
+.phone{width:390px;height:780px;border-radius:44px;border:10px solid #1c1917;background:var(--bg);color:var(--ink);position:relative;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.25)}
+.sb{height:34px;display:flex;justify-content:space-between;align-items:center;padding:0 26px;font:600 13px Inter;flex:none}
+.scr{position:absolute;inset:0;display:flex;flex-direction:column}
+.appbar{display:flex;align-items:center;gap:10px;padding:6px 16px 10px;flex:none}
+.appbar h3{font:400 24px Georgia,serif;margin:0;flex:1}
+.ib{width:40px;height:40px;border-radius:12px;border:0;background:transparent;color:var(--ink);display:grid;place-items:center;cursor:pointer}
+.ib:active,.ib:hover{background:var(--sel)}
+.body{flex:1;overflow:auto;padding:4px 16px 96px}
+svg.i{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.muted{color:var(--muted)}.greet{font:400 26px Georgia,serif;margin:2px 0 2px}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.kp div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 10px}
+.kp b{display:block;font:700 22px Georgia,serif}.kp small{color:var(--muted);font-size:11px}
+.pill{display:inline-block;font:600 11px Inter;padding:3px 10px;border-radius:99px;background:color-mix(in srgb,var(--accent2) 14%,transparent);color:var(--accent2)}body.dark .pill{color:#9aa2ff}
+.q{font:400 18px/1.35 Georgia,serif;margin:10px 0}
+.o{display:block;width:100%;text-align:left;margin:6px 0;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:15px Inter;min-height:48px}
+.o.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent)}
+.bar{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin:6px 0 12px}.bar i{display:block;height:100%;background:var(--blue)}
+.heat{display:grid;grid-template-columns:repeat(14,1fr);gap:3px}.heat i{aspect-ratio:1;border-radius:3px;background:var(--accent2)}
+.btn{background:var(--blue);color:#fff;border:0;border-radius:12px;padding:12px 18px;font:600 15px Inter;min-height:48px;cursor:pointer}body.dark .btn{color:#0b0c0f}
+.tri{height:4px;width:60px;background:linear-gradient(90deg,#1f3a93 33%,#fff 33% 66%,#c2410c 66%);border-radius:2px;margin:0 0 10px}
+/* A: bottom tabs */
+.tabs{position:absolute;left:0;right:0;bottom:0;display:flex;background:var(--bar);border-top:1px solid var(--line);padding:6px 4px 18px}
+.tabs button{flex:1;border:0;background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;font:600 11px Inter;padding:6px 0;min-height:52px;cursor:pointer}
+.tabs button.on{color:var(--blue)}.tabs button.on .pillbg{background:color-mix(in srgb,var(--blue) 14%,transparent)}
+.pillbg{padding:3px 18px;border-radius:99px;display:grid;place-items:center}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--bar);border-radius:24px 24px 0 0;border-top:1px solid var(--line);padding:10px 16px 26px;transform:translateY(105%);transition:transform .28s cubic-bezier(.33,1,.68,1);z-index:5;box-shadow:0 -10px 30px rgba(0,0,0,.2)}
+.sheet.open{transform:none}.grab{width:40px;height:4px;border-radius:9px;background:var(--line);margin:0 auto 12px}
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s;z-index:4}.scrim.open{opacity:1;pointer-events:auto}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{border:1px solid var(--line);background:var(--card);border-radius:16px;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--ink);font:600 12px Inter;text-align:center;min-height:84px;cursor:pointer}
+/* B: launcher */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lt{border:1px solid var(--line);background:var(--card);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px;min-height:118px;text-align:left;color:var(--ink);cursor:pointer;font:600 15px Inter}
+.lt .ic{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;color:#fff}
+.lt small{font:400 12px Inter;color:var(--muted)}
+.hero{background:linear-gradient(135deg,var(--accent2),#3b4fb8);color:#fff;border-radius:20px;padding:18px;margin-bottom:14px}
+.hero .btn{background:#fff;color:#1f3a93;margin-top:10px}
+/* C: drawer */
+.drawer{position:absolute;top:0;bottom:0;left:0;width:300px;background:var(--bar);border-right:1px solid var(--line);transform:translateX(-105%);transition:transform .28s cubic-bezier(.33,1,.68,1);z-index:5;padding:44px 12px 20px;display:flex;flex-direction:column;gap:2px}
+.drawer.open{transform:none}
+.drawer h3{font:700 24px Georgia,serif;margin:0 12px 6px}
+.drawer button{display:flex;gap:14px;align-items:center;border:0;background:transparent;color:var(--ink);padding:0 14px;min-height:50px;border-radius:12px;font:500 15px Inter;text-align:left;cursor:pointer}
+.drawer button.on{background:color-mix(in srgb,var(--blue) 14%,transparent);color:var(--blue);font-weight:700}
+/* D: today-first */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:0 16px 10px;flex:none;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
+.chips button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:0 16px;min-height:40px;font:600 13px Inter;cursor:pointer;display:flex;align-items:center;gap:6px}
+.chips button.on{background:var(--blue);color:#fff;border-color:var(--blue)}body.dark .chips button.on{color:#0b0c0f}
+.ring{width:92px;height:92px;border-radius:50%;background:conic-gradient(var(--blue) 0 72%,var(--line) 0);display:grid;place-items:center;flex:none}
+.ring span{width:68px;height:68px;border-radius:50%;background:var(--card);display:grid;place-items:center;font:700 20px Georgia,serif}
+.fab{position:absolute;right:16px;bottom:22px;border-radius:18px;padding:0 20px;min-height:56px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.stage{padding:18px;text-align:center;color:var(--muted)}
+.hint{max-width:1100px;margin:26px auto 0;text-align:center;color:#57534e;font-size:14px}body.dark .hint{color:#9a9a9a}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+<symbol id="cards" viewBox="0 0 24 24"><rect x="3" y="7" width="14" height="13" rx="2"/><path d="M7 7V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2"/></symbol>
+<symbol id="check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></symbol>
+<symbol id="book" viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zm0 0a2 2 0 0 0 2 2h13"/></symbol>
+<symbol id="more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></symbol>
+<symbol id="mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol>
+<symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/></symbol>
+<symbol id="link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+<symbol id="abc" viewBox="0 0 24 24"><path d="M4 18l4-12 4 12M5.5 14h5M15 18v-5a2.5 2.5 0 0 1 5 0v5M15 15.5h5"/></symbol>
+<symbol id="menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+<symbol id="back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+<symbol id="x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
+<symbol id="flame" viewBox="0 0 24 24"><path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9z"/></symbol>
+</defs></svg>
+
+<div class="top"><div><h1>Nationalité française — mobile layout options</h1><p>Tap around: tabs, "Plus", tiles, drawer and chips all work. Same content, four navigation patterns.</p></div>
+<button class="tg" onclick="document.body.classList.toggle('dark')">◐ Light / Dark</button></div>
+<div class="row" id="row"></div>
+<p class="hint">Why the current page feels off: the desktop sidebar collapses into 9 wrapped buttons above the content, so every screen starts with ~3 rows of menu. All four options below fix that with thumb-reachable navigation. Touch targets are ≥44px.</p>
+
+<script>
+const $=s=>document.querySelector(s);
+const I=(n,s)=>`<svg class="i"${s?` style="width:${s}px;height:${s}px"`:''}><use href="#${n}"/></svg>`;
+const ALL=[["home","home","Accueil"],["cards","cards","Flashcards"],["check","check","QCM / Examen"],["book","book","Livret du Citoyen"],["mic","mic","Entretien"],["clock","clock","Histoire & actualité"],["chat","chat","Dialogues"],["abc","abc","Conjugaison"],["link","link","Sources"]];
+const SB='<div class="sb"><span>9:41</span><span>● ● ▮</span></div>';
+const kp=`<div class="kp"><div><b>72%</b><small>Réussite QCM</small></div><div><b>128</b><small>Cartes vues</small></div><div><b style="color:var(--blue)">6 j</b><small>Série</small></div></div>`;
+const qotd=`<div class="card"><span class="pill">Question du jour</span><div class="q">Quelle est la devise de la République française ?</div><button class="o">Liberté, Égalité, Fraternité</button><button class="o">Travail, Famille, Patrie</button><button class="o">Unité, Justice, Paix</button></div>`;
+const act=`<div class="card"><b>Activité · 28 jours</b><div class="heat" style="margin-top:10px">${Array.from({length:28},(_,i)=>`<i style="opacity:${[.15,.35,.6,.9][(i*7+3)%4]}"></i>`).join('')}</div><p class="muted" style="font-size:13px;margin:10px 0 0">Point faible : Institutions (54 %)</p></div>`;
+const greet=`<div class="tri"></div><div class="greet">Bonjour Vipul 👋</div><div class="muted" style="font-size:14px">Examen civique : 32/40 pour réussir</div>`;
+const homeBody=greet+kp+qotd+act;
+const row=$('#row');
+function opt(letter,title,desc,html){const d=document.createElement('div');d.className='opt';d.innerHTML=`<div class="cap"><b>Option ${letter}</b><h2>${title}</h2><p>${desc}</p></div><div class="phone">${html}</div>`;row.appendChild(d);return d}
+
+/* A — bottom tabs + Plus sheet */
+{const d=opt('A','Bottom tabs + “Plus” sheet','Familiar iOS/Android pattern. 4 daily tabs in thumb reach; everything else in one sheet. Lowest learning curve.',
+`<div class="scr">${SB}<div class="appbar"><h3 data-t>Accueil</h3><button class="ib">${I('flame')}</button></div><div class="body" data-b>${homeBody}</div>
+<div class="tabs">${[["home","Accueil"],["cards","Cartes"],["check","QCM"],["book","Livret"],["more","Plus"]].map(([ic,l],i)=>`<button data-i="${i}" class="${i?'':'on'}"><span class="pillbg">${I(ic)}</span>${l}</button>`).join('')}</div>
+<div class="scrim"></div><div class="sheet"><div class="grab"></div><div class="g3">${[["mic","Entretien"],["clock","Histoire"],["chat","Dialogues"],["abc","Conjugaison"],["link","Sources"]].map(([ic,l])=>`<button class="tile" data-s="${l}">${I(ic)}${l}</button>`).join('')}</div></div></div>`);
+ const ph=d.querySelector('.phone'),sh=ph.querySelector('.sheet'),sc=ph.querySelector('.scrim'),tb=ph.querySelectorAll('.tabs button');
+ const close=()=>{sh.classList.remove('open');sc.classList.remove('open')};
+ tb.forEach(b=>b.onclick=()=>{if(b.dataset.i==4){sh.classList.add('open');sc.classList.add('open');return}close();tb.forEach(x=>x.classList.toggle('on',x===b));const t=b.textContent;ph.querySelector('[data-t]').textContent=t=='Cartes'?'Flashcards':t;ph.querySelector('[data-b]').innerHTML=b.dataset.i==0?homeBody:`<div class="stage">${t} — contenu de la section</div>`});
+ sc.onclick=close;ph.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{close();tb.forEach(x=>x.classList.remove('on'));tb[4].classList.add('on');ph.querySelector('[data-t]').textContent=b.dataset.s;ph.querySelector('[data-b]').innerHTML=`<div class="stage">${b.dataset.s} — contenu de la section</div>`})}
+
+/* B — launcher grid */
+{const cols=['#c2410c','#1f3a93','#15803d','#7c3aed','#b45309','#0e7490','#be185d','#4d7c0f','#475569'];
+ const d=opt('B','Launcher grid','Home is a big tile menu (like a phone home screen) with a “Continue” card. Sections open full-screen with a back arrow. Best for discoverability.',
+`<div class="scr">${SB}<div class="appbar"><button class="ib" data-back style="display:none">${I('back')}</button><h3 data-t>Le Citoyen</h3><button class="ib">${I('flame')}</button></div><div class="body" data-b></div></div>`);
+ const ph=d.querySelector('.phone'),b=ph.querySelector('[data-b]'),t=ph.querySelector('[data-t]'),bk=ph.querySelector('[data-back]');
+ const home=()=>{t.textContent='Le Citoyen';bk.style.display='none';b.innerHTML=`${greet}<div class="hero"><small style="opacity:.8">Reprendre</small><div style="font:400 20px Georgia,serif;margin-top:2px">QCM · Principes et valeurs</div><div class="bar" style="background:rgba(255,255,255,.3)"><i style="width:30%;background:#fff"></i></div><small>12 / 40 questions · 72 % de réussite</small><br><button class="btn">${I('play',18)} Continuer</button></div><div class="g2">${ALL.slice(1).map(([ic,,l],i)=>`<button class="lt" data-l="${l}"><span class="ic" style="background:${cols[i]}">${I(ic)}</span>${l}<small>${['128 cartes','Examen blanc 40 Q','116 fiches','Questions types','Frise & figures','Histoires illustrées','Tous les temps','Liens officiels'][i]}</small></button>`).join('')}</div>`;
+  b.querySelectorAll('[data-l]').forEach(x=>x.onclick=()=>{t.textContent=x.dataset.l;bk.style.display='';b.innerHTML=`<div class="stage">${x.dataset.l} — contenu de la section</div>`})};
+ bk.onclick=home;home()}
+
+/* C — drawer */
+{const d=opt('C','Hamburger drawer','Closest to the current structure: one slim top bar, full menu slides in from the left. Cleanest screens, but navigation is hidden and needs two taps.',
+`<div class="scr">${SB}<div class="appbar"><button class="ib" data-m>${I('menu')}</button><h3 data-t>Accueil</h3><button class="ib">${I('flame')}</button></div><div class="body" data-b style="padding-bottom:24px">${homeBody}</div></div>
+<div class="scrim"></div><div class="drawer"><h3>Le Citoyen</h3><div class="tri" style="margin-left:12px"></div>${ALL.map(([ic,,l],i)=>`<button class="${i?'':'on'}" data-l="${l}">${I(ic)}${l}</button>`).join('')}</div>`);
+ const ph=d.querySelector('.phone'),dr=ph.querySelector('.drawer'),sc=ph.querySelector('.scrim');
+ const c=()=>{dr.classList.remove('open');sc.classList.remove('open')};
+ ph.querySelector('[data-m]').onclick=()=>{dr.classList.add('open');sc.classList.add('open')};sc.onclick=c;
+ dr.querySelectorAll('[data-l]').forEach(x=>x.onclick=()=>{dr.querySelectorAll('button').forEach(y=>y.classList.toggle('on',y===x));ph.querySelector('[data-t]').textContent=x.dataset.l;ph.querySelector('[data-b]').innerHTML=x.dataset.l=='Accueil'?homeBody:`<div class="stage">${x.dataset.l} — contenu de la section</div>`;c()})}
+
+/* D — today-first */
+{const d=opt('D','“Today” + scrolling chips','Study-first: home is one daily goal ring and a Continue button; sections are swipeable chips under the title; floating button starts an exam. Best for daily revision habit.',
+`<div class="scr">${SB}<div class="appbar"><h3>Aujourd’hui</h3><button class="ib">${I('flame')}</button></div>
+<div class="chips">${ALL.map(([ic,,l],i)=>`<button class="${i?'':'on'}" data-l="${l}">${l}</button>`).join('')}</div>
+<div class="body" data-b style="padding-bottom:100px"></div><button class="btn fab">${I('check',20)} Examen blanc</button></div>`);
+ const ph=d.querySelector('.phone'),b=ph.querySelector('[data-b]');
+ const home=`<div class="card" style="display:flex;gap:16px;align-items:center"><div class="ring"><span>72%</span></div><div><b style="font:400 20px Georgia,serif">Objectif du jour</b><div class="muted" style="font-size:13px;margin:2px 0 8px">18 / 25 questions · série 6 jours</div><button class="btn" style="padding:0 14px;min-height:44px">${I('play',16)} Continuer</button></div></div>${qotd}<div class="card"><b>Thèmes</b>${[["Principes et valeurs",82],["Institutions",54],["Droits et devoirs",71],["Histoire, géo, culture",63],["Vivre en France",77]].map(([n,v])=>`<div style="display:flex;justify-content:space-between;font-size:13px;margin-top:8px"><span>${n}</span><span class="muted">${v}%</span></div><div class="bar" style="margin:4px 0 0"><i style="width:${v}%"></i></div>`).join('')}</div>`;
+ b.innerHTML=home;
+ ph.querySelectorAll('[data-l]').forEach(x=>x.onclick=()=>{ph.querySelectorAll('.chips button').forEach(y=>y.classList.toggle('on',y===x));b.innerHTML=x.dataset.l=='Accueil'?home:`<div class="stage">${x.dataset.l} — contenu de la section</div>`})}
+</script></body></html>

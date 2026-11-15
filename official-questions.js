@@ -1,5 +1,5 @@
 window.OFFICIAL = {
- "synced": "2026-10-28T09:15",
+ "synced": "2026-11-15T12:02",
  "source": "https://www.immigration.interieur.gouv.fr/sites/dgef/files/medias/documents/2026-01/examen-civique-naturalisation-questions-de-connaissance-20251212.pdf",
  "questions": [
   {

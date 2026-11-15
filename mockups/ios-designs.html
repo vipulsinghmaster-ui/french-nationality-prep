@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FR Prep — iOS design language mockups</title>
+<style>
+:root{--z:.78}
+body{margin:0;font:15px/1.4 -apple-system,"SF Pro Text",system-ui,"Segoe UI",sans-serif;background:#e5e5ea;color:#111;padding:22px}
+body.dk{background:#000;color:#ddd}
+.top{max-width:1800px;margin:0 auto 18px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+.top h1{font:700 26px -apple-system,"Segoe UI",sans-serif;margin:0}.top p{margin:2px 0 0;color:#636366;font-size:14px;max-width:760px}body.dk .top p{color:#98989d}
+.ctl{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sg{display:inline-flex;background:rgba(120,120,128,.18);border-radius:9px;padding:2px}
+.sg button{border:0;background:transparent;padding:7px 14px;border-radius:7px;font:500 13px -apple-system,"Segoe UI",sans-serif;color:inherit;cursor:pointer}
+.sg button.on{background:#fff;color:#000;box-shadow:0 1px 3px rgba(0,0,0,.2);font-weight:600}body.dk .sg button.on{background:#636366;color:#fff}
+.lbl{font-size:12px;color:#636366}body.dk .lbl{color:#98989d}
+.vh{max-width:1800px;margin:26px auto 12px}.vh h2{font:700 20px -apple-system,"Segoe UI",sans-serif;margin:0}.vh p{margin:2px 0 0;font-size:14px;color:#636366}body.dk .vh p{color:#98989d}
+.grid{max-width:1800px;margin:0 auto;display:flex;flex-wrap:wrap;gap:26px;justify-content:center}
+.cell{width:calc(390px*var(--z))}.cell small{display:block;text-align:center;margin-top:8px;font-size:12px;color:#636366}body.dk .cell small{color:#98989d}
+.frame{width:calc(390px*var(--z));height:calc(844px*var(--z))}
+.phone{zoom:var(--z);width:390px;height:844px;border-radius:55px;border:11px solid #1c1c1e;box-sizing:border-box;position:relative;overflow:hidden;background:var(--bg);color:var(--lab);box-shadow:0 18px 40px rgba(0,0,0,.28);
+ --bg:#f2f2f7;--bg2:#fff;--lab:#000;--lab2:rgba(60,60,67,.6);--lab3:rgba(60,60,67,.3);--sep:rgba(60,60,67,.18);--fill:rgba(120,120,128,.12);--bar:rgba(249,249,249,.86);--tint:#c2410c;--green:#34c759;--red:#ff3b30;--orange:#ff9500;--serif:ui-serif,"New York",Georgia,serif;
+ font:17px/1.29 -apple-system,"SF Pro Text",system-ui,"Segoe UI",sans-serif;letter-spacing:-.022em}
+body.blue .phone{--tint:#007aff}
+body.dk .phone{--bg:#000;--bg2:#1c1c1e;--lab:#fff;--lab2:rgba(235,235,245,.6);--lab3:rgba(235,235,245,.3);--sep:rgba(84,84,88,.6);--fill:rgba(120,120,128,.24);--bar:rgba(30,30,30,.86);--tint:#ff8a4c;--green:#30d158;--red:#ff453a;--orange:#ff9f0a}
+body.dk.blue .phone{--tint:#0a84ff}
+.phone *{box-sizing:border-box}
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:118px;height:34px;border-radius:20px;background:#000;z-index:30}
+.sb{position:absolute;top:0;left:0;right:0;height:54px;display:flex;justify-content:space-between;align-items:center;padding:6px 34px 0 38px;font:600 16px -apple-system,"Segoe UI",sans-serif;z-index:25;pointer-events:none}
+.scr{position:absolute;inset:0;overflow-y:auto;padding:54px 0 120px;scrollbar-width:none}.scr::-webkit-scrollbar{display:none}
+.nb{position:absolute;top:0;left:0;right:0;height:98px;padding-top:54px;display:flex;align-items:center;justify-content:space-between;padding-left:8px;padding-right:12px;z-index:20;transition:background .2s,border-color .2s;border-bottom:.5px solid transparent;pointer-events:none}
+.nb.sc{background:var(--bar);backdrop-filter:blur(22px) saturate(1.6);border-bottom-color:var(--sep)}
+.nb>*{pointer-events:auto}
+.nb .it{position:absolute;left:0;right:0;bottom:11px;text-align:center;font-weight:600;opacity:0;transition:opacity .15s;pointer-events:none}.nb.sc .it{opacity:1}
+.back{display:flex;align-items:center;color:var(--tint);border:0;background:none;font:inherit;letter-spacing:inherit;padding:0 8px 0 0;height:44px;cursor:pointer}
+.tr{border:0;background:none;color:var(--tint);height:44px;width:44px;display:grid;place-items:center;cursor:pointer}
+.lt{font:700 34px/1.2 -apple-system,"SF Pro Display","Segoe UI",sans-serif;letter-spacing:.01em;padding:44px 20px 6px}
+.sub{padding:0 20px 8px;color:var(--lab2);font-size:15px}
+svg.i{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.sh{padding:22px 20px 6px;font-size:13px;color:var(--lab2);text-transform:uppercase;letter-spacing:-.01em}
+.sf{padding:7px 20px 0;font-size:13px;color:var(--lab2);line-height:1.35}
+.g{margin:0 16px;background:var(--bg2);border-radius:12px;overflow:hidden}
+.r{display:flex;align-items:center;gap:12px;min-height:44px;padding:10px 16px;position:relative;width:100%;border:0;background:none;color:inherit;font:inherit;letter-spacing:inherit;text-align:left;cursor:pointer}
+.r+.r::before,.pad+.r::before{content:"";position:absolute;top:0;left:16px;right:0;height:.5px;background:var(--sep)}
+.r.ic+.r.ic::before{left:58px}
+.r .t{flex:1;min-width:0}.r .s{display:block;font-size:15px;color:var(--lab2);line-height:1.25}
+.r .v{color:var(--lab2)}.r .ch{color:var(--lab3)}
+.tile{width:30px;height:30px;border-radius:7px;display:grid;place-items:center;color:#fff;flex:none;font-size:17px}.tile svg{width:19px;height:19px}
+.pad{padding:14px 16px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 16px}
+.st{background:var(--bg2);border-radius:14px;padding:14px}.st small{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--lab2);font-weight:500}.st b{display:block;font:700 28px/1.15 -apple-system,"Segoe UI",sans-serif;margin-top:4px}
+.pb{height:5px;border-radius:9px;background:var(--fill);overflow:hidden;margin-top:8px}.pb i{display:block;height:100%;background:var(--tint);border-radius:9px}
+.q{font:600 21px/1.28 var(--serif);letter-spacing:-.01em}
+.rad{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--lab3);flex:none;display:grid;place-items:center}
+.r.ok .rad{background:var(--green);border-color:var(--green);color:#fff}.r.ok .rad svg{width:14px;height:14px;stroke-width:3}.r.bad .rad{background:var(--red);border-color:var(--red)}
+.seg{display:flex;background:var(--fill);border-radius:9px;padding:2px;margin:6px 16px 0;gap:2px;overflow-x:auto;scrollbar-width:none}.seg::-webkit-scrollbar{display:none}
+.seg button{flex:1;border:0;background:none;color:var(--lab);border-radius:7px;min-height:32px;padding:0 12px;font:500 13px -apple-system,"Segoe UI",sans-serif;white-space:nowrap;cursor:pointer}
+.seg button.on{background:#fff;color:#000;font-weight:600;box-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04)}body.dk .phone .seg button.on{background:#636366;color:#fff}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:calc(100% - 32px);margin:16px 16px 0;min-height:50px;border-radius:14px;border:0;background:var(--tint);color:#fff;font:600 17px -apple-system,"Segoe UI",sans-serif;cursor:pointer}
+.btn.t{background:color-mix(in srgb,var(--tint) 14%,transparent);color:var(--tint)}.btn.gr{background:var(--green)}.btn.rd{background:color-mix(in srgb,var(--red) 14%,transparent);color:var(--red)}
+.pair{display:flex;gap:12px;margin:16px 16px 0}.pair .btn{margin:0;flex:1;width:auto}
+.sw{width:51px;height:31px;border-radius:99px;background:var(--lab3);position:relative;flex:none;transition:background .2s;cursor:pointer}.sw::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.25);transition:transform .2s}
+.sw.on{background:var(--green)}.sw.on::after{transform:translateX(20px)}
+.search{display:flex;align-items:center;gap:6px;margin:6px 16px 0;background:var(--fill);border-radius:10px;height:36px;padding:0 8px;color:var(--lab2)}.search svg{width:18px;height:18px}
+.card{margin:14px 16px 0;background:var(--bg2);border-radius:20px;min-height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:26px;font:600 25px/1.3 var(--serif);cursor:pointer}.card small{font:400 13px -apple-system,"Segoe UI",sans-serif;color:var(--lab2);margin-top:14px}
+.tool{display:flex;justify-content:space-around;margin:14px 16px 0;color:var(--tint)}.tool button{border:0;background:none;color:inherit;width:48px;height:44px;display:grid;place-items:center;cursor:pointer}
+.heat{display:grid;grid-template-columns:repeat(14,1fr);gap:4px}.heat i{aspect-ratio:1;border-radius:4px;background:var(--tint)}
+.date{width:54px;font-weight:700;color:var(--tint);flex:none;font-variant-numeric:tabular-nums}
+.mod{padding:0 16px 14px;color:var(--lab2);font-size:15px;line-height:1.4}.mod b{color:var(--lab)}
+.pill{display:inline-flex;align-items:center;gap:6px;font:600 13px -apple-system,"Segoe UI",sans-serif;color:var(--green)}
+.tb{position:absolute;left:0;right:0;bottom:0;height:83px;background:var(--bar);backdrop-filter:blur(22px) saturate(1.6);border-top:.5px solid var(--sep);display:flex;padding:7px 4px 0;z-index:20}
+.tb button{flex:1;border:0;background:none;color:var(--lab2);display:flex;flex-direction:column;align-items:center;gap:2px;font:500 10px -apple-system,"Segoe UI",sans-serif;letter-spacing:0;height:44px;cursor:pointer}
+.tb button.on{color:var(--tint)}.tb button.on svg{fill:color-mix(in srgb,currentColor 22%,transparent)}.tb svg{width:26px;height:26px}
+.hi{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:9px;background:var(--lab);z-index:30;pointer-events:none}
+.note{max-width:1100px;margin:30px auto 0;text-align:center;font-size:13px;color:#636366}body.dk .note{color:#98989d}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+<symbol id="cards" viewBox="0 0 24 24"><rect x="3" y="7" width="14" height="13" rx="2"/><path d="M7 7V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2"/></symbol>
+<symbol id="check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></symbol>
+<symbol id="tick" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></symbol>
+<symbol id="book" viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zm0 0a2 2 0 0 0 2 2h13"/></symbol>
+<symbol id="more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></symbol>
+<symbol id="mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol>
+<symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/></symbol>
+<symbol id="abc" viewBox="0 0 24 24"><path d="M4 18l4-12 4 12M5.5 14h5M15 18v-5a2.5 2.5 0 0 1 5 0v5M15 15.5h5"/></symbol>
+<symbol id="link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+<symbol id="spk" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16.5 9a4 4 0 0 1 0 6M19 6.5a8 8 0 0 1 0 11"/></symbol>
+<symbol id="chr" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+<symbol id="chl" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+<symbol id="srch" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+<symbol id="shuf" viewBox="0 0 24 24"><path d="M3 7h4l10 10h4M3 17h4l2-2M14 9l3-2h4M18 4l3 3-3 3M18 14l3 3-3 3"/></symbol>
+<symbol id="ud" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></symbol>
+<symbol id="flame" viewBox="0 0 24 24"><path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9z"/></symbol>
+<symbol id="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></symbol>
+<symbol id="list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+</defs></svg>
+
+<div class="top"><div><h1>Nationalité française — iOS design language</h1><p>Rebuilt on Apple’s Human Interface Guidelines: large titles, inset grouped lists, translucent tab bar, SF-style type, 44 pt targets, sheets and segmented controls. Every page is shown for both layouts. Tap tabs, rows and back buttons inside any phone.</p></div>
+<div class="ctl"><span class="lbl">Layout</span><div class="sg" id="sgV"><button class="on" data-v="A">A · 4 tabs + Plus</button><button data-v="B">B · 3 tabs</button></div>
+<span class="lbl">Mode</span><div class="sg" id="sgM"><button class="on" data-m="l">Light</button><button data-m="d">Dark</button></div>
+<span class="lbl">Accent</span><div class="sg" id="sgT"><button class="on" data-t="t">Terracotta</button><button data-t="b">Apple blue</button></div>
+<span class="lbl">Size</span><input type="range" id="zz" min="50" max="100" value="78"></div></div>
+<div class="vh"><h2 id="vt"></h2><p id="vd"></p></div>
+<div class="grid" id="grid"></div>
+<p class="note">Fonts: your PC shows Segoe UI as a stand-in. On the iPhone the app uses the real system font (SF Pro) and New York for French reading text (<code>-apple-system</code> / <code>ui-serif</code>), so the real result looks even closer to native.</p>
+
+<script>
+const $=s=>document.querySelector(s);
+const I=(n,s)=>`<svg class="i"${s?` style="width:${s}px;height:${s}px"`:''}><use href="#${n}"/></svg>`;
+const tile=(c,html)=>`<span class="tile" style="background:${c}">${html}</span>`;
+const CH=`<span class="ch">${I('chr',18)}</span>`;
+const row=(inner,go,cls='')=>`<button class="r ${cls}"${go?` data-go="${go}"`:''}>${inner}</button>`;
+const hdr=t=>`<div class="sh">${t}</div>`,ftr=t=>`<div class="sf">${t}</div>`;
+const sw=on=>`<span class="sw ${on?'on':''}" data-sw></span>`;
+const seg=(a,i=0)=>`<div class="seg" data-seg>${a.map((x,j)=>`<button class="${j==i?'on':''}">${x}</button>`).join('')}</div>`;
+const menu=(l,v)=>`<div class="r"><span class="t">${l}</span><span class="v">${v}</span><span class="ch">${I('ud',18)}</span></div>`;
+const heat=`<div class="heat">${Array.from({length:28},(_,i)=>`<i style="opacity:${[.12,.3,.55,.9][(i*7+3)%4]}"></i>`).join('')}</div>`;
+const COL={orange:'#ff9500',blue:'#007aff',green:'#34c759',purple:'#af52de',red:'#ff3b30',teal:'#30b0c7',indigo:'#5856d6',gray:'#8e8e93'};
+const META={flash:['Flashcards','cards',COL.orange,'319 cartes'],quiz:['QCM / Examen blanc','check',COL.blue,'40 questions · 45 min'],interview:['Entretien','mic',COL.purple,'Questions fréquentes'],conj:['Conjugaison','abc',COL.indigo,'15 verbes · 6 temps'],dialogues:['Histoires illustrées','chat',COL.teal,'6 histoires'],livret:['Livret du Citoyen','book',COL.green,'116 fiches · 379 questions'],hist:['Histoire & actualité','clock',COL.red,'Chronologie · figures'],sources:['Sources officielles','link',COL.gray,'243 questions synchronisées']};
+const li=k=>{const m=META[k];return row(`${tile(m[2],I(m[1]))}<span class="t">${m[0]}<span class="s">${m[3]}</span></span>${CH}`,k,'ic')};
+
+const BODY={
+home:()=>`<div class="sub">Il vous reste 319 cartes à revoir · objectif 32/40 à l’examen civique.</div>
+<div class="row2" style="margin-top:8px"><div class="st"><small>${I('cards',16)}Flashcards</small><b>0/319</b><div class="pb"><i style="width:2%"></i></div></div><div class="st"><small>${I('check',16)}Moyenne QCM</small><b>—</b><div class="pb"><i style="width:0"></i></div></div><div class="st"><small>${I('abc',16)}Conjugaison</small><b>—</b><div class="pb"><i style="width:0"></i></div></div><div class="st"><small style="color:var(--orange)">${I('flame',16)}Série</small><b>0 jour</b><div class="pb"><i style="width:0"></i></div></div></div>
+${hdr('Question du jour · Histoire, géo, culture')}<div class="g"><div class="pad q">Parmi ces textes, lequel a été adopté sous Napoléon Ier ?</div>
+${['A. La loi de 1905','B. La Constitution de 1958','C. La DDHC de 1789','D. Le Code civil (1804)'].map((o,i)=>row(`<span class="t">${o}</span><span class="rad">${i==3?I('tick'):''}</span>`,'',i==3?'ok':'')).join('')}</div>
+${hdr('Activité · 28 jours')}<div class="g"><div class="pad">${heat}</div></div>${ftr('Répondez à quelques QCM pour voir vos thèmes faibles.')}
+${hdr('Vue d’ensemble')}<div class="g">${[['Examen civique','40 QCM · 45 min'],['Pour réussir','32/40 (80 %)'],['Langue','Niveau B2'],['Entretien','En préfecture']].map(([a,b])=>`<div class="r"><span class="t">${a}</span><span class="v">${b}</span></div>`).join('')}</div>`,
+flash:()=>`<div class="g" style="margin-top:6px">${menu('Thème','Tous les thèmes')}<div class="r"><span class="t">À revoir seulement</span>${sw(0)}</div></div>
+<div class="card" data-flip><span>Quelle est la devise de la République française ?</span><small>Touchez la carte pour la retourner</small></div>
+<div class="pb" style="margin:14px 36px 0"><i style="width:4%"></i></div><div class="sf" style="text-align:center">Carte 12 sur 319</div>
+<div class="pair"><button class="btn rd">${I('chl',20)} À revoir</button><button class="btn gr">Je sais ${I('tick',20)}</button></div>
+<div class="tool"><button>${I('chl')}</button><button>${I('shuf')}</button><button>${I('spk')}</button><button>${I('chr')}</button></div>`,
+quiz:()=>`<div class="sub">Entraînez-vous dans les conditions de l’examen civique.</div>${hdr('Réglages')}<div class="g">${menu('Thème','Tous les thèmes')}<div class="r"><span class="t">Questions</span></div><div style="padding:0 16px 12px">${seg(['10','20','40'],2).replace('margin:6px 16px 0','')}</div></div>${ftr('L’examen officiel : 40 QCM, 45 minutes, 32 bonnes réponses pour réussir.')}
+<button class="btn">Démarrer</button>${hdr('Derniers résultats')}<div class="g"><div class="pad" style="text-align:center;color:var(--lab2);padding:30px 16px"><div style="font-size:34px">🗒️</div><b style="color:var(--lab);display:block;margin-top:6px">Aucun QCM pour l’instant</b>Vos scores apparaîtront ici.</div></div>`,
+livret:()=>`<div class="search">${I('srch')}Rechercher une fiche</div>${seg(['Fiches','Cartes','QCM'],0)}${hdr('Partie')}<div class="g">${menu('Chapitre','I. La devise')}</div>
+${hdr('I. La devise de la République')}<div class="g">${['A. Liberté','B. Égalité','C. Fraternité','D. Les symboles de la France'].map((t,i)=>row(`<span class="t">${t}</span>${i==0?`<span style="color:var(--tint)">${I('spk',20)}</span>`:''}${CH}`)).join('')}</div>
+${ftr('Édition mai 2026 · source officielle · 116 fiches · 379 questions')}`,
+interview:()=>`<div class="sub">Lisez la question, répondez à voix haute, puis comparez avec le modèle.</div>
+${['Pouvez-vous vous présenter ?','Depuis combien de temps vivez-vous en France ?','Pourquoi souhaitez-vous devenir français ?'].map((q,i)=>`${hdr('Question '+(i+1))}<div class="g"><div class="r"><span class="t" style="font-weight:600">${q}</span><span style="color:var(--tint)">${I('spk',22)}</span></div>${i==0?`<div class="r" style="color:var(--tint)"><span class="t">Masquer le modèle de réponse</span>${I('ud',18)}</div><div class="mod"><b>Je m’appelle…</b>, je suis né(e) à… en… Je suis arrivé(e) en France en… et je vis à… avec ma famille.</div>`:`<div class="r" style="color:var(--tint)"><span class="t">Voir un modèle de réponse</span>${I('ud',18)}</div>`}</div>`).join('')}`,
+hist:()=>`${seg(['Histoire','Actualité'],0)}${hdr('Chronologie')}<div class="g">${[['1789','Révolution · DDHC'],['1804','Code civil'],['1905','Séparation des Églises et de l’État'],['1944','Droit de vote des femmes'],['1958','Constitution de la Ve République']].map(([d,t])=>`<div class="r"><span class="date">${d}</span><span class="t">${t}</span></div>`).join('')}</div>
+${hdr('Grandes figures')}<div class="g">${[['Jeanne d’Arc','XVe siècle'],['Victor Hugo','Écrivain'],['Charles de Gaulle','Ve République'],['Simone Veil','Droits des femmes']].map(([a,b])=>row(`<span class="t">${a}</span><span class="v">${b}</span>${CH}`)).join('')}</div>
+${hdr('Jours fériés')}<div class="g">${[['1er mai','Fête du Travail'],['8 mai','Victoire 1945'],['14 juillet','Fête nationale'],['11 novembre','Armistice 1918']].map(([d,t])=>`<div class="r"><span class="t">${t}</span><span class="v">${d}</span></div>`).join('')}</div>`,
+dialogues:()=>`<div class="sub">Lisez et écoutez des histoires pour pratiquer chaque temps.</div>${hdr('Temps')}${seg(['Présent','Passé composé','Imparfait','Futur'],0)}${hdr('Bibliothèque')}<div class="g">${[['🤖','John & Julliet','Un homme prépare sa nationalité avec son assistant'],['🐕','Max et moi','La vie avec son chien · 6 chapitres'],['🌟','Papa, pourquoi ?','Un père et sa fille de sept ans'],['⛰️','La famille Martin en Suisse','Une famille de quatre voyage'],['👵','Grand-mère Odette raconte','Son enfance'],['🗼','Une année en France','Les fêtes françaises']].map(([e,t,s])=>row(`<span class="tile" style="background:var(--fill);font-size:19px">${e}</span><span class="t">${t}<span class="s">${s}</span></span>${CH}`,'','ic')).join('')}</div>
+${hdr('Chapitre 1 · Le premier jour')}<div class="g"><div class="pad" style="font:400 18px/1.5 var(--serif)">Un soir à Paris, John ouvre son ordinateur. Un petit robot l’attend à l’écran…</div></div>`,
+conj:()=>`<div class="g" style="margin-top:6px">${menu('Verbe','venir')}<div class="r"><span class="t">Ajouter un verbe</span><span style="color:var(--tint)">${I('chr',18)}</span></div></div>${seg(['Présent','Passé composé','Imparfait','Futur','Conditionnel'],0)}
+${hdr('Présent')}<div class="g">${[['je','viens'],['tu','viens'],['il / elle / on','vient'],['nous','venons'],['vous','venez'],['ils / elles','viennent']].map(([p,f])=>`<div class="r"><span class="v" style="width:104px">${p}</span><span class="t" style="font-weight:600">${f}</span><span style="color:var(--tint)">${I('spk',20)}</span></div>`).join('')}</div>
+${hdr('Exercice')}<div class="g"><div class="pad"><div class="q" style="font-size:19px">Présent venir, ils/elles … ?</div><div style="margin-top:10px;background:var(--fill);border-radius:10px;padding:10px 12px;color:var(--lab2)">Votre réponse</div></div></div><button class="btn">Vérifier</button>`,
+sources:()=>`<div class="g" style="margin-top:6px"><div class="r"><span class="t"><span class="pill">${I('check',16)} Liste officielle synchronisée</span><span class="s">243 questions · dernière synchro 28/10/2026</span></span></div></div>${ftr('Aucune nouvelle question ces 14 derniers jours.')}
+${hdr('Sources officielles · vérifiées le 26/10/2026')}<div class="g">${[['Livret du citoyen','immigration.interieur.gouv.fr'],['Liste officielle des questions','formation-civique.interieur.gouv.fr'],['Procédure de naturalisation','service-public.fr'],['Arrêté du JORF 2026','legifrance.gouv.fr'],['Inscription à l’examen civique','francais.cci-paris-idf.fr']].map(([t,h])=>row(`${tile(COL.gray,I('link'))}<span class="t">${t}<span class="s">${h}</span></span><span class="ch">↗</span>`,'','ic')).join('')}</div>`
+};
+const TITLE={home:'Bonjour Vipul',flash:'Flashcards',quiz:'QCM',livret:'Livret du Citoyen',interview:'Entretien',hist:'Histoire & actualité',dialogues:'Histoires',conj:'Conjugaison',sources:'Sources',more:'Plus',study:'Réviser',lib:'Bibliothèque'};
+const LIST={
+more:()=>`<div class="g" style="margin-top:6px">${['interview','hist','dialogues','conj','sources'].map(li).join('')}</div>${hdr('Apparence')}<div class="g"><div style="padding:10px 16px 12px">${seg(['Auto','Clair','Sombre'],0).replace('margin:6px 16px 0','')}</div></div>`,
+study:()=>`${hdr('Entraînement')}<div class="g">${['flash','quiz','interview','conj','dialogues'].map(li).join('')}</div>${ftr('Les flashcards et le QCM comptent dans votre progression quotidienne.')}`,
+lib:()=>`<div class="g" style="margin-top:6px">${['livret','hist','sources'].map(li).join('')}</div>${ftr('Contenu officiel · édition mai 2026.')}`};
+const V={A:{n:'A · 4 tabs + “Plus” list',d:'Closest to the native iOS pattern: four daily tabs; “Plus” opens a grouped list of the rest (like Apple’s own More tab). Best if you mostly use Cartes and QCM.',
+ tabs:[['home','home','Accueil'],['flash','cards','Cartes'],['quiz','check','QCM'],['livret','book','Livret'],['more','more','Plus']],
+ par:{interview:'more',hist:'more',dialogues:'more',conj:'more',sources:'more'},roots:['home','flash','quiz','livret','more'],order:['home','flash','quiz','livret','more','interview','hist','dialogues','conj','sources']},
+B:{n:'B · 3 tabs: Aujourd’hui · Réviser · Bibliothèque',d:'Apple Fitness / Books style: fewer, bigger ideas. Every page is one push away from a clean list, nothing is hidden behind “…”. Best for a daily-habit app.',
+ tabs:[['home','home','Aujourd’hui'],['study','cards','Réviser'],['lib','book','Bibliothèque']],
+ par:{flash:'study',quiz:'study',interview:'study',conj:'study',dialogues:'study',livret:'lib',hist:'lib',sources:'lib'},roots:['home','study','lib'],order:['home','study','lib','flash','quiz','interview','conj','dialogues','livret','hist','sources']}};
+let cur='A';
+function draw(ph,v,p){const C=V[v],root=C.roots.includes(p),tab=C.tabs.find(t=>t[0]===p)?.[0]||C.par[p];
+ ph.dataset.v=v;ph.dataset.p=p;
+ ph.innerHTML=`<div class="island"></div><div class="sb"><span>9:41</span><span style="letter-spacing:1px">▂▄▆ ᯤ ▮</span></div>
+ <div class="nb"><span>${root?'':`<button class="back" data-go="${tab}">${I('chl',22)}<span>${TITLE[tab]}</span></button>`}</span><span class="it">${TITLE[p]}</span><span>${p=='home'||p=='flash'||p=='livret'||p=='interview'?`<button class="tr">${I('spk')}</button>`:p=='conj'||p=='dialogues'?`<button class="tr">${I('spk')}</button>`:''}</span></div>
+ <div class="scr"><div class="lt">${TITLE[p]}</div>${(BODY[p]||LIST[p])()}</div>
+ <div class="tb">${C.tabs.map(([k,ic,l])=>`<button class="${k===tab?'on':''}" data-go="${k}">${I(ic)}${l}</button>`).join('')}</div><div class="hi"></div>`;
+ const sc=ph.querySelector('.scr'),nb=ph.querySelector('.nb');sc.onscroll=()=>nb.classList.toggle('sc',sc.scrollTop>38)}
+function render(){const C=V[cur];$('#vt').textContent=C.n;$('#vd').textContent=C.d;const g=$('#grid');g.innerHTML='';
+ C.order.forEach(p=>{const c=document.createElement('div');c.className='cell';c.innerHTML=`<div class="frame"><div class="phone"></div></div><small>${TITLE[p]}${C.roots.includes(p)?'':' · pushed'}</small>`;g.appendChild(c);draw(c.querySelector('.phone'),cur,p)})}
+$('#grid').addEventListener('click',e=>{const ph=e.target.closest('.phone');if(!ph)return;
+ const go=e.target.closest('[data-go]');if(go&&go.dataset.go){draw(ph,ph.dataset.v,go.dataset.go);return}
+ const s=e.target.closest('[data-seg] button');if(s){s.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===s));return}
+ const w=e.target.closest('[data-sw]');if(w){w.classList.toggle('on');return}
+ const r=e.target.closest('.g .r');if(r&&r.querySelector('.rad')){const g=r.closest('.g');g.querySelectorAll('.r').forEach(x=>x.classList.remove('ok','bad'));const right=r.textContent.includes('Code civil');r.classList.add(right?'ok':'bad');r.querySelector('.rad').innerHTML=I(right?'tick':'tick');return}
+ const f=e.target.closest('[data-flip]');if(f){const a=f.firstElementChild;a.textContent=a.textContent.startsWith('Quelle')?'Liberté, Égalité, Fraternité':'Quelle est la devise de la République française ?'}});
+$('#sgV').onclick=e=>{const b=e.target.closest('button');if(!b)return;cur=b.dataset.v;$('#sgV').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));render()};
+$('#sgM').onclick=e=>{const b=e.target.closest('button');if(!b)return;document.body.classList.toggle('dk',b.dataset.m=='d');$('#sgM').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b))};
+$('#sgT').onclick=e=>{const b=e.target.closest('button');if(!b)return;document.body.classList.toggle('blue',b.dataset.t=='b');$('#sgT').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b))};
+$('#zz').oninput=e=>document.documentElement.style.setProperty('--z',e.target.value/100);
+render();
+</script></body></html>
