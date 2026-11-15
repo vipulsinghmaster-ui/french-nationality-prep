@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1f3a93">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="FR Prep">
 <title>Nationalité française — Prep Dashboard</title>
 <style>
 :root{--bg:#f5f1ea;--card:#fffdf8;--ink:#1c1917;--muted:#78716c;--blue:#c2410c;--accent2:#1f3a93;--ok:#15803d;--bad:#b91c1c;--line:#e7e0d4;--side:#efe9df;--sel:#fffdf8}
@@ -994,6 +999,7 @@ function drill(){const a=document.activeElement,refocus=!a||a===document.body||$
 $("cjVerb").onchange=()=>{cjEditing=false;drawCJ()};$("cjTense").onchange=drawCJ;
 
 buildFC();drawDL();drawCJ();drill();lvGo(0);show(location.hash.slice(1)||"home");
+if("serviceWorker"in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js");
 </script>
 </body>
 </html>
