@@ -870,7 +870,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 
 const TABS=[["home","🏠 Accueil"],["sources","🔗 Sources"],["flash","🃏 Flashcards"],["quiz","✅ QCM / Examen blanc"],["interview","🗣️ Entretien"],["livret","📘 Livret du Citoyen"],["hist","📜 History &amp; Current Affairs"],["dialogues","💬 Dialogues"],["conj","📚 Conjugaison"]];
 $("nav").innerHTML=TABS.map(([k,l])=>`<button data-t="${k}">${l}</button>`).join("");
-function show(k){if(k==="more"&&!isPhone())k="home";mSync(k);document.querySelectorAll("section").forEach(s=>s.classList.toggle("active",s.id===k));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.t===k));if(k==="home")renderStats();history.replaceState(null,"","#"+k);if(typeof stStop==="function"){stStop();document.querySelectorAll(".pgSpk").forEach(x=>{x.dataset.on="";x.textContent="🔊"})}}
+function show(k){if(k==="more"&&!isPhone())k="home";mSync(k);document.querySelectorAll("section").forEach(s=>s.classList.toggle("active",s.id===k));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.t===k));if(k==="home")renderStats();history.replaceState(null,"","#"+k);if(isPhone()){const t0=()=>{scrollTo(0,0);$("mnb").classList.remove("sc")};t0();requestAnimationFrame(t0);setTimeout(t0,80);setTimeout(t0,250)}if(typeof stStop==="function"){stStop();document.querySelectorAll(".pgSpk").forEach(x=>{x.dataset.on="";x.textContent="🔊"})}}
 $("nav").onclick=e=>e.target.dataset.t&&show(e.target.dataset.t);
 // Phone navigation (iOS pattern, <=820px via CSS): tab bar, large title + nav bar, "Plus" list, Apparence
 const MI=n=>`<svg class="mi" aria-hidden="true"><use href="#m-${n}"/></svg>`;
