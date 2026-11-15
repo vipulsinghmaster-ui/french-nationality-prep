@@ -960,7 +960,8 @@ $("fcTheme").innerHTML=themeOpts;$("qzTheme").innerHTML=themeOpts;
 store.days=store.days||{};store.th=store.th||{};
 const dayKey=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 function track(theme,ok){const k=dayKey(new Date());store.days[k]=(store.days[k]||0)+1;
-  if(theme){const s=store.th[theme]=store.th[theme]||[0,0];s[1]++;if(ok)s[0]++}save()}
+  if(theme){const s=store.th[theme]=store.th[theme]||[0,0];s[1]++;if(ok)s[0]++}save();refreshCounters()}
+function refreshCounters(){renderKpis();mChips()}
 function streak(){let n=0,d=new Date();if(!store.days[dayKey(d)])d.setDate(d.getDate()-1);while(store.days[dayKey(d)]){n++;d.setDate(d.getDate()-1)}return n}
 function renderKpis(){
   const known=Object.values(store.known).filter(Boolean).length;
@@ -1032,7 +1033,7 @@ function answer(j){const it=qz.items[qz.i],btns=$("qzBox").querySelectorAll(".op
   if(it.o[j][1])qz.score++;else qz.wrong.push(it.q);track(it.q[0],it.o[j][1]);
   $("qzFb").innerHTML=`<p class="muted">${esc(it.q[4])}</p><button class="btn">${qz.i+1<qz.items.length?"Suivante →":"Voir le résultat"}</button>`;
   $("qzFb").querySelector("button").onclick=()=>{qz.i++;qz.i<qz.items.length?drawQuiz():endQuiz()}}
-function endQuiz(){clearInterval(tmr);const pct=Math.round(qz.score/qz.items.length*100);store.quiz.push(pct);save();
+function endQuiz(){clearInterval(tmr);const pct=Math.round(qz.score/qz.items.length*100);store.quiz.push(pct);save();refreshCounters();
   $("qzBox").innerHTML=`<div class="big" style="color:${pct>=80?"var(--ok)":"var(--bad)"}">${qz.score}/${qz.items.length} (${pct} %) ${pct>=80?"Réussi ✓":"Pas encore. Objectif : 80 %"}</div>`+
    (qz.wrong.length?"<h3>À revoir</h3>"+qz.wrong.map(q=>`<div class="line">• ${esc(q[1])} → <b>${esc(q[2][q[3]])}</b></div>`).join(""):"")}
 
