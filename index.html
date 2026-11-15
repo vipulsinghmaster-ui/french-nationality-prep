@@ -107,13 +107,13 @@ body.dark{--bg:#000;--card:#1c1c1e;--ink:#fff;--muted:rgba(235,235,245,.6);--lin
 html{-webkit-text-size-adjust:100%}
 body{display:block;font:17px/1.35 var(--sans);letter-spacing:-.022em;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
 .side{display:none}
-main{padding:0 16px calc(76px + env(safe-area-inset-bottom))}
+main{padding:0 16px calc(84px + env(safe-area-inset-bottom))}
 h2,h3,.big,.k b,.brand{font-family:var(--sans)}
 h3{font:600 21px/1.28 var(--serif);letter-spacing:-.01em;margin:10px 0}
 .muted{font-size:15px}
 a{color:var(--blue)}
 /* nav bar + large title */
-#mnb{display:flex;position:fixed;top:0;left:0;right:0;z-index:40;height:calc(44px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 6px 0;align-items:center;justify-content:space-between;border-bottom:.5px solid transparent;transition:background .2s,border-color .2s}
+#mnb{display:flex;position:sticky;top:0;z-index:40;height:calc(44px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 6px 0;align-items:center;justify-content:space-between;border-bottom:.5px solid transparent;transition:background .2s,border-color .2s}
 #mnb.sc{background:var(--bar);-webkit-backdrop-filter:blur(22px) saturate(1.6);backdrop-filter:blur(22px) saturate(1.6);border-bottom-color:var(--line)}
 #mnb .it{position:absolute;left:96px;right:96px;bottom:0;height:44px;display:flex;align-items:center;justify-content:center;font:600 17px var(--sans);opacity:0;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .15s}
 #mnb.sc .it{opacity:1}
@@ -124,7 +124,7 @@ a{color:var(--blue)}
 #mnTr{justify-content:center}
 #mnTr::before{content:"";width:24px;height:24px;background:currentColor;-webkit-mask:var(--i-spk) center/contain no-repeat;mask:var(--i-spk) center/contain no-repeat}
 #mnTr[data-on="1"]::before{-webkit-mask-image:var(--i-pause);mask-image:var(--i-pause)}
-#mlt{display:block;font:700 34px/1.2 var(--sans);letter-spacing:.01em;padding:calc(48px + env(safe-area-inset-top)) 4px 8px}
+#mlt{display:block;font:700 34px/1.2 var(--sans);letter-spacing:.01em;padding:2px 4px 8px}
 /* cards -> inset grouped */
 .card{background:var(--card);border:0;border-radius:12px;padding:16px;margin-bottom:14px}
 .card .card{background:transparent;padding:0;margin:0;border-radius:0}
@@ -148,7 +148,7 @@ label{display:flex;align-items:center;min-height:44px;font-size:17px}
 .spk[data-on="1"]::before{-webkit-mask-image:var(--i-pause);mask-image:var(--i-pause)}
 .spk:hover,.row.talk .spk{background:var(--fill);border:0}
 .spk.in{width:30px;height:30px;font-size:0;margin:-8px 4px -8px 0;vertical-align:middle}
-#lvBody select,#lvBody input{display:block;width:100%;margin:0 0 8px}#lvBody li{line-height:1.45;margin:6px 0}#lvBody ul{padding-left:20px}
+#lvBody select,#lvBody input:not([type=checkbox]){display:block;width:100%;margin:0 0 8px}#lvBody li{line-height:1.45;margin:6px 0}#lvBody ul{padding-left:20px}
 th,.book .pgno,.book .chap,.av small,.en,.line b,.pill,.tag{font-family:var(--sans)}
 button,textarea{font-family:var(--sans)}th{font-size:12px}.av small{font-size:11px}.spk{position:relative}.spk::after{content:"";position:absolute;inset:-5px}
 #cjNew{width:100%}
@@ -165,26 +165,27 @@ body.dark .segw>button.btn:not(.ghost){background:#636366!important;color:#fff!i
 .em{display:none}
 /* home */
 .kpis{grid-template-columns:1fr 1fr;gap:12px;margin:8px 0 14px}
-.k{background:var(--card);border:0;border-radius:14px;padding:14px}.k small{font-size:13px;font-weight:500}.k b{font:700 28px/1.15 var(--sans);margin:4px 0 0}
+.k{--c:var(--blue);background:color-mix(in srgb,var(--c) 14%,var(--card));border:0;border-radius:14px;padding:14px}.k:nth-child(2){--c:var(--ok)}.k:nth-child(3){--c:#af52de}.k:nth-child(4){--c:#ff9500}.k small{font-size:13px;font-weight:600;color:var(--c)}.k .bar{background:color-mix(in srgb,var(--c) 22%,transparent)}.k .bar>i{background:var(--c)}.k b{font:700 28px/1.15 var(--sans);margin:4px 0 0}
 .row2{grid-template-columns:1fr;gap:0}
 .heat{gap:4px}
-/* flashcards */
-#flash>.card{background:transparent;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0}
-#flash>.card>*{grid-column:1/-1;margin:0}
-#fcInfo{order:0;text-align:center}
-#flash>.card>div:not(.flash){order:1;background:var(--card);border-radius:12px;padding:8px 16px;display:flex;flex-direction:column;gap:6px}
-#flash .card.flash{order:2;background:var(--card);border-radius:20px;min-height:280px;padding:26px;font:600 25px/1.3 var(--serif);letter-spacing:-.01em}
-#flash button.btn{margin:0;min-height:50px;border-radius:14px;font-size:17px}
-#flash button[onclick="markFC(false)"]{order:3;grid-column:span 2;background:color-mix(in srgb,var(--bad) 14%,transparent)!important;color:var(--bad)!important}
-#flash button[onclick="markFC(true)"]{order:4;grid-column:span 2}
-#flash button[onclick="flipFC()"]{order:5;grid-column:1/-1;background:color-mix(in srgb,var(--blue) 14%,transparent);color:var(--blue)}
-#flash button[onclick="nextFC(-1)"],#flash button[onclick="shuffleFC()"],#flash #fcSpk,#flash button[onclick="nextFC(1)"]{grid-column:span 1;font-size:0;display:grid;place-items:center;background:transparent!important;width:auto;height:44px;min-height:44px;border-radius:12px;justify-self:stretch;color:var(--blue)!important}
-#flash button[onclick="nextFC(-1)"]{order:6}#flash button[onclick="shuffleFC()"]{order:7}#flash #fcSpk{order:8}#flash button[onclick="nextFC(1)"]{order:9}
-#flash button[onclick="nextFC(-1)"]::before,#flash button[onclick="shuffleFC()"]::before,#flash button[onclick="nextFC(1)"]::before{content:"";width:24px;height:24px;background:currentColor}
-#flash button[onclick="nextFC(-1)"]::before{-webkit-mask:var(--i-chl) center/contain no-repeat;mask:var(--i-chl) center/contain no-repeat}
-#flash button[onclick="shuffleFC()"]::before{-webkit-mask:var(--i-shuf) center/contain no-repeat;mask:var(--i-shuf) center/contain no-repeat}
-#flash button[onclick="nextFC(1)"]::before{-webkit-mask:var(--i-chr) center/contain no-repeat;mask:var(--i-chr) center/contain no-repeat}
-#flash #fcSpk::before{width:24px;height:24px}
+/* flashcard deck (Cartes + Livret > Cartes): one grid, equal 50pt controls */
+.deck{background:transparent!important;padding:0!important;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 14px}
+.deck>*{grid-column:1/-1;margin:0!important}
+.deck>span.muted{order:0;text-align:center}
+.deck>div:not(.flash){order:1;background:var(--card);border-radius:12px;padding:8px 16px;display:flex;flex-direction:column;gap:6px}
+.deck>.flash{order:2;background:var(--card);border-radius:20px;min-height:280px;padding:26px;font:600 25px/1.3 var(--serif);letter-spacing:-.01em}
+.deck>button{height:50px;min-height:50px;width:100%;border-radius:14px;font:600 17px var(--sans);letter-spacing:-.01em;display:flex;align-items:center;justify-content:center;padding:0}
+.deck>.a-bad{order:3;grid-column:span 2;background:color-mix(in srgb,var(--bad) 14%,transparent)!important;color:var(--bad)!important}
+.deck>.a-good{order:4;grid-column:span 2;background:var(--ok)!important;color:#fff!important}
+.deck>.a-prev{order:5;grid-column:span 1}.deck>.a-flip{order:6;grid-column:span 2}.deck>.a-next{order:7;grid-column:span 1}
+.deck>.a-shuf{order:8;grid-column:span 2}.deck>.a-spk{order:9;grid-column:span 2}
+.deck>.a-prev,.deck>.a-flip,.deck>.a-next,.deck>.a-shuf,.deck>.a-spk{background:color-mix(in srgb,var(--blue) 14%,transparent)!important;color:var(--blue)!important}
+.deck>.a-prev,.deck>.a-next,.deck>.a-shuf,.deck>.a-spk{font-size:0;border-radius:14px}
+.deck>.a-prev::before,.deck>.a-next::before,.deck>.a-shuf::before,.deck>.a-spk::before{content:"";width:24px;height:24px;background:currentColor;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain}
+.deck>.a-prev::before{-webkit-mask-image:var(--i-chl);mask-image:var(--i-chl)}.deck>.a-next::before{-webkit-mask-image:var(--i-chr);mask-image:var(--i-chr)}
+.deck>.a-shuf::before{-webkit-mask-image:var(--i-shuf);mask-image:var(--i-shuf)}.deck>.a-spk::before{-webkit-mask-image:var(--i-spk);mask-image:var(--i-spk)}
+.deck>.a-spk.spk{width:100%;height:50px;margin:0}
+.deck>.a-spk[data-on="1"]::before{-webkit-mask-image:var(--i-pause);mask-image:var(--i-pause)}.deck>.a-spk::after{display:none}
 /* quiz */
 #quiz>.card{background:transparent;padding:0;display:flex;flex-direction:column;gap:10px;margin:0}
 #quiz>.card>button.btn{width:100%;min-height:50px;border-radius:14px;font-size:17px;margin:4px 0 0}
@@ -194,6 +195,10 @@ body.dark .segw>button.btn:not(.ghost){background:#636366!important;color:#fff!i
 #interview>.card,#livret>.card,#hist>.card,#dialogues>.card{background:transparent;padding:0;margin:0 0 10px}
 #ivList{display:block}#ivList>.card{background:var(--card);padding:16px;margin:0 0 12px;border-radius:12px}
 #lvBody>.card,#hsBody>.card{margin-bottom:12px}
+#ivList>.card{padding-bottom:0;overflow:hidden}
+#ivList .card>button.btn.ghost{display:flex;align-items:center;justify-content:space-between;width:calc(100% + 32px);height:48px;margin:12px -16px 0;border-radius:0;border-top:.5px solid var(--line)!important;background:transparent!important;padding:0 16px;font-size:17px;font-weight:400}
+#ivList .card>button.btn.ghost::after{content:"";width:18px;height:18px;background:var(--muted);-webkit-mask:var(--i-ud) center/contain no-repeat;mask:var(--i-ud) center/contain no-repeat}
+#ivList .card>p{margin:0;padding:12px 0 16px;border-top:.5px solid var(--line);font:17px/1.4 var(--sans)}#ivList .card>p[hidden]{display:none}
 /* dialogues */
 .shelf{display:block;background:var(--card);border-radius:12px;overflow:hidden;margin:6px 0 12px}
 .bk{display:grid;grid-template-columns:40px 1fr;column-gap:12px;align-items:center;width:100%;border:0;border-top:.5px solid var(--line);border-radius:0;background:transparent;padding:10px 16px;min-height:60px}
@@ -261,13 +266,13 @@ body.pushed section.active{animation:pushIn .32s cubic-bezier(.33,1,.68,1)}
 <section id="sources"><div class="card" id="syncBox"></div><div class="card"><h2>Sources officielles (vérifiées le 26/10/2026)</h2><div id="srcList"></div>
 <p class="muted">Les mises en situation ne sont pas publiées. Celles de ce tableau de bord sont des exemples représentatifs. Téléchargez la liste officielle des questions « naturalisation » et révisez-la en plus de ce site.</p></div></section>
 
-<section id="flash"><div class="card"><span id="fcInfo" class="muted"></span>
+<section id="flash"><div class="card deck"><span id="fcInfo" class="muted"></span>
 <div style="margin:8px 0"><select id="fcTheme"></select> <label><input type="checkbox" id="fcHard"> Seulement « à revoir »</label></div>
 <div class="card flash" id="fcCard" onclick="flipFC()"></div>
-<button class="btn ghost" onclick="nextFC(-1)">◀</button><button class="btn" onclick="flipFC()">Retourner</button>
-<button class="btn" style="background:var(--bad)" onclick="markFC(false)">À revoir</button><button class="btn" style="background:var(--ok)" onclick="markFC(true)">Je sais ✓</button>
-<button class="btn ghost" onclick="nextFC(1)">▶</button><button class="btn ghost" onclick="shuffleFC()">🔀</button>
-<button class="spk in" id="fcSpk" title="Écouter la question / la réponse" aria-label="Écouter la face affichée" onclick="fcSay()">🔊</button></div></section>
+<button class="btn ghost a-prev" onclick="nextFC(-1)">◀</button><button class="btn a-flip" onclick="flipFC()">Retourner</button>
+<button class="btn a-bad" style="background:var(--bad)" onclick="markFC(false)">À revoir</button><button class="btn a-good" style="background:var(--ok)" onclick="markFC(true)">Je sais ✓</button>
+<button class="btn ghost a-next" onclick="nextFC(1)">▶</button><button class="btn ghost a-shuf" onclick="shuffleFC()">🔀</button>
+<button class="spk in a-spk" id="fcSpk" title="Écouter la question / la réponse" aria-label="Écouter la face affichée" onclick="fcSay()">🔊</button></div></section>
 
 <section id="quiz"><div class="card"><h2>QCM d'entraînement</h2>
 <select id="qzTheme"></select> <select id="qzN"><option>10</option><option>20</option><option value="40">40 (examen blanc, 45 min)</option></select>
@@ -797,6 +802,7 @@ $("mtabs").onclick=e=>{const b=e.target.closest("button");if(b)show(b.dataset.m)
 $("moreList").onclick=e=>{const b=e.target.closest("button");if(b)show(b.dataset.m)};
 $("mnBack").onclick=()=>show("more");
 $("mnTr").onclick=()=>mnSrc&&mnSrc.click();
+history.scrollRestoration="manual";addEventListener("pageshow",()=>scrollTo(0,0));
 addEventListener("scroll",()=>$("mnb").classList.toggle("sc",scrollY>38),{passive:true});
 // swipe from the left edge = back (like UINavigationController)
 {let x0=null,y0=0;addEventListener("touchstart",e=>{const t=e.touches[0];x0=t.clientX<28?t.clientX:null;y0=t.clientY},{passive:true});
@@ -1004,13 +1010,13 @@ function lvFiches(){
   $("lvPart").onchange=draw;$("lvSearch").oninput=draw;draw()}
 // --- Cartes: flip cards (question -> answer + explanation), "à revoir" filter, progress saved per question
 function lvCards(){
-  $("lvBody").innerHTML=`<div class="card"><span id="lvcInfo" class="muted"></span>
+  $("lvBody").innerHTML=`<div class="card deck"><span id="lvcInfo" class="muted"></span>
 <div style="margin:8px 0"><select id="lvcPart">${lvPartOpts}</select> <label><input type="checkbox" id="lvcHard"> Seulement « à revoir »</label></div>
 <div class="card flash" id="lvcCard" onclick="lvFlip()"></div>
-<button class="btn ghost" onclick="lvNext(-1)" aria-label="Carte précédente">◀</button><button class="btn" onclick="lvFlip()">Retourner</button>
-<button class="btn" style="background:var(--bad)" onclick="lvMark(false)">À revoir</button><button class="btn" style="background:var(--ok)" onclick="lvMark(true)">Je sais ✓</button>
-<button class="btn ghost" onclick="lvNext(1)" aria-label="Carte suivante">▶</button><button class="btn ghost" onclick="lvShuffle()" aria-label="Mélanger">🔀</button>
-<button class="spk in pgSpk" title="Écouter la face affichée" aria-label="Écouter la face affichée" onclick="pgRead(this,lvCardLines())">🔊</button></div>`;
+<button class="btn ghost a-prev" onclick="lvNext(-1)" aria-label="Carte précédente">◀</button><button class="btn a-flip" onclick="lvFlip()">Retourner</button>
+<button class="btn a-bad" style="background:var(--bad)" onclick="lvMark(false)">À revoir</button><button class="btn a-good" style="background:var(--ok)" onclick="lvMark(true)">Je sais ✓</button>
+<button class="btn ghost a-next" onclick="lvNext(1)" aria-label="Carte suivante">▶</button><button class="btn ghost a-shuf" onclick="lvShuffle()" aria-label="Mélanger">🔀</button>
+<button class="spk in pgSpk a-spk" title="Écouter la face affichée" aria-label="Écouter la face affichée" onclick="pgRead(this,lvCardLines())">🔊</button></div>`;
   $("lvcPart").onchange=lvBuild;$("lvcHard").onchange=lvBuild;lvBuild()}
 function lvBuild(){window.speechSynthesis&&stStop();const p=$("lvcPart").value,h=$("lvcHard").checked;lvFc=LVQ.map((_,i)=>i).filter(i=>(!p||LVQ[i].part===p)&&(!h||!store.lvk[LVQ[i].k]));lvFi=0;lvFlipped=false;lvDraw()}
 function lvDraw(){if(!lvFc.length){$("lvcCard").innerHTML="🎉 Aucune carte ici.";$("lvcInfo").textContent="";return}
