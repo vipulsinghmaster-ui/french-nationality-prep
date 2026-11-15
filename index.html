@@ -165,7 +165,7 @@ body.dark .segw>button.btn:not(.ghost){background:#636366!important;color:#fff!i
 .em{display:none}
 /* home */
 .kpis{grid-template-columns:1fr 1fr;gap:12px;margin:8px 0 14px}
-.k{background:var(--card);border:0;border-radius:14px;padding:14px}#stats .k{--c:var(--blue);background:color-mix(in srgb,var(--c) 14%,var(--card))}#stats .k:nth-child(2){--c:var(--ok)}#stats .k:nth-child(3){--c:#af52de}#stats .k:nth-child(4){--c:#ff9500}.k small{font-size:13px;font-weight:600}#stats .k small{color:var(--c)}#stats .k .bar{background:color-mix(in srgb,var(--c) 22%,transparent)}#stats .k .bar>i{background:var(--c)}.k b{font:700 28px/1.15 var(--sans);margin:4px 0 0}
+.k{background:var(--card);border:0;border-radius:14px;padding:14px}.kt{--c:var(--blue);background:color-mix(in srgb,var(--c) 14%,var(--card))}.k small{font-size:13px;font-weight:600}.kt small{color:var(--c)}.kt .bar{background:color-mix(in srgb,var(--c) 22%,transparent)}.kt .bar>i{background:var(--c)}.k b{font:700 28px/1.15 var(--sans);margin:4px 0 0}.kpis.one{grid-template-columns:1fr;margin:8px 0 14px}
 .row2{grid-template-columns:1fr;gap:0}
 .heat{gap:4px}
 /* flashcard deck (Cartes + Livret > Cartes): 4-col grid, every control 50pt */
@@ -262,7 +262,7 @@ body[data-cur="home"] #mchips,body[data-cur="flash"] #mchips,body[data-cur="quiz
 .grp{border:2px solid var(--line);border-bottom-width:4px;border-radius:20px}
 .grp .tile{box-shadow:0 3px 0 rgba(0,0,0,.18);border-radius:12px;width:40px;height:40px}.grp .tile .mi{width:22px;height:22px}
 .grp button.r{font-family:var(--rounded);font-weight:800;border-top-width:2px}
-.k{border:2px solid var(--line);border-bottom-width:4px;border-radius:18px}#stats .k{border-color:color-mix(in srgb,var(--c) 28%,transparent)}
+.k{border:2px solid var(--line);border-bottom-width:4px;border-radius:18px}.kt{border-color:color-mix(in srgb,var(--c) 28%,transparent)}
 /* chunky pressable buttons */
 button.btn{background:var(--blue);color:#fff;box-shadow:0 4px 0 var(--blueD);min-height:48px;border-radius:16px;font:800 15px var(--rounded);letter-spacing:.06em;text-transform:uppercase;transition:transform .08s,box-shadow .08s}
 button.btn:active{transform:translateY(4px);box-shadow:0 0 0 var(--blueD);opacity:1}
@@ -349,7 +349,6 @@ body.lesson #qzBox>.big,body.lesson #lvqBox>.big{display:none}
 <section id="home"><h2 id="greet">Bonjour Vipul 👋</h2><p class="muted" id="greetSub"></p>
 <div class="card" id="goal"></div>
 <div id="path"></div>
-<div class="kpis" id="stats"></div>
 <div class="row2"><div class="card"><span class="pill" id="qotdTag"></span><h3 id="qotdQ"></h3><div id="qotdO"></div><p class="muted" id="qotdFb"></p></div>
 <div class="card"><b>Activité (28 jours)</b><div class="heat" id="heat"></div><p class="muted" style="font-size:13px;margin-top:16px" id="weak"></p><div id="themeBars"></div></div></div>
 <div class="card"><h2>Vue d'ensemble</h2>
@@ -360,7 +359,7 @@ body.lesson #qzBox>.big,body.lesson #lvqBox>.big{display:none}
 <section id="sources"><div class="card" id="syncBox"></div><div class="card"><h2>Sources officielles (vérifiées le 26/10/2026)</h2><div id="srcList"></div>
 <p class="muted">Les mises en situation ne sont pas publiées. Celles de ce tableau de bord sont des exemples représentatifs. Téléchargez la liste officielle des questions « naturalisation » et révisez-la en plus de ce site.</p></div></section>
 
-<section id="flash"><div class="card deck"><span id="fcInfo" class="muted"></span>
+<section id="flash"><div class="kpis one" id="kpi-flash"></div><div class="card deck"><span id="fcInfo" class="muted"></span>
 <div style="margin:8px 0"><select id="fcTheme"></select> <label><input type="checkbox" id="fcHard"> Seulement « à revoir »</label></div>
 <div class="card flash" id="fcCard" onclick="flipFC()"></div>
 <button class="btn ghost a-prev" onclick="nextFC(-1)">◀</button><button class="btn a-flip" onclick="flipFC()">Retourner</button>
@@ -368,7 +367,7 @@ body.lesson #qzBox>.big,body.lesson #lvqBox>.big{display:none}
 <button class="btn ghost a-next" onclick="nextFC(1)">▶</button><button class="btn ghost a-shuf" onclick="shuffleFC()">🔀</button>
 <button class="spk in a-spk" id="fcSpk" title="Écouter la question / la réponse" aria-label="Écouter la face affichée" onclick="fcSay()">🔊</button></div></section>
 
-<section id="quiz"><div class="card"><h2>QCM d'entraînement</h2>
+<section id="quiz"><div class="kpis one" id="kpi-quiz"></div><div class="card"><h2>QCM d'entraînement</h2>
 <select id="qzTheme"></select> <select id="qzN"><option>10</option><option>20</option><option value="40">40 (examen blanc, 45 min)</option></select>
 <button class="btn" onclick="startQuiz()">Démarrer</button> <span id="timer" class="big"></span>
 <div id="qzBox" style="margin-top:12px"></div></div></section>
@@ -388,7 +387,7 @@ body.lesson #qzBox>.big,body.lesson #lvqBox>.big{display:none}
 
 <section id="dialogues"><div class="card"><h2>Histoires illustrées</h2><div id="bkShelf" class="shelf"></div><select id="dlTense"></select> <label><input type="checkbox" id="dlHide"> Masquer l'anglais</label></div><div id="dlList"></div></section>
 
-<section id="conj"><div class="card"><h2>Conjugaison</h2>
+<section id="conj"><div class="kpis one" id="kpi-conj"></div><div class="card"><h2>Conjugaison</h2>
 <select id="cjVerb"></select> <select id="cjTense"></select> <span id="cjTools" hidden><button class="btn ghost" id="cjEdit">✏️ Modifier</button> <button class="btn ghost" id="cjDel">🗑 Supprimer</button></span>
 <div style="margin-top:10px"><input id="cjNew" autocomplete="off" placeholder="Nouveau verbe, ex. travailler, se laver"> <button class="btn" id="cjAdd"><span class="em">➕ </span>Ajouter</button> <span id="cjMsg" class="muted"></span></div><div id="cjTable" style="margin-top:10px"></div></div>
 <div class="card"><h3>Phrases</h3><p class="muted">10 phrases par temps pour le verbe choisi ci-dessus.</p><div id="snTabs"></div><div style="display:flex;gap:28px;flex-wrap:wrap;margin-top:6px"><div id="snList" style="flex:1 1 320px"></div><div id="snStory" style="flex:1 1 320px;align-self:flex-start;margin-top:14px;padding:14px 18px;border-left:3px solid var(--blue);background:var(--side);border-radius:8px"></div></div></div>
@@ -401,7 +400,7 @@ body.lesson #qzBox>.big,body.lesson #lvqBox>.big{display:none}
 <li><b>Futur proche</b> (aller + infinitif): <i>Je vais voter.</i> <b>Futur simple</b>: <i>Je deviendrai français.</i></li>
 <li><b>Conditionnel</b>: politesse et hypothèse. <i>Je voudrais un rendez-vous. Si j'étais français, je voterais.</i></li>
 </ul><p class="muted">Remarque : le « present perfect » anglais (<i>I have lived here for 8 years</i>) se dit en général avec le <b>présent + depuis</b> (<i>J'habite ici depuis 8 ans</i>), ou avec le passé composé quand l'action est terminée.</p></div></section>
-<section id="more"><div class="grp" id="moreList"></div><div class="sh">Apparence</div><div id="moreSeg"><button data-th="auto">Auto</button><button data-th="light">Clair</button><button data-th="dark">Sombre</button></div></section>
+<section id="more"><div class="kpis one" id="kpi-more"></div><div class="grp" id="moreList"></div><div class="sh">Apparence</div><div id="moreSeg"><button data-th="auto">Auto</button><button data-th="light">Clair</button><button data-th="dark">Sombre</button></div></section>
 </main>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <symbol id="m-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
@@ -870,7 +869,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 
 const TABS=[["home","🏠 Accueil"],["sources","🔗 Sources"],["flash","🃏 Flashcards"],["quiz","✅ QCM / Examen blanc"],["interview","🗣️ Entretien"],["livret","📘 Livret du Citoyen"],["hist","📜 History &amp; Current Affairs"],["dialogues","💬 Dialogues"],["conj","📚 Conjugaison"]];
 $("nav").innerHTML=TABS.map(([k,l])=>`<button data-t="${k}">${l}</button>`).join("");
-function show(k){if(k==="more"&&!isPhone())k="home";mSync(k);document.querySelectorAll("section").forEach(s=>s.classList.toggle("active",s.id===k));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.t===k));if(k==="home")renderStats();history.replaceState(null,"","#"+k);if(isPhone()){const t0=()=>{scrollTo(0,0);$("mnb").classList.remove("sc")};t0();requestAnimationFrame(t0);setTimeout(t0,80);setTimeout(t0,250)}if(typeof stStop==="function"){stStop();document.querySelectorAll(".pgSpk").forEach(x=>{x.dataset.on="";x.textContent="🔊"})}}
+function show(k){if(k==="more"&&!isPhone())k="home";mSync(k);document.querySelectorAll("section").forEach(s=>s.classList.toggle("active",s.id===k));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.t===k));if(k==="home")renderStats();else renderKpis();history.replaceState(null,"","#"+k);if(isPhone()){const t0=()=>{scrollTo(0,0);$("mnb").classList.remove("sc")};t0();requestAnimationFrame(t0);setTimeout(t0,80);setTimeout(t0,250)}if(typeof stStop==="function"){stStop();document.querySelectorAll(".pgSpk").forEach(x=>{x.dataset.on="";x.textContent="🔊"})}}
 $("nav").onclick=e=>e.target.dataset.t&&show(e.target.dataset.t);
 // Phone navigation (iOS pattern, <=820px via CSS): tab bar, large title + nav bar, "Plus" list, Apparence
 const MI=n=>`<svg class="mi" aria-hidden="true"><use href="#m-${n}"/></svg>`;
@@ -958,13 +957,19 @@ const dayKey=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${
 function track(theme,ok){const k=dayKey(new Date());store.days[k]=(store.days[k]||0)+1;
   if(theme){const s=store.th[theme]=store.th[theme]||[0,0];s[1]++;if(ok)s[0]++}save()}
 function streak(){let n=0,d=new Date();if(!store.days[dayKey(d)])d.setDate(d.getDate()-1);while(store.days[dayKey(d)]){n++;d.setDate(d.getDate()-1)}return n}
+function renderKpis(){
+  const known=Object.values(store.known).filter(Boolean).length;
+  const last=store.quiz.slice(-5);const avg=last.length?Math.round(last.reduce((a,b)=>a+b,0)/last.length):0;
+  const [ok,tot]=store.cj,st=streak();
+  const K={flash:["Flashcards",`${known}/${Q.length}`,known/Q.length*100,"var(--blue)"],quiz:["Moyenne QCM",last.length?`${avg} %`:"—",avg,"var(--ok)"],
+   conj:["Conjugaison",tot?`${Math.round(ok/tot*100)} %`:"—",tot?ok/tot*100:0,"#af52de"],more:["Série",`${st} jour${st>1?"s":""}`,Math.min(st/14,1)*100,"#ff9500"]};
+  for(const[id,[l,v,p,c]]of Object.entries(K)){const el=$("kpi-"+id);if(el)el.innerHTML=`<div class="k kt" style="--c:${c}"><small>${l}</small><b>${v}</b><div class="bar"><i style="width:${p}%${id==="more"?";background:var(--ok)":""}"></i></div></div>`}}
 function renderStats(){
   const known=Object.values(store.known).filter(Boolean).length;
   const last=store.quiz.slice(-5);const avg=last.length?Math.round(last.reduce((a,b)=>a+b,0)/last.length):0;
   const [ok,tot]=store.cj,st=streak();
   $("greetSub").textContent=`Il vous reste ${Q.length-known} cartes à revoir · objectif 32/40 à l'examen civique.`;
-  $("stats").innerHTML=[["Flashcards",`${known}/${Q.length}`,known/Q.length*100],["Moyenne QCM",last.length?`${avg} %`:"—",avg],["Conjugaison",tot?`${Math.round(ok/tot*100)} %`:"—",tot?ok/tot*100:0],["Série",`${st} jour${st>1?"s":""}`,Math.min(st/14,1)*100]]
-   .map(([l,v,p],i)=>`<div class="k"><small>${l}</small><b>${v}</b><div class="bar"><i style="width:${p}%${i===3?";background:var(--ok)":""}"></i></div></div>`).join("");
+  renderKpis();
   const mx=Math.max(1,...Object.values(store.days));let h="";
   for(let i=27;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const c=store.days[dayKey(d)]||0;h+=`<i title="${dayKey(d)} : ${c}" style="opacity:${c?(.3+.7*c/mx).toFixed(2):.08}"></i>`}
   $("heat").innerHTML=h;
