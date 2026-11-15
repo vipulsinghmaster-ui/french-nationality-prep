@@ -121,7 +121,7 @@ a{color:var(--blue)}
 #mnb button[hidden]{display:none}
 #mnb button:active{background:var(--fill)}
 #mnBack .mi{width:22px;height:22px}
-#mnTr{justify-content:center}
+#mnTr{display:none!important}
 #mnTr::before{content:"";width:24px;height:24px;background:currentColor;-webkit-mask:var(--i-spk) center/contain no-repeat;mask:var(--i-spk) center/contain no-repeat}
 #mnTr[data-on="1"]::before{-webkit-mask-image:var(--i-pause);mask-image:var(--i-pause)}
 #mlt{display:block;font:700 34px/1.2 var(--sans);letter-spacing:.01em;padding:2px 4px 8px}
@@ -292,9 +292,8 @@ body.dark .opt.ok{color:var(--ok)}
 #path{margin:0 0 14px}
 #path .unit{background:var(--blue);box-shadow:0 4px 0 var(--blueD);border-radius:20px;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
 #path .unit small{display:block;opacity:.85;font:800 12px var(--rounded);text-transform:uppercase;letter-spacing:.06em}#path .unit b{font:800 18px var(--rounded)}
-#path .nodes{display:flex;flex-direction:column;align-items:center;gap:30px;padding:40px 0 14px}
+#path .nodes{display:flex;flex-direction:column;align-items:center;gap:26px;padding:44px 0 14px}
 .pnode{display:flex;flex-direction:column;align-items:center;gap:10px;background:none;border:0;padding:0;color:var(--ink);cursor:pointer;font:800 15px var(--rounded);text-align:center;max-width:220px;position:relative}
-.pnode:nth-child(even){transform:translateX(36px)}.pnode:nth-child(3n){transform:translateX(-36px)}
 .pnode .c{width:78px;height:70px;border-radius:50%;display:grid;place-items:center;font-size:30px;color:#fff;background:var(--blue);box-shadow:0 6px 0 var(--blueD);transition:transform .08s,box-shadow .08s}
 .pnode:active .c{transform:translateY(6px);box-shadow:none}
 .pnode.gold .c{background:var(--gold);box-shadow:0 6px 0 var(--goldD)}
@@ -898,7 +897,7 @@ $("mtabs").onclick=e=>{const b=e.target.closest("button");if(b)show(b.dataset.m)
 $("moreList").onclick=e=>{const b=e.target.closest("button");if(b)show(b.dataset.m)};
 $("mnBack").onclick=()=>show("more");
 $("mnTr").onclick=()=>mnSrc&&mnSrc.click();
-history.scrollRestoration="manual";addEventListener("pageshow",()=>scrollTo(0,0));
+history.scrollRestoration="manual";document.documentElement.style.overflowAnchor="none";const top0=()=>{if(!document.body.classList.contains("lesson"))scrollTo(0,0)};addEventListener("pageshow",top0);addEventListener("load",()=>{top0();setTimeout(top0,150);setTimeout(top0,600)});document.addEventListener("visibilitychange",()=>{if(!document.hidden&&scrollY<200)top0()});
 addEventListener("scroll",()=>$("mnb").classList.toggle("sc",scrollY>38),{passive:true});
 // swipe from the left edge = back (like UINavigationController)
 {let x0=null,y0=0;addEventListener("touchstart",e=>{const t=e.touches[0];x0=t.clientX<28?t.clientX:null;y0=t.clientY},{passive:true});

@@ -1,5 +1,5 @@
 // Offline cache for the French Nationality Prep PWA. Bump VERSION when files change.
-const VERSION = "frnat-v5";
+const VERSION = "frnat-v6";
 const CORE = [
   "./", "./index.html", "./manifest.webmanifest",
   "./official-questions.js", "./official-answers.js", "./livret-data.js",
