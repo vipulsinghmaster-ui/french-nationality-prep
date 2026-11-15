@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Mock-up — Tuile stat par onglet</title>
+<style>
+*{box-sizing:border-box;margin:0}
+body{font-family:-apple-system,"SF Pro Text",system-ui,sans-serif;background:#d9dce3;display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px}
+.phone{width:390px;height:844px;background:#f2f1f6;border-radius:46px;overflow:hidden;position:relative;box-shadow:0 20px 50px #0003;border:10px solid #111}
+.status{height:44px;display:flex;justify-content:space-between;padding:14px 28px 0;font-weight:600;font-size:15px}
+.header{background:#d3e6fb;text-align:center;padding:12px 0;font-size:17px;font-weight:600;border-bottom:1px solid #0001}
+.top{padding:12px 16px 4px}
+.tile{border-radius:18px;padding:14px 16px;border:2px solid}
+.tile .l{font-size:14px;font-weight:600}.tile .v{font-size:30px;font-weight:700;color:#111;margin:2px 0 8px}
+.tile .bar{height:5px;border-radius:3px;background:#0001;overflow:hidden}.tile .bar i{display:block;height:100%}
+.b{background:#dcebfd;border-color:#9cc8f7;color:#1a7cf0}.b i{background:#1a7cf0}
+.g{background:#e2f6e7;border-color:#a9e2b6;color:#2fb34d}.g i{background:#2fc552}
+.p{background:#f3e5f7;border-color:#e0b8ec;color:#b24fd1}.p i{background:#c77ddf}
+.o{background:#fdeedb;border-color:#fbd29b;color:#f08c00}.o i{background:#2fc552}
+.hero{background:#1a7cf0;color:#fff;border-radius:18px;padding:14px 16px;font-weight:600;font-size:13px;box-shadow:0 5px 0 #0d5fc4}
+.hero b{font-size:19px;display:block;margin-bottom:4px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.scroll{position:absolute;top:150px;bottom:82px;left:0;right:0;overflow:auto;padding:12px 16px}
+.start{margin:14px auto;display:block;width:max-content;padding:6px 18px;border:2px solid #ddd;border-radius:14px;color:#2fb34d;font-weight:800;letter-spacing:2px;font-size:13px;background:#fff}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 6px;text-align:center}
+.coin{width:60px;height:60px;border-radius:50%;margin:0 auto 6px;display:grid;place-items:center;font-size:26px;background:#1a7cf0;box-shadow:0 5px 0 #0d5fc4}
+.coin.y{background:#fcc419;box-shadow:0 5px 0 #d4a10d}.coin.s{background:#ccc;box-shadow:0 5px 0 #999}
+.grid b{font-size:12px;display:block}.grid small{font-size:10.5px;color:#888}
+.card{background:#fff;border-radius:16px;padding:14px;border:1.5px solid #e3e3e8;margin-top:12px;font-size:14px}
+.chip{display:inline-block;background:#dcebfd;color:#1a7cf0;border-radius:10px;padding:3px 10px;font-size:12px}
+.card h3{font-size:17px;margin-top:8px}.muted{color:#888;font-size:12.5px}
+.row{display:flex;justify-content:space-between;align-items:center}
+.nav{position:absolute;bottom:0;left:0;right:0;height:82px;background:#fafafa;border-top:1px solid #0001;display:flex;justify-content:space-around;padding-top:10px;font-size:11px;color:#888;text-align:center}
+.nav div{cursor:pointer;width:60px}.nav span{display:block;font-size:22px}.nav .on{color:#1a7cf0}
+.note{max-width:560px;font-size:13px;color:#444;text-align:center}
+</style></head><body>
+<p class="note"><b>Cliquez sur la barre du bas.</b> Chaque onglet affiche sa propre tuile en haut, juste sous l'en‑tête.</p>
+<div class="phone">
+ <div class="status"><span>16:04</span><span>▮▮▮ 100</span></div>
+ <div class="header" id="hdr">Accueil</div>
+ <div class="scroll"><h1 id="big" style="font-size:30px;font-weight:800;margin:4px 0 2px"></h1><p id="sub" class="muted" style="margin-bottom:12px"></p><div id="topTile"></div><div id="body"></div></div>
+ <div class="nav" id="nav">
+  <div data-k="home"><span>⌂</span>Accueil</div><div data-k="cards"><span>❐</span>Cartes</div>
+  <div data-k="qcm"><span>✓</span>QCM</div><div data-k="livret"><span>▯</span>Livret</div><div data-k="plus"><span>···</span>Plus</div>
+ </div>
+</div>
+<script>
+const tile=(c,l,v,w)=>`<div class="tile ${c}"><div class="l">${l}</div><div class="v">${v}</div><div class="bar"><i style="width:${w}"></i></div></div>`;
+const T={
+ flash:tile('b','Flashcards','1/319','1%'), qcm:tile('g','Moyenne QCM','100 %','100%'),
+ conj:tile('p','Conjugaison','—','0'), serie:tile('o','Série','1 jour','7%')};
+const S={
+ home:['Accueil',`<div class="hero"><b>Examen civique</b>1/6 thèmes validés (≥ 80 %)</div>`,
+  `<span class="start">COMMENCER</span><div class="grid">
+  <div><div class="coin y">⭐</div><b>Principes et valeurs</b><small>100 % · 10 réponses</small></div>
+  <div><div class="coin s">🏛️</div><b>Institutions</b><small>Pas encore commencé</small></div>
+  <div><div class="coin">⚖️</div><b>Droits et devoirs</b><small>100 % · 1 réponse</small></div>
+  <div><div class="coin">📜</div><b>Histoire, géo, culture</b><small>100 % · 2 réponses</small></div>
+  <div><div class="coin">🏠</div><b>Vivre en France</b><small>75 % · 4 réponses</small></div>
+  <div><div class="coin">🗣️</div><b>Mise en situation</b><small>0 % · 1 réponse</small></div></div>
+  <div class="card"><span class="chip">Question du jour · Histoire, géo, culture</span><h3>Parmi ces textes, lequel a été adopté sous Napoléon Ier ?</h3></div>`],
+ cards:['Cartes',T.flash,`<div class="card row"><div><b>À réviser aujourd'hui</b><div class="muted">12 cartes</div></div><span>›</span></div>
+  <div class="card row"><div><b>Nouvelles cartes</b><div class="muted">318 restantes</div></div><span>›</span></div>
+  <div class="card row"><div><b>Par thème</b><div class="muted">6 thèmes</div></div><span>›</span></div>`],
+ qcm:['QCM',T.qcm,`<div class="card row"><div><b>Examen blanc</b><div class="muted">40 questions · 45 min</div></div><span>›</span></div>
+  <div class="card row"><div><b>Entraînement par thème</b><div class="muted">6 thèmes</div></div><span>›</span></div>
+  <div class="card row"><div><b>Historique</b><div class="muted">18 réponses</div></div><span>›</span></div>`],
+ livret:['Livret','',`<div class="card"><b>Livret du citoyen</b><div class="muted">Chapitres 1 à 6</div></div>`],
+ plus:['Plus',`<div class="duo">${T.conj}${T.serie}</div>`,`<div class="card row"><div><b>Conjugaison</b><div class="muted">Exercices de verbes</div></div><span>›</span></div>
+  <div class="card row"><div><b>Réglages</b></div><span>›</span></div>`]};
+const H={home:["Bonjour Vipul 👋","Prêt pour l’examen civique ?"],cards:["Flashcards","Révisez à votre rythme"],qcm:["QCM","Testez vos connaissances"],livret:["Livret du citoyen","Le guide officiel"],plus:["Plus","Conjugaison, série et réglages"]};
+function go(k){const[h,t,b]=S[k];big.textContent=H[k][0];sub.textContent=H[k][1];hdr.textContent=h;topTile.innerHTML=t;body.innerHTML=b;
+ document.querySelectorAll('#nav div').forEach(d=>d.classList.toggle('on',d.dataset.k==k))}
+document.querySelectorAll('#nav div').forEach(d=>d.onclick=()=>go(d.dataset.k));go('home');
+</script></body></html>
